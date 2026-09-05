@@ -239,7 +239,7 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
                onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
                onerror="this.style.display='none';">
         </div>
-        <div class="name">${a.first} ${a.last}</div>
+        <div class="name"><a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="roster-name-link">${a.first} ${a.last}</a></div>
         <div class="meta">${a.grade}</div>
       </div>
     `;
