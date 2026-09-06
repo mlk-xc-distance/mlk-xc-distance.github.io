@@ -312,6 +312,9 @@ const MEETS = [
     const weatherHtml = inForecastWindow(m)
       ? `<div class="meet-parking" id="weatherFact-${i}">Weather: <span id="weatherValue-${i}">Loading forecast…</span></div>`
       : '';
+    const resultsLinkHtml = isPast
+      ? `<div class="meet-parking"><a href="results.html?meet=${encodeURIComponent(m.name)}&date=${m.date}" style="color:var(--clay); font-weight:600;">How We Did →</a></div>`
+      : '';
     return `
       <li class="meet-row ${cls}">
         <div class="num">${i + 1}</div>
@@ -320,6 +323,7 @@ const MEETS = [
           <div class="meet-loc">${locHtml}</div>
           ${parkingHtml}
           ${weatherHtml}
+          ${resultsLinkHtml}
         </div>
         <div class="meet-when"><span class="d">${fmtDate(m.date)}</span>${m.time}</div>
       </li>
