@@ -287,7 +287,7 @@ const MEETS = [
     return String(nh).padStart(2,'0') + ":" + String(nm).padStart(2,'0');
   }
   function fetchHistoricalWeather(m){
-    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago`;
     return fetch(url)
       .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
       .then(data => {
