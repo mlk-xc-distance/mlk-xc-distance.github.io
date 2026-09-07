@@ -133,280 +133,36 @@ const ATHLETE_TIMES = {
   "Liam Durham": "22:28.79",
   "Jack Edmonson": "22:29.30",
   "Dillon Fell": "17:22.90",
-  "Brent Ferrell": "16:11.80",
+  "Brent Ferrell": "15:55.25",
   "Miles Fowler": "17:41.51",
   "Campbell Gnetz": "20:41.02",
   "Brandon Johnson": "23:58.76",
   "Tanner Jones": "18:21.05",
   "Joseph Lambert": "22:19.10",
   "Ben Lewis": "20:51.02",
-  "Rolando Muniz-Huerta": "20:11.28",
+  "Rolando Muniz-Huerta": "19:31.28",
   "Samuel Petrony": "18:29.88",
   "Oscar Spitzer": "23:03.50",
   "Damien Tellez": "25:40.71",
   "Winston Walker": "20:58.57",
   "Cooper Wallace": "20:54.10",
   "Claude Yriart": "18:36.77",
+  "Cooper Hubbard": "23:46.74",
+  "Ethan Newberry": "25:09.97",
+  "Colin Dinh": "26:23.26",
+  "Will Lindstrom": "27:10.48",
   "Eleanor Bonino": "22:49.70",
   "Nevaeh Bowers": "28:48.34",
   "Ivy Brame-Blake": "34:08.70",
   "Olivia Collins": "26:44.52",
   "Kenzie Wilcox": "32:51.91",
   "Ruby York": "24:36.54",
-};
-
-function timeToSeconds(t){
-  if (!t) return null;
-  const [m, s] = t.split(":").map(Number);
-  return m * 60 + s;
-}
-
-/* ============================================================
-   EDIT ME: manual rank, used by "By PR" when a real time isn't
-   known yet. Boys: slots these athletes in after everyone with
-   a real time, in this order. Girls: this is a full coach-given
-   order that takes priority over real times for these athletes
-   specifically — everyone else falls in alphabetically after.
-   (Two different behaviors, set by the coach on purpose.)
-   ============================================================ */
-const MANUAL_RANK = {
-  "Cooper Hubbard": 1, "Will Lindstrom": 2, "Ethan Newberry": 3, "Colin Dinh": 4, "Aidan Withers": 5,
-  "Eleanor Bonino": 1, "Vicki Grammer": 2, "Ruby York": 3, "Ellianna Wicker": 4, "Olivia Collins": 5, "Margaret Ward": 6, "Emmy Kotras": 7,
-};
-
-const GRADE_SORT_ORDER = { Sr: 0, Jr: 1, So: 2, Fr: 3 };
-
-const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
-  const prTime = ATHLETE_TIMES[`${first} ${last}`] || null;
-  return {
-    first, last, gender, classYear,
-    grade: GRADE_BY_CLASS_YEAR[classYear] || "",
-    photo: "photos/" + slug(first, last) + ".jpg",
-    prTime,
-    prSeconds: timeToSeconds(prTime),
-    manualRank: (MANUAL_RANK[`${first} ${last}`] !== undefined) ? MANUAL_RANK[`${first} ${last}`] : null,
-  };
-});
-
-(function render(){
-  const gradeBar = document.getElementById('gradeFilters');
-  const sortBar = document.getElementById('sortToggle');
-  const gridBoys = document.getElementById('rosterGridBoys');
-  const gridGirls = document.getElementById('rosterGridGirls');
-  const GRADE_ORDER = ["Fr","So","Jr","Sr"];
-  const gradesPresent = GRADE_ORDER.filter(g => ROSTER.some(a => a.grade === g));
-
-  let currentGrade = 'All';
-  let currentSort = 'time';
-
-  function initials(a){ return (a.first[0] + a.last[0]).toUpperCase(); }
-
-  function sortList(list){
-    if (currentSort === 'time'){
-      const gender = (list.length > 0) ? list[0].gender : null;
-      if (gender === 'f'){
-        // Girls: manual rank (coach-given) takes full priority; everyone else alphabetical after.
-        return [...list].sort((a, b) => {
-          if (a.manualRank != null && b.manualRank != null) return a.manualRank - b.manualRank;
-          if (a.manualRank != null) return -1;
-          if (b.manualRank != null) return 1;
-          return a.first.localeCompare(b.first);
-        });
-      }
-      // Boys (and default): real time first, manual rank fills in for no-time athletes, then alphabetical.
-      return [...list].sort((a, b) => {
-        if (a.prSeconds != null && b.prSeconds != null) return a.prSeconds - b.prSeconds;
-        if (a.prSeconds != null) return -1;
-        if (b.prSeconds != null) return 1;
-        if (a.manualRank != null && b.manualRank != null) return a.manualRank - b.manualRank;
-        if (a.manualRank != null) return -1;
-        if (b.manualRank != null) return 1;
-        return a.first.localeCompare(b.first);
-      });
-    }
-    return [...list].sort((a, b) => {
-      const g = GRADE_SORT_ORDER[a.grade] - GRADE_SORT_ORDER[b.grade];
-      if (g !== 0) return g;
-      return a.first.localeCompare(b.first);
-    });
-  }
-
-  function cardHtml(a){
-    return `
-      <div class="athlete">
-        <div class="avatar">
-          <span class="init">${initials(a)}</span>
-          <img src="${a.photo}" alt="${a.first} ${a.last}" style="display:none;"
-               onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
-               onerror="this.style.display='none';">
-        </div>
-        <div class="name"><a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="roster-name-link">${a.first} ${a.last}</a></div>
-        <div class="meta">${a.grade}</div>
-      </div>
-    `;
-  }
-
-  function renderRoster(){
-    const base = currentGrade === 'All' ? ROSTER : ROSTER.filter(a => a.grade === currentGrade);
-    const boys = sortList(base.filter(a => a.gender === 'm'));
-    const girls = sortList(base.filter(a => a.gender === 'f'));
-    gridBoys.innerHTML = boys.map(cardHtml).join('') || '<p class="placeholder-note">No athletes in this grade.</p>';
-    gridGirls.innerHTML = girls.map(cardHtml).join('') || '<p class="placeholder-note">No athletes in this grade.</p>';
-  }
-
-  gradeBar.innerHTML = ['All', ...gradesPresent].map(g =>
-    `<button data-grade="${g}" class="${g === 'All' ? 'active' : ''}" aria-pressed="${g === 'All'}">${g}</button>`
-  ).join('');
-  gradeBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    gradeBar.querySelectorAll('button').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-    currentGrade = btn.dataset.grade;
-    renderRoster();
-  });
-
-  sortBar.addEventListener('click', (e) => {
-    const btn = e.target.closest('button');
-    if (!btn) return;
-    sortBar.querySelectorAll('button').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-    btn.classList.add('active');
-    btn.setAttribute('aria-pressed', 'true');
-    currentSort = btn.dataset.sort;
-    renderRoster();
-  });
-
-  renderRoster();
-})();
-</script>
-
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch(() => {});
-  });
-}
-</script>
-</body>
-</html>    <a class="team-name" href="index.html">MLK <span>XC</span> <span class="year">2026</span></a>
-    <button class="nav-toggle" aria-expanded="false" aria-controls="navlinks" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);">Menu</button>
-    <ul id="navlinks">
-      <li><a href="index.html#next-meet">Next Meet</a></li>
-      <li><a href="index.html#calendar">Calendar</a></li>
-      <li><a href="roster.html" class="nav-current">Roster</a></li>
-      <li><a href="results.html">Results</a></li>
-      <li><a href="records.html">Records</a></li>
-      <li><a href="index.html#links">Links</a></li>
-    </ul>
-  </nav>
-</header>
-
-<section id="roster" style="padding-top:40px;">
-  <div class="wrap">
-    <div class="section-head">
-      <div>
-        <h2>Roster</h2>
-        <p>Tap a filter to narrow by grade or sort by general racing time</p>
-      </div>
-    </div>
-
-    <div class="roster-controls">
-      <div class="roster-filters" id="gradeFilters" role="group" aria-label="Filter by grade"></div>
-      <div class="roster-filters" id="sortToggle" role="group" aria-label="Sort order">
-        <button data-sort="grade" aria-pressed="false">By Grade</button>
-        <button data-sort="time" class="active" aria-pressed="true">By PR</button>
-      </div>
-    </div>
-
-    <h3 class="link-subhead" style="margin-top:32px;">Boys</h3>
-    <div class="roster-grid" id="rosterGridBoys"></div>
-
-    <h3 class="link-subhead" style="margin-top:32px;">Girls</h3>
-    <div class="roster-grid" id="rosterGridGirls"></div>
-
-    <p class="placeholder-note">Cross country roster (39 athletes) — 38 from MileSplit plus Colin Dinh, added manually. Each card looks for <code>photos/lastname-firstname.jpg</code>; add the file and it replaces the initials automatically. "By PR" uses times entered in the code but doesn't display them on the cards.</p>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div id="dailyQuote" class="quote-line"></div>
-    <div class="footer-bottom">
-      <div>Martin Luther King High School Cross Country · Season 2026</div>
-      <div>Questions? <a href="mailto:mlk.xc.distance@gmail.com">mlk.xc.distance@gmail.com</a></div>
-    </div>
-  </div>
-</footer>
-<script src="quotes.js"></script>
-
-<script>
-/* ============================================================
-   EDIT ME: roster. Pulled from MileSplit's team roster page,
-   trimmed to XC athletes only. classYear = graduation year,
-   used to compute grade automatically. photo = filename this
-   card looks for inside a "photos/" folder next to this file;
-   falls back to initials if missing.
-   ============================================================ */
-const GRADE_BY_CLASS_YEAR = { 2027: "Sr", 2028: "Jr", 2029: "So", 2030: "Fr" };
-
-function slug(first, last){
-  return (first + "-" + last).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-}
-
-const ROSTER_RAW = [
-  ["Simon","Ally","m",2027], ["Praveen","Bhave","m",2030],
-  ["Sachin","Bhave","m",2028], ["Will","Blocher","m",2029], ["Eleanor","Bonino","f",2028],
-  ["Nevaeh","Bowers","f",2027], ["Ivy","Brame-Blake","f",2027], ["Harper","Bush","m",2028],
-  ["Olivia","Collins","f",2027], ["Liam","Durham","m",2029], ["Jack","Edmonson","m",2029],
-  ["Dillon","Fell","m",2028], ["Brent","Ferrell","m",2027], ["Miles","Fowler","m",2028],
-  ["Campbell","Gnetz","m",2028], ["Vicki","Grammer","f",2029], ["Leah","Hatt","f",2029],
-  ["Cooper","Hubbard","m",2028], ["Brandon","Johnson","m",2028], ["Tanner","Jones","m",2028],
-  ["Emmy","Kotras","f",2030], ["Joseph","Lambert","m",2028], ["Ben","Lewis","m",2029],
-  ["Will","Lindstrom","m",2030], ["Rolando","Muniz-Huerta","m",2028], ["Ethan","Newberry","m",2030],
-  ["Samuel","Petrony","m",2027], ["Ava","Sanderfur","f",2029],
-  ["Oscar","Spitzer","m",2027], ["Damien","Tellez","m",2028], ["Winston","Walker","m",2028],
-  ["Cooper","Wallace","m",2028], ["Margaret","Ward","f",2029], ["Ellianna","Wicker","f",2029],
-  ["Kenzie","Wilcox","f",2029], ["Aidan","Withers","m",2028], ["Ruby","York","f",2029],
-  ["Claude","Yriart","m",2029],
-  ["Colin","Dinh","m",2028],
-];
-
-/* ============================================================
-   EDIT ME: 5K PRs, "mm:ss" format. Add a line per athlete as
-   times become known — key must match "First Last" exactly.
-   Athletes not listed here show "No time yet" and sort to the
-   bottom of the "By PR" view.
-   ============================================================ */
-const ATHLETE_TIMES = {
-  "Simon Ally": "15:40.11",
-  "Praveen Bhave": "19:49.20",
-  "Sachin Bhave": "17:36.36",
-  "Will Blocher": "20:36.74",
-  "Harper Bush": "20:41.57",
-  "Liam Durham": "22:28.79",
-  "Jack Edmonson": "22:29.30",
-  "Dillon Fell": "17:22.90",
-  "Brent Ferrell": "16:11.80",
-  "Miles Fowler": "17:41.51",
-  "Campbell Gnetz": "20:41.02",
-  "Brandon Johnson": "23:58.76",
-  "Tanner Jones": "18:21.05",
-  "Joseph Lambert": "22:19.10",
-  "Ben Lewis": "20:51.02",
-  "Rolando Muniz-Huerta": "20:11.28",
-  "Samuel Petrony": "18:29.88",
-  "Oscar Spitzer": "23:03.50",
-  "Damien Tellez": "25:40.71",
-  "Winston Walker": "20:58.57",
-  "Cooper Wallace": "20:54.10",
-  "Claude Yriart": "18:36.77",
-  "Eleanor Bonino": "22:49.70",
-  "Nevaeh Bowers": "28:48.34",
-  "Ivy Brame-Blake": "34:08.70",
-  "Olivia Collins": "26:44.52",
-  "Kenzie Wilcox": "32:51.91",
-  "Ruby York": "24:36.54",
+  "Vicki Grammer": "24:34.43",
+  "Ellianna Wicker": "25:20.70",
+  "Emmy Kotras": "25:50.44",
+  "Margaret Ward": "26:20.53",
+  "Leah Hatt": "45:02.57",
+  "Ava Sanderfur": "45:02.96",
 };
 
 function timeToSeconds(t){
