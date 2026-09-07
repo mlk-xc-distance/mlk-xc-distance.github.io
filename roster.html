@@ -213,17 +213,8 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
 
   function sortList(list){
     if (currentSort === 'time'){
-      const gender = (list.length > 0) ? list[0].gender : null;
-      if (gender === 'f'){
-        // Girls: manual rank (coach-given) takes full priority; everyone else alphabetical after.
-        return [...list].sort((a, b) => {
-          if (a.manualRank != null && b.manualRank != null) return a.manualRank - b.manualRank;
-          if (a.manualRank != null) return -1;
-          if (b.manualRank != null) return 1;
-          return a.first.localeCompare(b.first);
-        });
-      }
-      // Boys (and default): real time first, manual rank fills in for no-time athletes, then alphabetical.
+      // Real time first (now that every athlete has one on file), manual rank fills in
+      // for anyone missing a time, then alphabetical as a final tiebreaker.
       return [...list].sort((a, b) => {
         if (a.prSeconds != null && b.prSeconds != null) return a.prSeconds - b.prSeconds;
         if (a.prSeconds != null) return -1;
