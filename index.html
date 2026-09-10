@@ -1,447 +1,435 @@
-:root{
-    --pine:      #14225E;
-    --pine-soft: #1F3480;
-    --stone:     #F2F4FB;
-    --stone-dk:  #DCE3F5;
-    --chalk:     #FFFFFF;
-    --clay:      #2F4FE0;
-    --clay-soft: #B9C7FF;
-    --slate:     #5B6479;
-    --line:      #D9DFEF;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14225E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MLK XC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>MLK Cross Country — Martin Luther King High School Royals</title>
+<meta name="description" content="Meets, roster, and team links for Martin Luther King High School Cross Country.">
+<meta property="og:title" content="MLK Cross Country — Royals">
+<meta property="og:site_name" content="MLK Cross Country">
+<meta property="og:description" content="Meets, roster, and team links for Martin Luther King High School Cross Country.">
+<meta property="og:image" content="https://mlk-xc-distance.github.io/share/og-image.png">
+<meta property="og:url" content="https://mlk-xc-distance.github.io/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MLK Cross Country — Royals">
+<meta name="twitter:image" content="https://mlk-xc-distance.github.io/share/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a href="#next-meet" class="skip-link">Skip to main content</a>
+
+<header class="site">
+  <nav class="nav">
+    <a class="team-name" href="index.html">MLK <span>XC</span> <span class="year">2026</span></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="navlinks" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);">Menu</button>
+    <ul id="navlinks">
+      <li><a href="#next-meet">Next Meet</a></li>
+      <li><a href="#calendar">Calendar</a></li>
+      <li><a href="roster.html">Roster</a></li>
+      <li><a href="https://photos.app.goo.gl/stjjs3EQkY86BbVC6" target="_blank" rel="noopener">Photos</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="records.html">Records</a></li>
+      <li><a href="#links">Links</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section class="hero" id="next-meet">
+  <svg class="contours" viewBox="0 0 900 300" preserveAspectRatio="none">
+    <path d="M-20,250 C150,180 250,280 420,200 C560,140 650,220 900,150" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <path d="M-20,200 C150,140 250,220 420,150 C560,100 650,170 900,100" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <path d="M-20,290 C150,230 250,310 420,260 C560,200 650,270 900,210" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+  </svg>
+  <div class="hero-inner" id="heroContent">
+    <!-- filled by script from the meets list, based on today's date -->
+  </div>
+</section>
+
+<section id="calendar">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Season calendar</h2>
+      </div>
+    </div>
+    <ol class="meet-list" id="meetList"></ol>
+  </div>
+</section>
+
+<section id="links">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Team links</h2>
+        <p>Forms, policies, and anything else the team needs on hand.</p>
+      </div>
+    </div>
+    <h3 class="link-group-head">Info</h3>
+    <div class="link-grid">
+      <a class="link-card" href="https://tn.milesplit.com/teams/4822-martin-luther-king-high-school" target="_blank" rel="noopener">
+        <div class="t">MileSplit Team Page</div>
+        <div class="d">Rankings, results, and full roster</div>
+      </a>
+      <div class="link-card" style="cursor:default;">
+        <div class="t"><a href="https://photos.app.goo.gl/stjjs3EQkY86BbVC6" target="_blank" rel="noopener" style="color:var(--pine); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;">Team Photo Album</a></div>
+        <div class="d">View and add meet-day photos (Google account needed to add). Or email your photos to <a href="mailto:mlk.xc.distance@gmail.com?subject=XC%20Team%20Photos" style="color:var(--clay); font-weight:600;">mlk.xc.distance@gmail.com</a> if you don't have a Google account.</div>
+      </div>
+      <!-- Hidden for now until public sharing is confirmed on the Google Calendar side. Remove this comment wrapper to bring it back.
+      <a class="link-card" href="https://calendar.google.com/calendar/embed?src=8b25577f277ca8eeaa3893e5f764efdc518ac81d0d1c1a36a10ab765ca51fb0a%40group.calendar.google.com" target="_blank" rel="noopener">
+        <div class="t">Team Calendar (Google)</div>
+        <div class="d">Subscribe for automatic updates</div>
+      </a>
+      -->
+    </div>
+
+    <h3 class="link-group-head">To Do List</h3>
+
+    <h4 class="link-subhead">ASAP</h4>
+    <div class="link-grid">
+      <a class="link-card" href="https://nashvillepublic-tn.finalforms.com" target="_blank" rel="noopener">
+        <div class="t">Physical / Registration Form</div>
+        <div class="d">Please complete ASAP if you haven't already.</div>
+      </a>
+      <a class="link-card" href="https://mnps.schoolcashonline.com/Fee/Details/16742/386/False/True" target="_blank" rel="noopener">
+        <div class="t">Boys Team Fee</div>
+        <div class="d">Please complete ASAP if you haven't already.</div>
+      </a>
+      <a class="link-card" href="https://mnps.schoolcashonline.com/Fee/Details/16743/386/False/True" target="_blank" rel="noopener">
+        <div class="t">Girls Team Fee</div>
+        <div class="d">Please complete ASAP if you haven't already.</div>
+      </a>
+    </div>
+
+    <h4 class="link-subhead">Sign Ups</h4>
+    <div class="link-grid">
+      <a class="link-card" href="https://www.remind.com/join/xcmlk" target="_blank" rel="noopener">
+        <div class="t">Join Remind App group for Students and Parents</div>
+        <div class="d">Official team correspondence from coaches.</div>
+      </a>
+      <a class="link-card" href="https://groupme.com/join_group/88888635/VXtmDOob" target="_blank" rel="noopener">
+        <div class="t">Join GroupMe group for MLK XC Parents</div>
+        <div class="d">Just a group chat among parents.</div>
+      </a>
+      <a class="link-card" href="https://www.signupgenius.com/go/30E0E4AA4AD2EA20-65183699-meet" target="_blank" rel="noopener">
+        <div class="t">Sign up to host a meet</div>
+        <div class="d">Volunteer slots for meet-day support</div>
+      </a>
+    </div>
+
+    <h3 class="link-group-head">Course Maps</h3>
+    <div class="link-grid">
+      <a class="link-card" href="maps/voyles-classic.jpg" target="_blank" rel="noopener">
+        <div class="t">Course Map — MSCCA Voyles Classic</div>
+        <div class="d">The Hermitage, Hermitage, TN</div>
+      </a>
+      <a class="link-card" href="maps/southern-showcase.jpg" target="_blank" rel="noopener">
+        <div class="t">Course Map — The Southern Showcase</div>
+        <div class="d">John Hunt Park, Huntsville, AL</div>
+      </a>
+      <a class="link-card" href="https://www.huntsvilleal.gov/videos/virtual-walkthrough-john-hunt-park-cross-country-course-5k-course/" target="_blank" rel="noopener">
+        <div class="t">Course Walkthrough Video — John Hunt Park</div>
+        <div class="d">Virtual 5K course walkthrough</div>
+      </a>
+      <a class="link-card" href="maps/frank-horton.jpg" target="_blank" rel="noopener">
+        <div class="t">Course Map — Hoka Frank Horton Night Classic</div>
+        <div class="d">Shelby Farms Park, Memphis, TN</div>
+      </a>
+      <a class="link-card" href="maps/mscca-championships.jpg" target="_blank" rel="noopener">
+        <div class="t">Course Map — MSCCA Championships</div>
+        <div class="d">Buckner City Park, Dickson, TN</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div id="dailyQuote" class="quote-line"></div>
+    <div class="footer-bottom">
+      <div>Martin Luther King High School Cross Country · Season 2026</div>
+      <div>Questions? <a href="mailto:mlk.xc.distance@gmail.com">mlk.xc.distance@gmail.com</a></div>
+    </div>
+  </div>
+</footer>
+<script src="quotes.js"></script>
+
+<script>
+/* ============================================================
+   EDIT ME: meets. date = "YYYY-MM-DD", used to sort and to
+   decide past vs. next. link/results/stream are optional.
+   ============================================================ */
+const MEETS = [
+  { name: "MSCCA Voyles Classic", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "07:45", lastRaceHour: "09:20", parking: "$10/car, cash only", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", date: "2026-09-05", time: "Girls Varsity 7:45 AM · Boys Varsity 8:20 AM · Boys JV 8:50 AM · Girls JV 9:20 AM", link: "https://tn.milesplit.com/meets/724605-mscca-voyles-classic-2026/info", results: "https://tn.milesplit.com/meets/724605-mscca-voyles-classic-2026/results" },
+  { name: "The Southern Showcase", location: "John Hunt Running Park, Huntsville, AL", address: "2151 Airport Rd SW, Huntsville, AL 35801", lat: 34.6892, lon: -86.5868, parking: "No fee. John Hunt lots fill up fast — the lot across the street at Get-A-Way Skate Park is a great backup option.", parkingAddress: "3685 Alex McAllister Drive SW, Huntsville, AL 35805", parkingMapLabel: "Directions to Skate Park Lot", date: "2026-09-19", time: "Boys Varsity likely 8:55 AM (other races TBD) · Our races run between 8:55 AM and 10:50 AM", raceHour: "08:55", lastRaceHour: "10:50", link: "https://al.milesplit.com/meets/719044-the-southern-showcase-powered-by-huntsville-high-school-2026/info", results: "https://al.milesplit.com/meets/719044-the-southern-showcase-powered-by-huntsville-high-school-2026/results" },
+  { name: "Hoka Frank Horton Night Classic", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", lat: 35.1381, lon: -89.8338, parking: "$7/car in advance, $10/car day-of; buying ahead also secures a better parking spot.", parkingMap: "https://runsignup.com/TicketEvent/HortonStore26", parkingMapLabel: "Buy Parking Pass Online (Save $3)", parkingMapTitle: "Buying your parking pass ahead of time also secures a better spot", date: "2026-10-03", time: "HS 5K — see meet page for times", link: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/info", results: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/results" },
+  { name: "TSIAA Week 5 (Frank Horton alternate)", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "17:50", parking: "TBD", date: "2026-10-05", time: "JV — High School (3.1 mi) 5:50 PM (for athletes that can't travel to Frank Horton in Memphis or don't meet the roster/time limits for that race)", link: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/info", results: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/results" },
+  { name: "MSCCA Championships", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "09:00", parking: "TBD", date: "2026-10-17", time: "Boys Varsity 9:00 AM · Girls Varsity 9:40 AM", link: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/info", results: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/results" },
+  { name: "Regionals", location: "Sanders Ferry Park, Hendersonville, TN", address: "513 Sanders Ferry Rd, Hendersonville, TN 37075", lat: 36.2527, lon: -86.6060, date: "2026-10-27", time: "TBD" },
+  { name: "State Championship", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", lat: 35.1381, lon: -89.8338, date: "2026-11-06", time: "TBD" },
+];
+
+(function render(){
+  function getCentralDateStr(){
+    const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Chicago', year: 'numeric', month: '2-digit', day: '2-digit' });
+    return fmt.format(new Date());
+  }
+  const todayStr = getCentralDateStr();
+
+  function fmtDate(iso){
+    const d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+  }
+  function meetNameHtml(m){
+    return m.link ? `<a href="${m.link}" target="_blank" rel="noopener">${m.name}</a>` : m.name;
+  }
+  function linkFact(label, url, text){
+    return url ? `<div><div class="label">${label}</div><div class="value"><a href="${url}" target="_blank" rel="noopener" style="color:inherit;">${text}</a></div></div>` : '';
+  }
+  function universalMapsUrl(address){
+    if (!address) return null;
+    const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) && !/Windows/.test(navigator.userAgent);
+    return isApple
+      ? `https://maps.apple.com/?q=${encodeURIComponent(address)}`
+      : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+  }
+  function mapsUrl(m){
+    return universalMapsUrl(m.address);
   }
 
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  a:focus-visible, button:focus-visible, select:focus-visible{
-    outline:3px solid var(--clay);
-    outline-offset:2px;
+  // ---- Weather: only meaningful within ~7 days out (forecast accuracy drops off after that) ----
+  const WEATHER_CODES = {
+    0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast",
+    45: "Foggy", 48: "Foggy",
+    51: "Light drizzle", 53: "Drizzle", 55: "Heavy drizzle",
+    61: "Light rain", 63: "Rain", 65: "Heavy rain",
+    71: "Light snow", 73: "Snow", 75: "Heavy snow",
+    80: "Rain showers", 81: "Rain showers", 82: "Heavy rain showers",
+    95: "Thunderstorms",
+  };
+  function daysOut(dateStr){
+    const today = new Date(todayStr + "T00:00:00");
+    const target = new Date(dateStr + "T00:00:00");
+    return Math.round((target - today) / 86400000);
   }
-  .skip-link{
-    position:absolute; left:-9999px; top:0;
-    background:var(--clay); color:white; padding:10px 16px;
-    z-index:1000; border-radius:0 0 4px 0; font-weight:600;
+  function inForecastWindow(m){
+    const d = daysOut(m.date);
+    return m.lat != null && m.lon != null && d >= 0 && d <= 16;
   }
-  .skip-link:focus{left:0;}
-  body{
-    margin:0;
-    background:var(--stone);
-    color:var(--pine);
-    font-family:'Source Sans 3', sans-serif;
-    font-size:17px;
-    line-height:1.5;
-  }
-  h1,h2,h3,.display{
-    font-family:'Oswald', sans-serif;
-    font-weight:600;
-    letter-spacing:0.01em;
-    margin:0;
-  }
-  a{color:var(--clay);}
-  .wrap{max-width:900px; margin:0 auto; padding:0 20px;}
-
-  header.site{
-    position:sticky; top:0; z-index:50;
-    background:var(--pine);
-    border-bottom:3px solid var(--clay);
-  }
-  .nav{
-    display:flex; align-items:center; justify-content:space-between;
-    max-width:900px; margin:0 auto; padding:14px 20px;
-  }
-  .nav .team-name{
-    font-family:'Oswald', sans-serif;
-    font-size:25px; font-weight:700;
-    color:var(--chalk);
-    letter-spacing:0.02em;
-    text-decoration:none;
-  }
-  .nav .team-name span{color:var(--clay-soft);}
-  .nav .team-name .year{
-    font-size:0.62em;
-    font-weight:500;
-    opacity:0.8;
-    letter-spacing:0.03em;
-  }
-  .nav ul{
-    list-style:none; display:flex; gap:22px; margin:0; padding:0;
-  }
-  .nav a{
-    color:var(--stone);
-    text-decoration:none;
-    font-size:15px;
-    font-weight:500;
-    border-bottom:2px solid transparent;
-    padding-bottom:2px;
-  }
-  .nav a:hover, .nav a:focus-visible{border-bottom-color:var(--clay-soft);}
-  .nav a.nav-current{
-    color:var(--chalk);
-    font-weight:700;
-    border-bottom-color:var(--clay);
-  }
-  .nav-toggle{display:none;}
-  @media (max-width:620px){
-    .nav ul{
-      display:none;
-      position:absolute; top:100%; left:0; right:0;
-      background:var(--pine); flex-direction:column; gap:0;
-      border-bottom:3px solid var(--clay);
+  function fetchWeather(m){
+    if (m.raceHour){
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
+      return fetch(url)
+        .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
+        .then(data => {
+          const targetHour = `${m.date}T${m.raceHour}`;
+          let idx = data.hourly.time.indexOf(targetHour);
+          if (idx === -1){
+            // fall back to nearest listed hour if exact minute isn't in the hourly series
+            idx = data.hourly.time.findIndex(t => t.slice(0,13) === targetHour.slice(0,13));
+          }
+          if (idx === -1) throw new Error("hour not found");
+          const code = data.hourly.weathercode[idx];
+          const temp = Math.round(data.hourly.temperature_2m[idx]);
+          const rain = data.hourly.precipitation_probability[idx];
+          const desc = WEATHER_CODES[code] || "—";
+          const hourLabel = new Date(targetHour).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+          return `${desc}, ${temp}°F · ${rain}% chance of rain (at ${hourLabel} start)`;
+        });
     }
-    .nav ul.open{display:flex;}
-    .nav ul li{border-top:1px solid var(--pine-soft);}
-    .nav ul li a{display:block; padding:14px 20px;}
-    .nav-toggle{
-      display:block; background:none; border:1px solid var(--stone);
-      color:var(--stone); font-size:14px; padding:6px 12px; border-radius:3px;
-      font-family:'Source Sans 3', sans-serif; cursor:pointer;
-    }
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
+    return fetch(url)
+      .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
+      .then(data => {
+        const code = data.daily.weathercode[0];
+        const hi = Math.round(data.daily.temperature_2m_max[0]);
+        const lo = Math.round(data.daily.temperature_2m_min[0]);
+        const rain = data.daily.precipitation_probability_max[0];
+        const desc = WEATHER_CODES[code] || "—";
+        return `${desc}, ${hi}°/${lo}°F · ${rain}% chance of rain`;
+      });
+  }
+  function loadWeatherInto(valueId, wrapperId, m){
+    const valueEl = document.getElementById(valueId);
+    if (!valueEl) return;
+    fetchWeather(m)
+      .then(text => { valueEl.textContent = text; })
+      .catch(() => { const w = document.getElementById(wrapperId); if (w) w.remove(); });
   }
 
-  .hero{
-    position:relative;
-    background:var(--pine);
-    color:var(--chalk);
-    overflow:hidden;
-    padding:56px 0 48px;
+  // ---- Historical weather: for meets that have already happened ----
+  function isPastMeet(m){
+    return m.lat != null && m.lon != null && m.date < todayStr;
   }
-  .hero svg.contours{
-    position:absolute; inset:0; width:100%; height:100%;
-    opacity:0.14; pointer-events:none;
+  function addHoursToTime(hhmm, hoursToAdd){
+    const [h, mnt] = hhmm.split(":").map(Number);
+    let total = h * 60 + mnt + hoursToAdd * 60;
+    total = ((total % 1440) + 1440) % 1440;
+    const nh = Math.floor(total / 60);
+    const nm = total % 60;
+    return String(nh).padStart(2,'0') + ":" + String(nm).padStart(2,'0');
   }
-  .hero-inner{position:relative; max-width:900px; margin:0 auto; padding:0 20px;}
-  .hero .kicker{
-    font-size:15px; color:var(--clay-soft); font-weight:600; margin-bottom:6px;
-  }
-  .hero h1{
-    font-size:clamp(26px, 4.6vw, 40px);
-    color:var(--chalk);
-    max-width:20ch;
-  }
-  .hero h1 a{color:inherit; text-decoration:none; border-bottom:2px solid var(--clay-soft);}
-  .hero h1 a:hover{border-bottom-color:var(--chalk);}
-  .countdown-badge{
-    display:inline-block;
-    margin-top:14px;
-    background:var(--clay);
-    color:white;
-    font-family:'Oswald', sans-serif;
-    font-size:15px;
-    font-weight:700;
-    letter-spacing:0.02em;
-    padding:6px 14px;
-    border-radius:20px;
-  }
-  .meet-facts{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
-    column-gap:28px;
-    row-gap:18px;
-    margin-top:26px;
-    padding-top:22px;
-    border-top:1px solid var(--pine-soft);
-  }
-  .meet-facts .label{font-size:13px; color:var(--clay-soft); margin-bottom:3px;}
-  .meet-facts .value{font-size:17px; font-weight:600; line-height:1.3;}
+  function fetchHistoricalWeather(m){
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago`;
+    return fetch(url)
+      .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
+      .then(data => {
+        const times = data.hourly.time;
+        const temps = data.hourly.temperature_2m;
+        const rains = data.hourly.precipitation_probability;
+        const codes = data.hourly.weathercode;
 
-  section{padding:52px 0;}
-  section + section{border-top:1px solid var(--line);}
-  .section-head{
-    display:flex; align-items:baseline; justify-content:space-between;
-    margin-bottom:24px; gap:16px; flex-wrap:wrap;
-  }
-  .section-head h2{font-size:26px;}
-  .section-head p{margin:4px 0 0; color:var(--slate); font-size:15px;}
+        const startHour = m.raceHour || "12:00";
+        const lastStart = m.lastRaceHour || startHour;
+        const endHour = addHoursToTime(lastStart, 1);
 
-  .meet-list{list-style:none; margin:0; padding:0;}
-  .meet-row{
-    display:grid;
-    grid-template-columns:52px 1fr auto;
-    gap:16px;
-    align-items:center;
-    padding:16px 0;
-    border-bottom:1px solid var(--line);
+        let startIdx = times.findIndex(t => t.slice(0,13) === `${m.date}T${startHour}`.slice(0,13));
+        let endIdx = times.findIndex(t => t.slice(0,13) === `${m.date}T${endHour}`.slice(0,13));
+        let idxs;
+        if (startIdx === -1 || endIdx === -1 || endIdx < startIdx){
+          idxs = temps.map((_, i) => i);
+        } else {
+          idxs = [];
+          for (let i = startIdx; i <= endIdx; i++) idxs.push(i);
+        }
+        const rangeTemps = idxs.map(i => temps[i]).filter(t => t != null);
+        const rangeRains = idxs.map(i => rains[i]).filter(r => r != null);
+        if (rangeTemps.length === 0) throw new Error("no data");
+        const hi = Math.round(Math.max(...rangeTemps));
+        const lo = Math.round(Math.min(...rangeTemps));
+        const maxRain = rangeRains.length ? Math.max(...rangeRains) : 0;
+        const midIdx = idxs[Math.floor(idxs.length / 2)];
+        const desc = WEATHER_CODES[codes[midIdx]] || "—";
+        const tempStr = hi === lo ? `${hi}°F` : `${lo}–${hi}°F`;
+        return `${desc}, ${tempStr} · ${maxRain}% chance of rain (race day)`;
+      });
   }
-  .meet-row:last-child{border-bottom:none;}
-  .meet-row .num{
-    font-family:'Oswald', sans-serif;
-    font-size:22px; color:var(--slate);
-    text-align:right;
-  }
-  .meet-row.is-past .num,
-  .meet-row.is-past .meet-name,
-  .meet-row.is-past .meet-loc{color:var(--slate); opacity:0.6;}
-  .meet-row.is-past .num::after{content:" ✓";}
-  .meet-row.is-next{
-    background:var(--chalk);
-    border-radius:3px;
-    padding-left:10px; padding-right:10px;
-    margin-left:-10px; margin-right:-10px;
-    border-bottom-color:transparent;
-    box-shadow:inset 3px 0 0 var(--clay);
-  }
-  .meet-name{font-weight:600; font-size:16px;}
-  .meet-name a{color:var(--clay); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;}
-  .meet-name a:hover{text-decoration-color:var(--clay);}
-  .meet-loc{font-size:14px; color:var(--slate);}
-  .meet-parking{font-size:12.5px; color:var(--slate); margin-top:2px; opacity:0.85;}
-  .meet-when{text-align:right; font-size:14px; color:var(--slate); white-space:normal; max-width:260px;}
-  .meet-when .d{display:block; font-weight:600; color:var(--pine); font-size:15px;}
-
-  @media (max-width:560px){
-    .meet-row{
-      grid-template-columns:32px 1fr;
-      row-gap:6px;
-    }
-    .meet-when{
-      grid-column:1 / -1;
-      text-align:left;
-      white-space:normal;
-      max-width:none;
-      padding-left:44px;
-    }
-    .meet-when .d{display:inline; margin-right:6px;}
+  function loadHistoricalWeatherInto(valueId, wrapperId, m){
+    const valueEl = document.getElementById(valueId);
+    if (!valueEl) return;
+    fetchHistoricalWeather(m)
+      .then(text => { valueEl.textContent = text; })
+      .catch(() => { const w = document.getElementById(wrapperId); if (w) w.remove(); });
   }
 
-  .roster-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));
-    gap:22px;
-  }
-  .athlete{text-align:left;}
-  .avatar{
-    width:100%; aspect-ratio:1/1;
-    border-radius:6px;
-    background:linear-gradient(160deg, var(--stone-dk), var(--stone));
-    border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Oswald', sans-serif;
-    font-size:26px; color:var(--slate);
-    margin-bottom:8px;
-    overflow:hidden;
-  }
-  .avatar img{width:100%; height:100%; object-fit:cover; display:block;}
-  .athlete .name{font-weight:600; font-size:15px;}
-  .roster-name-link{color:var(--pine); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;}
-  .roster-name-link:hover, .roster-name-link:focus-visible{color:var(--clay); text-decoration-color:var(--clay);}
-  .athlete .meta{font-size:13px; color:var(--slate);}
-
-  .roster-filters{display:flex; gap:8px; flex-wrap:wrap;}
-  .roster-controls{display:flex; gap:24px; flex-wrap:wrap; align-items:center; margin-bottom:8px;}
-  .roster-filters button{
-    font-family:'Source Sans 3', sans-serif;
-    font-size:13px; font-weight:600;
-    padding:6px 12px;
-    border:1px solid var(--line);
-    background:var(--chalk);
-    color:var(--slate);
-    border-radius:3px;
-    cursor:pointer;
-  }
-  .roster-filters button.active{
-    background:var(--pine); color:var(--chalk); border-color:var(--pine);
+  // ---- Hero: next upcoming meet ----
+  const sorted = [...MEETS].sort((a,b) => a.date.localeCompare(b.date));
+  const upcoming = sorted.filter(m => m.date >= todayStr);
+  const hero = document.getElementById('heroContent');
+  if (upcoming.length){
+    const next = upcoming[0];
+    const daysUntil = daysOut(next.date);
+    const countdownText = daysUntil === 0 ? "Today!" : daysUntil === 1 ? "Tomorrow!" : `${daysUntil} days away`;
+    hero.innerHTML = `
+      <div class="kicker">Next meet</div>
+      <h1>${meetNameHtml(next)} — ${next.location}</h1>
+      <div class="countdown-badge">${countdownText}</div>
+      <div class="meet-facts">
+        <div><div class="label">Date</div><div class="value">${fmtDate(next.date)}</div></div>
+        <div><div class="label">Location</div><div class="value">${next.location}</div></div>
+        <div><div class="label">Race times</div><div class="value">${next.time}</div></div>
+        <div><div class="label">Arrival</div><div class="value">75–90 min before your race time</div></div>
+        ${linkFact("Address", mapsUrl(next), next.address || "")}
+        ${next.parking ? `<div><div class="label">Parking</div><div class="value">${next.parking}${(next.parkingAddress || next.parkingMap) ? `<br><a href="${next.parkingAddress ? universalMapsUrl(next.parkingAddress) : next.parkingMap}" target="_blank" rel="noopener" ${next.parkingMapTitle ? `title="${next.parkingMapTitle}"` : ''} style="color:var(--clay-soft); font-size:14px;">${next.parkingMapLabel || 'Link to Parking Map'}</a>` : ''}</div></div>` : ''}
+        ${inForecastWindow(next) ? `<div id="heroWeatherFact"><div class="label">Weather</div><div class="value" id="heroWeatherValue">Loading forecast…</div></div>` : ''}
+        ${linkFact("Results", next.results, "Official Results →")}
+        ${linkFact("Stream", next.stream, "Watch live →")}
+      </div>
+    `;
+    if (inForecastWindow(next)) loadWeatherInto("heroWeatherValue", "heroWeatherFact", next);
+  } else {
+    hero.innerHTML = `
+      <div class="kicker">Season complete</div>
+      <h1>No meets remaining on the schedule</h1>
+    `;
   }
 
-  .link-group-head{
-    font-family:'Oswald', sans-serif;
-    font-size:20px;
-    font-weight:600;
-    color:var(--pine);
-    margin:0 0 14px;
-  }
-  .link-group-head:not(:first-of-type){margin-top:36px;}
+  // ---- Full calendar, past meets greyed out ----
+  const meetList = document.getElementById('meetList');
+  meetList.innerHTML = sorted.map((m, i) => {
+    const isPast = m.date < todayStr;
+    const isNext = upcoming.length && m === upcoming[0];
+    const cls = [isPast ? 'is-past' : '', isNext ? 'is-next' : ''].filter(Boolean).join(' ');
+    const mapsLink = mapsUrl(m);
+    const locHtml = mapsLink
+      ? `<a href="${mapsLink}" target="_blank" rel="noopener" style="color:inherit;">${m.location} · Get directions</a>`
+      : m.location;
+    const parkingHtml = m.parking ? `<div class="meet-parking">Parking: ${m.parking}${(m.parkingAddress || m.parkingMap) ? `<br><a href="${m.parkingAddress ? universalMapsUrl(m.parkingAddress) : m.parkingMap}" target="_blank" rel="noopener" ${m.parkingMapTitle ? `title="${m.parkingMapTitle}"` : ''} style="color:var(--clay);">${m.parkingMapLabel || 'Link to Parking Map'}</a>` : ''}</div>` : '';
+    const weatherHtml = inForecastWindow(m)
+      ? `<div class="meet-parking" id="weatherFact-${i}">Weather: <span id="weatherValue-${i}">Loading forecast…</span></div>`
+      : isPastMeet(m)
+        ? `<div class="meet-parking" id="weatherFact-${i}">Race Day Weather: <span id="weatherValue-${i}">Loading…</span></div>`
+        : '';
+    const resultsLinkHtml = isPast
+      ? `<div class="meet-parking"><a href="results.html?meet=${encodeURIComponent(m.name)}&date=${m.date}" style="color:var(--clay); font-weight:600;">How We Did →</a></div>`
+      : '';
+    return `
+      <li class="meet-row ${cls}">
+        <div class="num">${i + 1}</div>
+        <div>
+          <div class="meet-name">${meetNameHtml(m)}</div>
+          <div class="meet-loc">${locHtml}</div>
+          ${parkingHtml}
+          ${weatherHtml}
+          ${resultsLinkHtml}
+        </div>
+        <div class="meet-when"><span class="d">${fmtDate(m.date)}</span>${m.time}</div>
+      </li>
+    `;
+  }).join('');
 
-  .link-subhead{
-    font-size:14px;
-    font-weight:600;
-    color:var(--slate);
-    text-transform:none;
-    letter-spacing:0.02em;
-    margin:0 0 12px;
-  }
-  .link-subhead:not(:first-of-type){margin-top:28px;}
+  sorted.forEach((m, i) => {
+    if (inForecastWindow(m)) loadWeatherInto(`weatherValue-${i}`, `weatherFact-${i}`, m);
+    else if (isPastMeet(m)) loadHistoricalWeatherInto(`weatherValue-${i}`, `weatherFact-${i}`, m);
+  });
+})();
 
-  .link-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
-    gap:14px;
-  }
-  .link-card{
-    display:block;
-    padding:16px 18px;
-    background:var(--chalk);
-    border:1px solid var(--line);
-    border-left:3px solid var(--clay);
-    border-radius:2px;
-    text-decoration:none;
-    color:var(--pine);
-  }
-  .link-card:hover{background:#F9FAFF;}
-  .link-card .t{font-weight:600; font-size:15px; margin-bottom:2px;}
-  .link-card .d{font-size:13px; color:var(--slate);}
+// ---- Scroll-spy: highlight the in-page nav link for whichever section is in view ----
+(function scrollSpy(){
+  const sectionIds = ['next-meet', 'calendar', 'links'];
+  const navLinks = {};
+  sectionIds.forEach(id => {
+    const link = document.querySelector(`#navlinks a[href="#${id}"]`);
+    if (link) navLinks[id] = link;
+  });
+  const sections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+  if (!('IntersectionObserver' in window) || sections.length === 0) return;
 
-  .link-card.is-highlighted{
-    animation: highlight-fade 3s ease-out;
-  }
-  @keyframes highlight-fade{
-    0%{background:var(--clay-soft); border-left-color:var(--clay);}
-    100%{background:var(--chalk);}
-  }
-
-  footer{
-    background:var(--pine); color:var(--stone);
-    padding:30px 0; font-size:14px;
-  }
-  footer .footer-bottom{display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
-  footer a{color:var(--clay-soft);}
-  .quote-line{
-    font-size:13.5px;
-    font-style:italic;
-    color:var(--clay-soft);
-    margin-bottom:16px;
-    padding-bottom:16px;
-    border-bottom:1px solid var(--pine-soft);
-  }
-  .quote-line .quote-author{
-    font-style:normal;
-    font-weight:600;
-    opacity:0.85;
+  function setActive(id){
+    Object.values(navLinks).forEach(a => a.classList.remove('nav-current'));
+    if (navLinks[id]) navLinks[id].classList.add('nav-current');
   }
 
-  .placeholder-note{
-    font-size:13px; color:var(--slate); font-style:italic; margin-top:12px;
-  }
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActive(entry.target.id);
+    });
+  }, { rootMargin: '-40% 0px -55% 0px' });
 
-  .callout{
-    background:var(--chalk);
-    border:1px solid var(--line);
-    border-left:3px solid var(--clay);
-    border-radius:2px;
-    padding:12px 16px;
-    font-size:14px;
-    font-weight:600;
-    color:var(--pine);
-    margin-top:6px;
-  }
+  sections.forEach(s => observer.observe(s));
+})();
+</script>
 
-  .season-badge{
-    font-size:12px; font-weight:600; color:var(--slate);
-    background:var(--stone); border-radius:3px; padding:2px 8px;
-    vertical-align:middle; white-space:nowrap;
-  }
-
-  .pr-time-box{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    background:var(--clay);
-    color:var(--chalk);
-    font-weight:700;
-    border-radius:4px;
-    padding:2px 6px;
-    white-space:nowrap;
-  }
-  .pr-tag{
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:0.03em;
-    background:var(--chalk);
-    color:var(--clay);
-    border-radius:2px;
-    padding:1px 4px;
-  }
-
-  .results-table-row.is-pr{
-    background:var(--clay-soft) !important;
-    box-shadow:inset 3px 0 0 var(--clay);
-  }
-
-  .results-columns{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:24px;
-  }
-  @media (max-width:640px){
-    .results-columns{grid-template-columns:1fr;}
-  }
-
-  .results-table{border:1px solid var(--line); border-radius:3px; overflow:hidden;}
-  .results-table-head{
-    display:grid; grid-template-columns:52px 1fr 112px;
-    background:var(--pine); color:var(--chalk);
-    font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.03em;
-    padding:7px 10px;
-  }
-  .results-table-row{
-    display:grid; grid-template-columns:52px 1fr 112px;
-    align-items:center;
-    padding:7px 10px;
-    font-size:13.5px;
-    background:var(--chalk);
-  }
-  .results-table-row.alt{background:var(--stone);}
-  .rt-place{font-family:'Oswald', sans-serif; font-weight:600; color:var(--slate);}
-  .rt-name{font-weight:600; color:var(--pine); overflow-wrap:break-word;}
-  .rt-name-link{color:var(--clay); text-decoration:underline; text-decoration-color:var(--clay-soft); cursor:pointer;}
-  .rt-name-link:hover{text-decoration-color:var(--clay);}
-  .rt-sub{font-size:11.5px; color:var(--slate); font-weight:400; margin-top:1px;}
-  .rt-time{font-weight:600; color:var(--pine); text-align:right; font-variant-numeric:tabular-nums;}
-
-  .results-table-head div:nth-child(1),
-  .results-table-row .rt-place{text-align:left;}
-
-  .results-table.athlete-view .results-table-head,
-  .results-table.athlete-view .results-table-row{
-    grid-template-columns:1fr 56px 112px;
-  }
-
-  .athlete-select{
-    font-family:'Source Sans 3', sans-serif;
-    font-size:14px; font-weight:600;
-    padding:7px 12px;
-    border:1px solid var(--line);
-    border-radius:3px;
-    background:var(--chalk);
-    color:var(--pine);
-    cursor:pointer;
-  }
-
-  /* ============================================================
-     PRINT STYLES — keep dark backgrounds from wasting ink,
-     hide interactive-only controls, avoid awkward page breaks.
-     ============================================================ */
-  @media print{
-    body{background:white; color:black;}
-    header.site, .hero, footer{
-      background:white !important;
-      color:black !important;
-      border:none !important;
-      box-shadow:none !important;
-    }
-    .hero svg.contours{display:none;}
-    .nav .team-name, .nav .team-name span{color:black !important;}
-    .nav a{color:black !important; border-bottom-color:transparent !important;}
-    .nav-toggle{display:none !important;}
-    #navlinks{display:flex !important; position:static !important; flex-direction:row !important;}
-    .hero .label, .hero .kicker{color:#444 !important;}
-    .quote-line, .quote-line .quote-author{color:#333 !important;}
-    .hero .value, .hero h1{color:black !important;}
-    .hero h1 a, .hero h1 a[href]{color:black !important; border-bottom-color:#999 !important;}
-
-    a[href]:after{content:"";}
-    a{color:black !important; text-decoration:underline !important;}
-
-    .roster-filters, .roster-controls, #sortToggle, #viewToggle, #sexToggle,
-    .nav-toggle, #resultsSearch, .athlete-select{
-      display:none !important;
-    }
-
-    .link-card, .results-table-row, .athlete{
-      break-inside:avoid;
-    }
-    section{padding:20px 0 !important;}
-    .callout, .link-card{border:1px solid #999 !important; background:white !important;}
-    .season-badge, .pr-time-box, .pr-tag{
-      background:white !important; color:black !important; border:1px solid #999 !important;
-    }
-    .results-table-row.is-pr{background:#eee !important; box-shadow:none !important;}
-  }
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
