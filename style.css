@@ -131,6 +131,20 @@
     padding:6px 14px;
     border-radius:20px;
   }
+  .alert-badge{
+    display:inline-block;
+    margin-bottom:8px;
+    background:var(--chalk);
+    color:var(--pine);
+    border:2px solid var(--clay);
+    font-family:'Oswald', sans-serif;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.04em;
+    padding:4px 12px;
+    border-radius:4px;
+  }
+  .alert-badge-row{background:var(--stone); border:1px solid var(--clay-soft); color:var(--clay); font-weight:700; font-size:12px; letter-spacing:0.03em; padding:2px 8px; border-radius:3px; margin-left:8px; display:inline-block; vertical-align:middle;}
   .meet-facts{
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
