@@ -382,7 +382,7 @@ const MEETS = [
       <li class="meet-row ${cls}">
         <div class="num">${i + 1}</div>
         <div>
-          <div class="meet-name">${meetNameHtml(m)}${(m.alertBadge && !isPast) ? `<span class="alert-badge-row">${m.alertBadge}</span>` : ''}</div>
+          <div class="meet-name">${meetNameHtml(m)}${(m.alertBadge && !isPast) ? ` <span class="alert-badge-row">${m.alertBadge}</span>` : ''}</div>
           <div class="meet-loc">${locHtml}</div>
           ${parkingHtml}
           ${weatherHtml}
