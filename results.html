@@ -1078,19 +1078,16 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     `;
   }
 
-  function renderByCompare(){
-    const names = allAthleteNames();
-    if (names.length === 0){
-      list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
-      return;
+  function athleteGender(name){
+    for (const r of ALL_RESULTS){
+      if ((r.topBoys || []).some(f => f.name === name)) return 'boys';
+      if ((r.topGirls || []).some(f => f.name === name)) return 'girls';
     }
-    const withSeconds = names.map(name => {
-      const races = racesFor(name);
-      const best = races.length ? Math.min(...races.map(r => timeToSeconds(r.time))) : Infinity;
-      return { name, best };
-    }).sort((a, b) => a.best - b.best);
+    return null;
+  }
 
-    const checkboxes = withSeconds.map(({ name }) => {
+  function checkboxList(names){
+    return names.map(({ name }) => {
       const checked = compareSelected.includes(name);
       const disabled = !checked && compareSelected.length >= COMPARE_MAX;
       return `
@@ -1100,14 +1097,42 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         </label>
       `;
     }).join('');
+  }
+
+  function renderByCompare(){
+    const names = allAthleteNames();
+    if (names.length === 0){
+      list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
+      return;
+    }
+    const withSeconds = names.map(name => {
+      const races = racesFor(name);
+      const best = races.length ? Math.min(...races.map(r => timeToSeconds(r.time))) : Infinity;
+      return { name, best, gender: athleteGender(name) };
+    }).sort((a, b) => a.best - b.best);
+
+    const boys = withSeconds.filter(a => a.gender === 'boys');
+    const girls = withSeconds.filter(a => a.gender === 'girls');
 
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
         <div class="t" style="font-size:18px; margin-bottom:4px;">Chart Athletes</div>
-        <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Pick 1–${COMPARE_MAX} athletes (sorted fastest to slowest) to see their race times.</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+          <div style="font-size:13px; color:var(--slate);">Pick 1–${COMPARE_MAX} athletes (sorted fastest to slowest) to see their race times.</div>
+          ${compareSelected.length > 0 ? `<button id="clearCompareBtn" style="background:none; border:1px solid var(--clay); color:var(--clay); font-size:12px; font-weight:600; padding:4px 10px; border-radius:3px; cursor:pointer;">Clear All</button>` : ''}
+        </div>
         <div class="results-columns" style="margin-bottom:18px;">
-          <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
-            ${checkboxes}
+          <div>
+            <h4 class="link-subhead">Boys</h4>
+            <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
+              ${checkboxList(boys)}
+            </div>
+          </div>
+          <div>
+            <h4 class="link-subhead">Girls</h4>
+            <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
+              ${checkboxList(girls)}
+            </div>
           </div>
         </div>
         <div id="compareChartArea">${buildComparisonChart(compareSelected)}</div>
@@ -1125,6 +1150,14 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         renderByCompare();
       });
     });
+
+    const clearBtn = document.getElementById('clearCompareBtn');
+    if (clearBtn){
+      clearBtn.addEventListener('click', () => {
+        compareSelected = [];
+        renderByCompare();
+      });
+    }
   }
 
   viewToggle.addEventListener('click', (e) => {
