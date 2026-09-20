@@ -958,7 +958,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       const y = yFor(sec);
       gridLines += `
         <line x1="${marginLeft}" y1="${y}" x2="${W - marginRight}" y2="${y}" stroke="#D9DFEF" stroke-width="1"/>
-        <text x="${marginLeft - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmss(maxSec - (sec - minSec))}</text>
+        <text x="${marginLeft - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmss(sec)}</text>
       `;
     }
 
