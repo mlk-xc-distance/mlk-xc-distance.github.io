@@ -64,7 +64,7 @@
         <button data-view="meet" class="active" aria-pressed="true">By Meet</button>
         <button data-view="athlete" aria-pressed="false">By Athlete</button>
         <button data-view="pr" aria-pressed="false">By PR</button>
-        <button data-view="compare" aria-pressed="false">Compare</button>
+        <button data-view="compare" aria-pressed="false">Chart</button>
       </div>
       <div id="athletePicker" style="display:none;">
         <select id="athleteSelect" class="athlete-select"></select>
@@ -914,10 +914,24 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     tip.textContent = text;
     tip.style.display = 'block';
     const point = evt.touches && evt.touches[0] ? evt.touches[0] : evt;
+
+    // Measure the tooltip's real rendered size rather than assuming a fixed width,
+    // so positioning stays accurate regardless of text length or screen size.
+    const w = tip.offsetWidth || 160;
+    const h = tip.offsetHeight || 30;
+    const margin = 8;
+
     let left = point.clientX + 14;
-    let top = point.clientY - 34;
-    if (left + 220 > window.innerWidth) left = point.clientX - 14 - 220;
-    if (top < 0) top = point.clientY + 20;
+    let top = point.clientY - h - 14;
+
+    // Flip to the other side of the touch/cursor point if the default position
+    // would run off that edge, then hard-clamp as a final safety net either way.
+    if (left + w + margin > window.innerWidth) left = point.clientX - w - 14;
+    if (top < margin) top = point.clientY + 20;
+
+    left = Math.max(margin, Math.min(left, window.innerWidth - w - margin));
+    top = Math.max(margin, Math.min(top, window.innerHeight - h - margin));
+
     tip.style.left = left + 'px';
     tip.style.top = top + 'px';
   };
@@ -1089,7 +1103,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
 
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
-        <div class="t" style="font-size:18px; margin-bottom:4px;">Compare Athletes</div>
+        <div class="t" style="font-size:18px; margin-bottom:4px;">Chart Athletes</div>
         <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Pick 1–${COMPARE_MAX} athletes (sorted fastest to slowest) to see their race times.</div>
         <div class="results-columns" style="margin-bottom:18px;">
           <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
