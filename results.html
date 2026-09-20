@@ -908,13 +908,36 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const s = (seconds % 60).toFixed(1).padStart(4, '0');
     return `${m}:${s}`;
   }
+  window.showChartTooltip = function(evt, text){
+    const tip = document.getElementById('chartTooltip');
+    if (!tip) return;
+    tip.textContent = text;
+    tip.style.display = 'block';
+    const point = evt.touches && evt.touches[0] ? evt.touches[0] : evt;
+    let left = point.clientX + 14;
+    let top = point.clientY - 34;
+    if (left + 220 > window.innerWidth) left = point.clientX - 14 - 220;
+    if (top < 0) top = point.clientY + 20;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  };
+  window.hideChartTooltip = function(){
+    const tip = document.getElementById('chartTooltip');
+    if (tip) tip.style.display = 'none';
+  };
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('circle')) window.hideChartTooltip();
+  });
+
+  function mmssClean(seconds){
+    const m = Math.floor(seconds / 60);
+    const s = String(Math.round(seconds % 60)).padStart(2, '0');
+    return `${m}:${s}`;
+  }
 
   function buildComparisonChart(names){
     if (names.length === 0){
-      return `<div class="callout">Pick 2–${COMPARE_MAX} athletes above to compare their times.</div>`;
-    }
-    if (names.length === 1){
-      return '<div class="callout">Pick at least one more athlete to compare against.</div>';
+      return `<div class="callout">Pick 1–${COMPARE_MAX} athletes above to see their times.</div>`;
     }
 
     const athleteRaces = names.map(name => ({ name, races: racesFor(name) }));
@@ -951,14 +974,19 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     // Inverted: fastest (lowest seconds) plots near the top, since faster = better.
     const yFor = (sec) => marginTop + ((sec - minSec) / (maxSec - minSec)) * plotH;
 
-    const gridCount = 5;
+    // Pick a clean interval (in seconds) that lands on :00/:15/:30/:45-style marks,
+    // scaled so the chart shows a reasonable number of gridlines regardless of range.
+    const candidateIntervals = [15, 30, 60, 120, 300, 600];
+    const targetLines = 20;
+    let interval = candidateIntervals.find(step => (maxSec - minSec) / step <= targetLines) || candidateIntervals[candidateIntervals.length - 1];
+
+    const firstLine = Math.ceil(minSec / interval) * interval;
     let gridLines = '';
-    for (let g = 0; g <= gridCount; g++){
-      const sec = minSec + (g / gridCount) * (maxSec - minSec);
+    for (let sec = firstLine; sec <= maxSec; sec += interval){
       const y = yFor(sec);
       gridLines += `
         <line x1="${marginLeft}" y1="${y}" x2="${W - marginRight}" y2="${y}" stroke="#D9DFEF" stroke-width="1"/>
-        <text x="${marginLeft - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmss(sec)}</text>
+        <text x="${marginLeft - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmssClean(sec)}</text>
       `;
     }
 
@@ -997,7 +1025,15 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           const x = xFor(i);
           const y = yFor(timeToSeconds(r.time));
           currentSegment.push(`${x},${y}`);
-          dots += `<circle cx="${x}" cy="${y}" r="4" fill="${color}"><title>${name} — ${m.meetName}: ${r.time}</title></circle>`;
+          const tipText = `${name.replace(/'/g, "\\'")} — ${m.meetName.replace(/'/g, "\\'")}: ${r.time}`;
+          dots += `
+            <circle cx="${x}" cy="${y}" r="4" fill="${color}" style="cursor:pointer;"
+              onmouseenter="showChartTooltip(event, '${tipText}')" onmouseleave="hideChartTooltip()"
+              onclick="showChartTooltip(event, '${tipText}')"><title>${name} — ${m.meetName}: ${r.time}</title></circle>
+            <circle cx="${x}" cy="${y}" r="14" fill="transparent" style="cursor:pointer;"
+              onmouseenter="showChartTooltip(event, '${tipText}')" onmouseleave="hideChartTooltip()"
+              onclick="showChartTooltip(event, '${tipText}')"></circle>
+          `;
         } else {
           if (currentSegment.length > 1) pathSegments.push(currentSegment);
           currentSegment = [];
@@ -1013,7 +1049,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
 
     return `
       <div style="margin-bottom:10px;">${legend}</div>
-      <div style="overflow-x:auto;">
+      <div style="overflow-x:auto; position:relative;">
         <svg viewBox="0 0 ${W} ${H}" style="width:100%; min-width:600px; height:auto;">
           ${gridLines}
           <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft}" y2="${H - marginBottom}" stroke="#5B6479" stroke-width="1"/>
@@ -1022,7 +1058,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           ${lines}
         </svg>
       </div>
-      <div style="font-size:12px; color:var(--slate); margin-top:6px;">Faster times plot higher on the chart. Gaps mean that athlete didn't run that race.</div>
+      <div id="chartTooltip" style="position:fixed; display:none; background:var(--pine); color:white; padding:6px 10px; border-radius:4px; font-size:13px; font-weight:600; pointer-events:none; z-index:1000; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></div>
+      <div style="font-size:12px; color:var(--slate); margin-top:6px;">Faster times plot higher on the chart. Tap or hover a point for the exact time. Gaps mean that athlete didn't run that race.</div>
     `;
   }
 
@@ -1052,7 +1089,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
         <div class="t" style="font-size:18px; margin-bottom:4px;">Compare Athletes</div>
-        <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Pick 2–${COMPARE_MAX} athletes (sorted fastest to slowest) to overlay their race times.</div>
+        <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Pick 1–${COMPARE_MAX} athletes (sorted fastest to slowest) to see their race times.</div>
         <div class="results-columns" style="margin-bottom:18px;">
           <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
             ${checkboxes}
