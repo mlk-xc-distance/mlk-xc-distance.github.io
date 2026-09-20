@@ -1025,11 +1025,12 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           const x = xFor(i);
           const y = yFor(timeToSeconds(r.time));
           currentSegment.push(`${x},${y}`);
-          const tipText = `${name.replace(/'/g, "\\'")} — ${m.meetName.replace(/'/g, "\\'")}: ${r.time}`;
+          const firstName = name.split(' ')[0].replace(/'/g, "\\'");
+          const tipText = `${firstName}: ${r.time}`;
           dots += `
             <circle cx="${x}" cy="${y}" r="4" fill="${color}" style="cursor:pointer;"
               onmouseenter="showChartTooltip(event, '${tipText}')" onmouseleave="hideChartTooltip()"
-              onclick="showChartTooltip(event, '${tipText}')"><title>${name} — ${m.meetName}: ${r.time}</title></circle>
+              onclick="showChartTooltip(event, '${tipText}')"><title>${firstName}: ${r.time}</title></circle>
             <circle cx="${x}" cy="${y}" r="14" fill="transparent" style="cursor:pointer;"
               onmouseenter="showChartTooltip(event, '${tipText}')" onmouseleave="hideChartTooltip()"
               onclick="showChartTooltip(event, '${tipText}')"></circle>
