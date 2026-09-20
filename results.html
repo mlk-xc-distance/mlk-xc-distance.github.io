@@ -64,6 +64,7 @@
         <button data-view="meet" class="active" aria-pressed="true">By Meet</button>
         <button data-view="athlete" aria-pressed="false">By Athlete</button>
         <button data-view="pr" aria-pressed="false">By PR</button>
+        <button data-view="compare" aria-pressed="false">Compare</button>
       </div>
       <div id="athletePicker" style="display:none;">
         <select id="athleteSelect" class="athlete-select"></select>
@@ -897,6 +898,174 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     `;
   }
 
+  // ---- Compare: overlay 2-4 athletes' race times on one chart ----
+  const COMPARE_MAX = 4;
+  const COMPARE_COLORS = ['#2F4FE0', '#C0392B', '#1F8A55', '#B8860B'];
+  let compareSelected = [];
+
+  function mmss(seconds){
+    const m = Math.floor(seconds / 60);
+    const s = (seconds % 60).toFixed(1).padStart(4, '0');
+    return `${m}:${s}`;
+  }
+
+  function buildComparisonChart(names){
+    if (names.length === 0){
+      return '<div class="callout">Pick 2–4 athletes above to compare their times.</div>';
+    }
+    if (names.length === 1){
+      return '<div class="callout">Pick at least one more athlete to compare against.</div>';
+    }
+
+    const athleteRaces = names.map(name => ({ name, races: racesFor(name) }));
+
+    const meetKeySet = new Map();
+    athleteRaces.forEach(({ races }) => {
+      races.forEach(r => {
+        const key = r.date + '|' + r.meetName;
+        if (!meetKeySet.has(key)) meetKeySet.set(key, { date: r.date, meetName: r.meetName });
+      });
+    });
+    const meets = [...meetKeySet.values()].sort((a, b) => a.date.localeCompare(b.date));
+    if (meets.length === 0){
+      return '<div class="callout">No shared race data yet for this group.</div>';
+    }
+
+    let minSec = Infinity, maxSec = -Infinity;
+    athleteRaces.forEach(({ races }) => {
+      races.forEach(r => {
+        const s = timeToSeconds(r.time);
+        if (s < minSec) minSec = s;
+        if (s > maxSec) maxSec = s;
+      });
+    });
+    const pad = (maxSec - minSec) * 0.1 || 10;
+    minSec -= pad; maxSec += pad;
+
+    const W = 900, H = 420;
+    const marginLeft = 70, marginRight = 20, marginTop = 20, marginBottom = 90;
+    const plotW = W - marginLeft - marginRight;
+    const plotH = H - marginTop - marginBottom;
+
+    const xFor = (i) => meets.length === 1 ? marginLeft + plotW / 2 : marginLeft + (i / (meets.length - 1)) * plotW;
+    // Inverted: fastest (lowest seconds) plots near the top, since faster = better.
+    const yFor = (sec) => marginTop + ((sec - minSec) / (maxSec - minSec)) * plotH;
+
+    const gridCount = 5;
+    let gridLines = '';
+    for (let g = 0; g <= gridCount; g++){
+      const sec = minSec + (g / gridCount) * (maxSec - minSec);
+      const y = yFor(sec);
+      gridLines += `
+        <line x1="${marginLeft}" y1="${y}" x2="${W - marginRight}" y2="${y}" stroke="#D9DFEF" stroke-width="1"/>
+        <text x="${marginLeft - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmss(maxSec - (sec - minSec))}</text>
+      `;
+    }
+
+    let xLabels = '';
+    meets.forEach((m, i) => {
+      const x = xFor(i);
+      const shortDate = new Date(m.date + "T00:00:00").toLocaleDateString('en-US', { month:'numeric', day:'numeric' });
+      xLabels += `
+        <text x="${x}" y="${H - marginBottom + 18}" font-size="11" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif" transform="rotate(-40 ${x} ${H - marginBottom + 18})">
+          <title>${m.meetName}</title>${shortDate}
+        </text>
+      `;
+    });
+
+    let lines = '';
+    let legend = '';
+    athleteRaces.forEach(({ name, races }, ai) => {
+      const color = COMPARE_COLORS[ai % COMPARE_COLORS.length];
+      const byKey = new Map(races.map(r => [r.date + '|' + r.meetName, r]));
+      let pathSegments = [];
+      let currentSegment = [];
+      let dots = '';
+      meets.forEach((m, i) => {
+        const key = m.date + '|' + m.meetName;
+        const r = byKey.get(key);
+        if (r){
+          const x = xFor(i);
+          const y = yFor(timeToSeconds(r.time));
+          currentSegment.push(`${x},${y}`);
+          dots += `<circle cx="${x}" cy="${y}" r="4" fill="${color}"><title>${name} — ${m.meetName}: ${r.time}</title></circle>`;
+        } else {
+          if (currentSegment.length > 1) pathSegments.push(currentSegment);
+          currentSegment = [];
+        }
+      });
+      if (currentSegment.length > 1) pathSegments.push(currentSegment);
+      pathSegments.forEach(seg => {
+        lines += `<polyline points="${seg.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5"/>`;
+      });
+      lines += dots;
+      legend += `<span style="display:inline-flex; align-items:center; gap:6px; margin-right:18px; margin-bottom:6px;"><span style="width:12px; height:12px; border-radius:50%; background:${color}; display:inline-block;"></span><span style="font-size:13px; color:var(--pine); font-weight:600;">${name}</span></span>`;
+    });
+
+    return `
+      <div style="margin-bottom:10px;">${legend}</div>
+      <div style="overflow-x:auto;">
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%; min-width:600px; height:auto;">
+          ${gridLines}
+          <line x1="${marginLeft}" y1="${marginTop}" x2="${marginLeft}" y2="${H - marginBottom}" stroke="#5B6479" stroke-width="1"/>
+          <line x1="${marginLeft}" y1="${H - marginBottom}" x2="${W - marginRight}" y2="${H - marginBottom}" stroke="#5B6479" stroke-width="1"/>
+          ${xLabels}
+          ${lines}
+        </svg>
+      </div>
+      <div style="font-size:12px; color:var(--slate); margin-top:6px;">Faster times plot higher on the chart. Gaps mean that athlete didn't run that race.</div>
+    `;
+  }
+
+  function renderByCompare(){
+    const names = allAthleteNames();
+    if (names.length === 0){
+      list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
+      return;
+    }
+    const withSeconds = names.map(name => {
+      const races = racesFor(name);
+      const best = races.length ? Math.min(...races.map(r => timeToSeconds(r.time))) : Infinity;
+      return { name, best };
+    }).sort((a, b) => a.best - b.best);
+
+    const checkboxes = withSeconds.map(({ name }) => {
+      const checked = compareSelected.includes(name);
+      const disabled = !checked && compareSelected.length >= COMPARE_MAX;
+      return `
+        <label style="display:flex; align-items:center; gap:6px; padding:5px 0; font-size:13.5px; color:${disabled ? 'var(--slate)' : 'var(--pine)'}; cursor:${disabled ? 'default' : 'pointer'};">
+          <input type="checkbox" data-compare-name="${name}" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''}>
+          ${name}
+        </label>
+      `;
+    }).join('');
+
+    list.innerHTML = `
+      <div class="link-card" style="display:block; cursor:default;">
+        <div class="t" style="font-size:18px; margin-bottom:4px;">Compare Athletes</div>
+        <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Pick 2–${COMPARE_MAX} athletes (sorted fastest to slowest) to overlay their race times.</div>
+        <div class="results-columns" style="margin-bottom:18px;">
+          <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
+            ${checkboxes}
+          </div>
+        </div>
+        <div id="compareChartArea">${buildComparisonChart(compareSelected)}</div>
+      </div>
+    `;
+
+    list.querySelectorAll('[data-compare-name]').forEach(cb => {
+      cb.addEventListener('change', (e) => {
+        const n = e.target.dataset.compareName;
+        if (e.target.checked){
+          if (compareSelected.length < COMPARE_MAX) compareSelected.push(n);
+        } else {
+          compareSelected = compareSelected.filter(x => x !== n);
+        }
+        renderByCompare();
+      });
+    });
+  }
+
   viewToggle.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
     if (!btn) return;
@@ -907,6 +1076,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     athletePicker.style.display = currentView === 'athlete' ? 'block' : 'none';
     if (currentView === 'meet') renderByMeet();
     else if (currentView === 'athlete') renderByAthlete();
+    else if (currentView === 'compare') renderByCompare();
     else renderByPR();
   });
 
