@@ -144,7 +144,7 @@
     padding:4px 12px;
     border-radius:4px;
   }
-  .alert-badge-row{background:var(--stone); border:1px solid var(--clay-soft); color:var(--clay); font-weight:700; font-size:12px; letter-spacing:0.03em; padding:2px 8px; border-radius:3px; margin-left:8px; display:inline-block; vertical-align:middle;}
+  .alert-badge-row{background:var(--chalk); border:1.5px solid var(--clay); color:var(--pine); font-weight:700; font-size:12px; letter-spacing:0.03em; padding:2px 8px; border-radius:3px; margin-left:8px; display:inline-block; vertical-align:middle;}
   .meet-facts{
     display:grid;
     grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
