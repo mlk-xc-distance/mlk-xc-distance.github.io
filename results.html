@@ -942,8 +942,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const pad = (maxSec - minSec) * 0.1 || 10;
     minSec -= pad; maxSec += pad;
 
-    const W = 900, H = 420;
-    const marginLeft = 70, marginRight = 20, marginTop = 20, marginBottom = 90;
+    const W = 900, H = 440;
+    const marginLeft = 70, marginRight = 20, marginTop = 20, marginBottom = 110;
     const plotW = W - marginLeft - marginRight;
     const plotH = H - marginTop - marginBottom;
 
@@ -963,14 +963,23 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     }
 
     let xLabels = '';
+    let lastYear = null;
     meets.forEach((m, i) => {
       const x = xFor(i);
       const shortDate = new Date(m.date + "T00:00:00").toLocaleDateString('en-US', { month:'numeric', day:'numeric' });
+      const year = m.date.slice(0, 4);
       xLabels += `
         <text x="${x}" y="${H - marginBottom + 18}" font-size="11" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif" transform="rotate(-40 ${x} ${H - marginBottom + 18})">
           <title>${m.meetName}</title>${shortDate}
         </text>
       `;
+      if (year !== lastYear){
+        xLabels += `
+          <line x1="${x}" y1="${marginTop}" x2="${x}" y2="${H - marginBottom}" stroke="#D9DFEF" stroke-width="1" stroke-dasharray="3,3"/>
+          <text x="${x}" y="${H - marginBottom + 62}" font-size="11" font-weight="700" fill="var(--pine)" text-anchor="middle" font-family="Oswald, sans-serif">${year}</text>
+        `;
+        lastYear = year;
+      }
     });
 
     let lines = '';
