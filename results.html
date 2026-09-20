@@ -899,8 +899,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   }
 
   // ---- Compare: overlay 2-4 athletes' race times on one chart ----
-  const COMPARE_MAX = 4;
-  const COMPARE_COLORS = ['#2F4FE0', '#C0392B', '#1F8A55', '#B8860B'];
+  const COMPARE_MAX = 5;
+  const COMPARE_COLORS = ['#2F4FE0', '#C0392B', '#1F8A55', '#B8860B', '#7A4FC0'];
   let compareSelected = [];
 
   function mmss(seconds){
@@ -911,7 +911,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
 
   function buildComparisonChart(names){
     if (names.length === 0){
-      return '<div class="callout">Pick 2–4 athletes above to compare their times.</div>';
+      return `<div class="callout">Pick 2–${COMPARE_MAX} athletes above to compare their times.</div>`;
     }
     if (names.length === 1){
       return '<div class="callout">Pick at least one more athlete to compare against.</div>';
