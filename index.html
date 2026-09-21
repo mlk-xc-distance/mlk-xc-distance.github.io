@@ -401,7 +401,14 @@ const MEETS = [
         <div class="hero-slides" id="heroSlidesTrack">
           ${heroSlides.map(s => `<div class="hero-slide">${s}</div>`).join('')}
         </div>
-        ${heroSlides.length > 1 ? `<div class="hero-divider"></div><div class="hero-dots">${dots}</div>` : ''}
+        ${heroSlides.length > 1 ? `
+          <div class="hero-divider"></div>
+          <div class="hero-nav-row">
+            <button class="hero-arrow hero-arrow-desktop" onclick="heroSlidePrev()" aria-label="Previous">‹</button>
+            <div class="hero-dots">${dots}</div>
+            <button class="hero-arrow hero-arrow-desktop" onclick="heroSlideNext()" aria-label="Next">›</button>
+          </div>
+        ` : ''}
       </div>
       ${staticFacts}
     `;
