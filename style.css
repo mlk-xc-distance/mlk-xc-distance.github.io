@@ -209,6 +209,7 @@
     color:var(--clay-soft);
     margin-bottom:6px;
     font-style:italic;
+    text-align:center;
   }
   .hero-dot{
     width:6px;
