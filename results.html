@@ -68,6 +68,7 @@
         <button data-view="meet" class="active" aria-pressed="true">By Meet</button>
         <button data-view="athlete" aria-pressed="false">By Athlete</button>
         <button data-view="pr" aria-pressed="false">By PR</button>
+        <button data-view="seasonsb" aria-pressed="false">Season Best</button>
         <button data-view="compare" aria-pressed="false">Chart</button>
       </div>
       <div id="athletePicker" style="display:none;">
@@ -892,6 +893,60 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     `;
   }
 
+  function availableSeasons(){
+    const seasons = new Set();
+    ALL_RESULTS.forEach(r => seasons.add(r.season || r.date.slice(0, 4)));
+    return [...seasons].sort((a, b) => b.localeCompare(a));
+  }
+
+  function seasonSBLeaderboard(season){
+    const board = {};
+    ALL_RESULTS.forEach(r => {
+      const rSeason = r.season || r.date.slice(0, 4);
+      if (rSeason !== season) return;
+      [["boys", r.topBoys], ["girls", r.topGirls]].forEach(([gender, finishers]) => {
+        (finishers || []).forEach(f => {
+          const secs = timeToSeconds(f.time);
+          if (!board[f.name] || secs < board[f.name].seconds){
+            board[f.name] = { gender, seconds: secs, time: f.time, meetName: r.meetName, date: r.date, location: r.location };
+          }
+        });
+      });
+    });
+    const boys = Object.entries(board).filter(([, v]) => v.gender === 'boys').sort((a, b) => a[1].seconds - b[1].seconds);
+    const girls = Object.entries(board).filter(([, v]) => v.gender === 'girls').sort((a, b) => a[1].seconds - b[1].seconds);
+    return { boys, girls };
+  }
+
+  let selectedSBSeason = null;
+
+  function renderBySeasonSB(){
+    if (ALL_RESULTS.length === 0){
+      list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
+      return;
+    }
+    const seasons = availableSeasons();
+    if (!selectedSBSeason || !seasons.includes(selectedSBSeason)) selectedSBSeason = seasons[0];
+    const { boys, girls } = seasonSBLeaderboard(selectedSBSeason);
+    const options = seasons.map(s => `<option value="${s}" ${s === selectedSBSeason ? 'selected' : ''}>${s} Season</option>`).join('');
+    list.innerHTML = `
+      <div class="link-card" style="display:block; cursor:default;">
+        <div class="t" style="font-size:18px; margin-bottom:4px;">Season Best Leaderboard</div>
+        <div style="margin-bottom:14px;">
+          <select id="sbSeasonSelect" class="athlete-select">${options}</select>
+        </div>
+        <div class="results-columns">
+          <div><h4 class="link-subhead">Boys</h4>${prTable(boys)}</div>
+          <div><h4 class="link-subhead">Girls</h4>${prTable(girls)}</div>
+        </div>
+      </div>
+    `;
+    document.getElementById('sbSeasonSelect').addEventListener('change', (e) => {
+      selectedSBSeason = e.target.value;
+      renderBySeasonSB();
+    });
+  }
+
   function renderByPR(){
     if (ALL_RESULTS.length === 0){
       list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
@@ -1182,6 +1237,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     if (currentView === 'meet') renderByMeet();
     else if (currentView === 'athlete') renderByAthlete();
     else if (currentView === 'compare') renderByCompare();
+    else if (currentView === 'seasonsb') renderBySeasonSB();
     else renderByPR();
   });
 
