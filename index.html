@@ -201,8 +201,11 @@ const MEETS = [
 
   window.heroSlideGoTo = function(i){
     heroSlideIndex = i;
-    document.querySelectorAll('.hero-slide').forEach((s, idx) => s.classList.toggle('active', idx === i));
+    const slides = document.querySelectorAll('.hero-slide');
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
     document.querySelectorAll('.hero-dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    const track = document.getElementById('heroSlidesTrack');
+    if (track && slides[i]) track.style.height = slides[i].scrollHeight + 'px';
   };
   window.heroSlideNext = function(){ window.heroSlideGoTo((heroSlideIndex + 1) % heroSlideCount); };
   window.heroSlidePrev = function(){ window.heroSlideGoTo((heroSlideIndex - 1 + heroSlideCount) % heroSlideCount); };
@@ -408,6 +411,9 @@ const MEETS = [
     `;
     heroSlideCount = heroSlides.length;
     heroSlideIndex = 0;
+    const initialTrack = document.getElementById('heroSlidesTrack');
+    const initialSlide = document.querySelector('.hero-slide.active');
+    if (initialTrack && initialSlide) initialTrack.style.height = initialSlide.scrollHeight + 'px';
     if (inForecastWindow(next)) loadWeatherInto("heroWeatherValue", "heroWeatherFact", next);
   } else {
     hero.innerHTML = `
