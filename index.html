@@ -201,8 +201,7 @@ const MEETS = [
 
   window.heroSlideGoTo = function(i){
     heroSlideIndex = i;
-    const track = document.getElementById('heroSlidesTrack');
-    if (track) track.style.transform = `translateX(-${i * 100}%)`;
+    document.querySelectorAll('.hero-slide').forEach((s, idx) => s.classList.toggle('active', idx === i));
     document.querySelectorAll('.hero-dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
   };
   window.heroSlideNext = function(){ window.heroSlideGoTo((heroSlideIndex + 1) % heroSlideCount); };
@@ -394,7 +393,7 @@ const MEETS = [
     hero.innerHTML = `
       <div class="hero-slider" ontouchstart="heroTouchStart(event)" ontouchend="heroTouchEnd(event)">
         <div class="hero-slides" id="heroSlidesTrack">
-          ${heroSlides.map(s => `<div class="hero-slide">${s}</div>`).join('')}
+          ${heroSlides.map((s, i) => `<div class="hero-slide${i === 0 ? ' active' : ''}">${s}</div>`).join('')}
         </div>
         ${heroSlides.length > 1 ? `
           <div class="hero-divider"></div>
