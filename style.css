@@ -109,7 +109,8 @@
     position:absolute; inset:0;
     background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20900%20300%27%3E%3Cpath%20d%3D%27M-20%2C250%20C150%2C180%20250%2C280%20420%2C200%20C560%2C140%20650%2C220%20900%2C150%27%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27/%3E%3Cpath%20d%3D%27M-20%2C200%20C150%2C140%20250%2C220%20420%2C150%20C560%2C100%20650%2C170%20900%2C100%27%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27/%3E%3Cpath%20d%3D%27M-20%2C290%20C150%2C230%20250%2C310%20420%2C260%20C560%2C200%20650%2C270%20900%2C210%27%20fill%3D%27none%27%20stroke%3D%27white%27%20stroke-width%3D%271.5%27/%3E%3C/svg%3E");
     background-repeat:no-repeat;
-    background-size:100% 100%;
+    background-position:center;
+    background-size:cover;
     opacity:0.14;
     pointer-events:none;
   }
