@@ -128,13 +128,23 @@
     position:relative;
     overflow:hidden;
   }
+  .hero-slides{
+    position:relative;
+    overflow:hidden;
+    transition:height 0.3s ease;
+  }
   .hero-slide{
-    display:none;
+    position:absolute;
+    top:0; left:0;
     width:100%;
     box-sizing:border-box;
+    opacity:0;
+    transition:opacity 0.3s ease;
+    pointer-events:none;
   }
   .hero-slide.active{
-    display:block;
+    opacity:1;
+    pointer-events:auto;
   }
   .hero-map-slide{
     padding:10px 0 20px;
