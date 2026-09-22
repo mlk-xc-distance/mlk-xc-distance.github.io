@@ -764,15 +764,15 @@ const ALUMNI = [
     pr: { time: "17:14.12", meet: "Chickasaw Trails Invite", place: "22nd", date: "Sep 6, 2008" },
     seasons: [
       { year: "2008", grade: null, races: [
-        { meet: "TSSAA State Cross-Country Championships", time: "17:28.18", place: "19th", date: "Nov 1", link: "https://tn.milesplit.com/meets/31927-tssaa-state-cross-country-championships-2008/results/80334" },
-        { meet: "Region 5 A-AA", time: "17:57.07", place: "9th", date: "Oct 23", link: "https://tn.milesplit.com/meets/43362-region-5-a-aa-2008" },
-        { meet: "Tennessee Classic", time: "17:28.81", place: "50th", date: "Sep 20", link: "https://tn.milesplit.com/meets/38834-tennessee-classic-2008" },
-        { meet: "Chickasaw Trails Invite", time: "17:14.12", place: "22nd", date: "Sep 6", link: "https://tn.milesplit.com/meets/38758-chickasaw-trails-invite-2008" },
+        { meet: "TSSAA State Cross-Country Championships", time: "17:28.18", place: "19th", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "17:57.07", place: "9th", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "17:28.81", place: "50th", date: "Sep 20" },
+        { meet: "Chickasaw Trails Invite", time: "17:14.12", place: "22nd", date: "Sep 6" },
       ] },
       { year: "2007", grade: null, races: [
-        { meet: "Nashville Metro Championships", time: "17:20.36", place: "15th", date: "listed under 2007 season with Oct 16, 2008 date on site", link: "https://tn.milesplit.com/meets/43413-nashville-metro-championships-2007" },
-        { meet: "TSSAA State Cross Country Championship", time: "17:55.98", place: "37th", date: "Nov 3", link: "https://tn.milesplit.com/meets/25042-tssaa-state-cross-country-championship-2007" },
-        { meet: "Brooks Memphis Twilight Classic", time: "17:47.49", place: "81st", date: "Oct 6", link: "https://tn.milesplit.com/meets/21631-brooks-memphis-twilight-classic-2007" },
+        { meet: "Nashville Metro Championships", time: "17:20.36", place: "15th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+        { meet: "TSSAA State Cross Country Championship", time: "17:55.98", place: "37th", date: "Nov 3" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:47.49", place: "81st", date: "Oct 6" },
       ] },
     ],
   },
@@ -792,6 +792,15 @@ const ALUMNI = [
 
   function fmtSeasonDate(dateStr, year){
     return `${dateStr}, ${year}`;
+  }
+
+  function timeToSeconds(t){
+    const parts = t.split(':');
+    return parts.length === 2 ? Number(parts[0]) * 60 + Number(parts[1]) : Number(t);
+  }
+
+  function isFiveK(meetName){
+    return !/\b(4000m|3200m|2\s*mile|3\s*mile)\b/i.test(meetName);
   }
 
   function renderAlumni(){
@@ -815,22 +824,29 @@ const ALUMNI = [
           <span style="color:var(--slate); font-size:13px; margin-left:8px;">${athlete.pr.meet}${athlete.pr.place ? ` · ${athlete.pr.place}` : ''} · ${athlete.pr.date}</span>
         </div>
       ` : '';
-      const seasonsHtml = athlete.seasons.map(s => `
+      const seasonsHtml = athlete.seasons.map(s => {
+        const fiveKTimes = s.races.filter(r => isFiveK(r.meet)).map(r => timeToSeconds(r.time));
+        const seasonBestSec = fiveKTimes.length ? Math.min(...fiveKTimes) : null;
+        return `
         <h4 class="link-subhead" style="margin-top:14px;">${s.year}${s.grade ? ` — ${s.grade}` : ''}</h4>
         <div class="results-table athlete-view">
           <div class="results-table-head"><div>Meet</div><div>Place</div><div>Time</div></div>
           ${s.races.map((r, i) => {
-            const isPR = athlete.pr && r.time === athlete.pr.time;
+            const eligible = isFiveK(r.meet);
+            const isPR = eligible && athlete.pr && r.time === athlete.pr.time;
+            const isSB = eligible && !isPR && seasonBestSec !== null && timeToSeconds(r.time) === seasonBestSec;
+            const badge = isPR ? 'PR' : (isSB ? 'SB' : null);
             return `
             <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${isPR ? ' is-pr' : ''}">
               <div class="rt-name">${r.link ? `<a href="${r.link}" target="_blank" rel="noopener" class="rt-name-link">${r.meet}</a>` : r.meet}<div class="rt-sub">${fmtSeasonDate(r.date, s.year)}</div></div>
               <div class="rt-place">${r.place || '—'}</div>
-              <div class="rt-time">${isPR ? `<span class="pr-time-box">${r.time}<span class="pr-tag">PR</span></span>` : r.time}</div>
+              <div class="rt-time">${badge === 'PR' ? `<span class="pr-time-box">${r.time}<span class="pr-tag">PR</span></span>` : badge === 'SB' ? `<span class="sb-time-box">${r.time}<span class="sb-tag">SB</span></span>` : r.time}</div>
             </div>
           `;
           }).join('')}
         </div>
-      `).join('');
+      `;
+      }).join('');
       body = prBox + seasonsHtml;
     }
 
