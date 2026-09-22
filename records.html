@@ -62,6 +62,7 @@
       <div class="roster-filters" id="sexToggle" role="group" aria-label="Filter by team">
         <button data-sex="boys" class="active" aria-pressed="true">Boys</button>
         <button data-sex="girls" aria-pressed="false">Girls</button>
+        <button data-sex="alumni" aria-pressed="false">Careers</button>
       </div>
     </div>
 
@@ -147,6 +148,637 @@ const GIRLS_RECORDS = [
   { rank: 25, first: "Natey", last: "Kinzounza", classYear: 2013, time: "22:52.4", meet: "Jesse Owens", grade: "So", date: "2010-10-02" },
 ];
 
+const ALUMNI = [
+  {
+    rank: 2, name: "Wyatt Boling", profile: "https://tn.milesplit.com/athletes/11863146-wyatt-boling",
+    pr: { time: "15:26.37", meet: "New Balance RunningLane XC Championships", place: "43rd", date: "Dec 6, 2025" },
+    seasons: [
+      { year: "2025", grade: null, races: [
+        { meet: "New Balance RunningLane XC Championships", time: "15:26.37", place: "43rd", date: "Dec 6" },
+        { meet: "Brooks XC Championships South", time: "15:52.65", place: "50th", date: "Nov 29" },
+        { meet: "Nike Cross Nationals SE Regional", time: "15:49.80", place: "7th", date: "Nov 22" },
+        { meet: "TSSAA XC DI Class AA State", time: "15:39.69", place: "2nd", date: "Nov 6" },
+        { meet: "TSSAA DI Class AA XC Section 4", time: "15:34.80", place: "1st", date: "Oct 28" },
+        { meet: "MSCCA Championships", time: "16:35.44", place: "6th", date: "Oct 18" },
+        { meet: "Hoka Frank Horton \"Night\" Classic", time: "16:12.30", place: "37th", date: "Oct 3-4" },
+        { meet: "Southern Showcase (Huntsville HS)", time: "16:00.33", place: "46th", date: "Sep 12-13" },
+        { meet: "MSCCA Voyles Classic", time: "15:32.40", place: "5th", date: "Sep 5-6" },
+      ] },
+      { year: "2024", grade: null, races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "15:52.78", place: "17th", date: "Nov 23" },
+        { meet: "TSSAA State CC Championship", time: "16:15.08", place: "8th", date: "Nov 7-8" },
+        { meet: "TSSAA XC DI Class A-AA Region 5", time: "16:11.19", place: "3rd", date: "Oct 29" },
+        { meet: "MSCCA Championships", time: "16:38.77", place: "9th", date: "Oct 19" },
+        { meet: "Coleman Midgett Invitational", time: "17:34.39", place: "16th", date: "Oct 5" },
+        { meet: "Southern Showcase", time: "16:46.51", place: "65th", date: "Sep 13-14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "16:55.78", place: "22nd", date: "Aug 31" },
+      ] },
+      { year: "2023", grade: null, races: [
+        { meet: "RunningLane XC Championships", time: "16:31.60", place: "26th", date: "Dec 2" },
+        { meet: "Foot Locker Championships South Region", time: "16:36.93", place: "118th", date: "Nov 25" },
+        { meet: "TSSAA State CC Championship", time: "16:10.25", place: "3rd", date: "Nov 2-3" },
+        { meet: "TSSAA Division I A-AA Region 5", time: "16:28.20", place: "2nd", date: "Oct 24" },
+        { meet: "Louisville XC Classic", time: "17:03.20", place: "33rd", date: "Sep 29-30" },
+        { meet: "MSCCA Voyles Classic", time: "16:08.50", place: "12th", date: "Sep 9" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "17:47.87", place: "82nd", date: "Sep 2" },
+      ] },
+      { year: "2022", grade: null, races: [
+        { meet: "TSSAA Div. 1 A-AA Region 5", time: "17:05.00", place: "2nd", date: "Oct 27" },
+        { meet: "MSCCA Championships", time: "16:58.21", place: "20th", date: "Oct 15" },
+        { meet: "Chick-fil-A at Glenbrook", time: "16:38.10", place: "28th", date: "Oct 1" },
+        { meet: "Speedway Shootout", time: "16:52.51", place: "2nd", date: "Sep 24" },
+        { meet: "MSCCA Voyles Classic", time: "17:05.07", place: "9th", date: "Sep 10" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "17:08.96", place: "44th", date: "Sep 3" },
+      ] },
+      { year: "2021", grade: null, races: [
+        { meet: "Cross Country Coaches National Youth Championships (4000m)", time: "13:42.28", place: "5th", date: "Nov 20" },
+        { meet: "TSSAA State CC Championship (5000m)", time: "17:28.64", place: "25th", date: "Nov 4-5" },
+        { meet: "TSSAA Div.1 Small \u2014 Region 5 (3 mile)", time: "17:09.00", place: "4th", date: "Oct 28" },
+        { meet: "Louisville XC Classic (4000m)", time: "14:26.10", place: "6th", date: "Oct 1-2" },
+      ] },
+    ],
+  },
+  {
+    rank: 9, name: "Colter Lewis", profile: "https://tn.milesplit.com/athletes/12323487-colter-lewis",
+    pr: { time: "16:33.30", meet: "TSSAA XC DI Class AA State Championship Meet", place: "10th", date: "Nov 6, 2025" },
+    seasons: [
+      { year: "2025", grade: null, races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "16:35.00", place: "70th", date: "Nov 22" },
+        { meet: "TSSAA XC DI Class AA State", time: "16:33.30", place: "10th", date: "Nov 6" },
+        { meet: "TSSAA DI Class AA XC Section 4", time: "16:34.60", place: "5th", date: "Oct 28" },
+        { meet: "MSCCA Championships", time: "17:15.36", place: "26th", date: "Oct 18" },
+        { meet: "Hoka Frank Horton \"Night\" Classic", time: "16:50.30", place: "85th", date: "Oct 3-4" },
+        { meet: "Southern Showcase", time: "16:50.38", place: "118th", date: "Sep 12-13" },
+        { meet: "MSCCA Voyles Classic", time: "16:33.36", place: "33rd", date: "Sep 5-6" },
+      ] },
+      { year: "2024", grade: null, races: [
+        { meet: "TSSAA State CC Championship", time: "19:48.21", place: "174th", date: "Nov 7-8" },
+        { meet: "TSSAA XC DI Class A-AA Region 5", time: "17:23.68", place: "13th", date: "Oct 29" },
+        { meet: "MSCCA Championships", time: "17:56.01", place: "57th", date: "Oct 19" },
+        { meet: "Coleman Midgett Invitational", time: "18:28.87", place: "39th", date: "Oct 5" },
+        { meet: "Southern Showcase", time: "18:03.73", place: "193rd", date: "Sep 13-14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "18:02.01", place: "67th", date: "Aug 31" },
+      ] },
+      { year: "2023", grade: null, races: [
+        { meet: "RunningLane XC Championships", time: "18:34.00", place: "96th", date: "Dec 2" },
+        { meet: "TSSAA Division I A-AA Region 5", time: "18:04.90", place: "20th", date: "Oct 24" },
+        { meet: "Coleman Midgett Invitational", time: "17:52.46", place: "48th", date: "Oct 7" },
+        { meet: "Louisville XC Classic", time: "18:21.20", place: "119th", date: "Sep 29-30" },
+        { meet: "MSCCA Voyles Classic", time: "18:19.13", place: "105th", date: "Sep 9" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "18:41.10", place: "176th", date: "Sep 2" },
+      ] },
+      { year: "2022", grade: null, races: [
+        { meet: "TSSAA Div. 1 A-AA Region 5", time: "20:34.00", place: "54th", date: "Oct 27" },
+        { meet: "MSCCA Championships", time: "20:30.00", place: "167th", date: "Oct 15" },
+        { meet: "Chick-fil-A at Glenbrook", time: "20:36.90", place: "209th", date: "Oct 1" },
+        { meet: "Speedway Shootout", time: "19:41.06", place: "55th", date: "Sep 24" },
+        { meet: "MSCCA Voyles Classic", time: "20:25.44", place: "84th", date: "Sep 10" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "20:11.54", place: "253rd", date: "Sep 3" },
+      ] },
+    ],
+  },
+  {
+    rank: 7, name: "Korben Lewis", profile: "https://ga.milesplit.com/athletes/17122179-korben-lewis",
+    pr: { time: "15:54.71", meet: "TSSAA State Cross Country Championship", place: "4th", date: "Nov 7-8, 2024" },
+    seasons: [
+      { year: "2024", grade: null, races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "16:17.96", place: "73rd", date: "Nov 23" },
+        { meet: "TSSAA State CC Championship", time: "15:54.71", place: "4th", date: "Nov 7-8" },
+        { meet: "TSSAA XC DI Class A-AA Region 5", time: "16:02.60", place: "2nd", date: "Oct 29" },
+        { meet: "MSCCA Championships", time: "16:19.27", place: "4th", date: "Oct 19" },
+        { meet: "Coleman Midgett Invitational", time: "16:21.00", place: "1st", date: "Oct 5" },
+        { meet: "Southern Showcase", time: "16:25.90", place: "45th", date: "Sep 13-14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "16:31.72", place: "13th", date: "Aug 31" },
+      ] },
+      { year: "2023", grade: null, races: [
+        { meet: "RunningLane XC Championships", time: "18:04.60", place: "194th", date: "Dec 2" },
+        { meet: "TSSAA State CC Championship", time: "16:51.69", place: "18th", date: "Nov 2-3" },
+        { meet: "TSSAA Division I A-AA Region 5", time: "16:53.00", place: "5th", date: "Oct 24" },
+        { meet: "Coleman Midgett Invitational", time: "16:53.51", place: "21st", date: "Oct 7" },
+        { meet: "Louisville XC Classic", time: "17:25.10", place: "52nd", date: "Sep 29-30" },
+        { meet: "MSCCA Voyles Classic", time: "17:05.69", place: "36th", date: "Sep 9" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "17:45.01", place: "76th", date: "Sep 2" },
+      ] },
+      { year: "2022", grade: null, races: [
+        { meet: "TSSAA State CC Championship", time: "18:05.73", place: "49th", date: "Nov 3-4" },
+        { meet: "TSSAA Div. 1 A-AA Region 5", time: "17:16.00", place: "5th", date: "Oct 27" },
+        { meet: "MSCCA Championships", time: "17:59.76", place: "50th", date: "Oct 15" },
+        { meet: "Chick-fil-A at Glenbrook", time: "17:43.60", place: "89th", date: "Oct 1" },
+        { meet: "Speedway Shootout", time: "17:12.70", place: "6th", date: "Sep 24" },
+        { meet: "MSCCA Voyles Classic", time: "17:21.06", place: "15th", date: "Sep 10" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "18:11.27", place: "103rd", date: "Sep 3" },
+      ] },
+      { year: "2021", grade: null, races: [
+        { meet: "TSSAA State CC Championship (5000m)", time: "19:41.63", place: "149th", date: "Nov 4-5" },
+        { meet: "Charley Pruitt Invitational (5000m)", time: "19:26.00", place: "12th", date: "Oct 9" },
+        { meet: "TSSAA Div.1 Small \u2014 Region 5 (3 mile)", time: "18:56.00", place: "23rd", date: "Oct 28" },
+      ] },
+    ],
+  },
+  {
+    rank: 1, name: "Miles Ally", profile: "https://tn.milesplit.com/athletes/7350432-miles-ally",
+    pr: { time: "15:08.31", meet: "Coach Wood Invitational", place: "3rd", date: "Oct 16-17, 2020" },
+    seasons: [
+      { year: "2020", grade: null, races: [
+        { meet: "TSSAA State CC Championship", time: "15:40.67", place: "3rd", date: "Nov 5-6" },
+        { meet: "TSSAA Region 6: Large Schools", time: "15:29.00", place: "1st", date: "Oct 27" },
+        { meet: "Coach Wood Invitational", time: "15:08.31", place: "3rd", date: "Oct 16-17" },
+        { meet: "32nd Annual Frank Horton Invitational", time: "15:17.11", place: "1st", date: "Sep 25-26" },
+        { meet: "Memphis Youth Athletics #1", time: "15:10.00", place: "1st", date: "Sep 19" },
+      ] },
+      { year: "2019", grade: null, races: [
+        { meet: "Foot Locker South Regional", time: "15:43.00", place: "33rd", date: "Nov 30" },
+        { meet: "TSSAA State CC Championship", time: "15:40.15", place: "3rd", date: "Nov 2" },
+        { meet: "TSSAA Div.1 Large \u2014 Region 6", time: "16:10.05", place: "1st", date: "Oct 24" },
+        { meet: "Greater Louisville Classic", time: "15:49.80", place: "6th", date: "Oct 4-5" },
+        { meet: "Wingfoot XC Classic", time: "15:50.00", place: "17th", date: "Sep 20-21" },
+        { meet: "Dickson Invitational", time: "16:08.84", place: "2nd", date: "Sep 14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "15:43.15", place: "3rd", date: "Aug 31" },
+      ] },
+      { year: "2018", grade: null, races: [
+        { meet: "Middle TN Hoka Postal Nationals (3200m)", time: "9:35.06", place: "3rd", date: "Nov 10" },
+        { meet: "Foot Locker South Regional", time: "16:13.20", place: "68th", date: "Nov 24" },
+        { meet: "TSSAA State CC Championships", time: "16:13.71", place: "11th", date: "Nov 3" },
+        { meet: "TSSAA Div.1 Large \u2014 Region 6", time: "16:08.30", place: "2nd", date: "Oct 25" },
+        { meet: "Jesse Owens Classic", time: "16:25.35", place: "18th", date: "Oct 6" },
+        { meet: "Greater Louisville Classic", time: "16:20.10", place: "11th", date: "Sep 28-29" },
+        { meet: "Dickson Invitational", time: "16:36.00", place: "2nd", date: "Sep 15" },
+        { meet: "Brooks Memphis Twilight XC Classic", time: "16:20.83", place: "8th", date: "Sep 1" },
+      ] },
+      { year: "2017", grade: null, races: [
+        { meet: "Foot Locker South Regional", time: "16:36.40", place: "7th", date: "Nov 25" },
+        { meet: "TSSAA State CC Championships", time: "17:39.41", place: "71st", date: "Nov 4" },
+        { meet: "TSSAA (Div.1) Region 6 Large School Qualifier", time: "16:53.53", place: "5th", date: "Oct 26" },
+        { meet: "Greater Louisville Classic", time: "17:54.67", place: "117th", date: "Sep 29-30" },
+        { meet: "Dickson Invitational", time: "18:15.00", place: "5th", date: "Sep 16" },
+        { meet: "Brooks Memphis Twilight Classic", time: "16:49.31", place: "30th", date: "Sep 2" },
+      ] },
+    ],
+  },
+  {
+    rank: 5, name: "Sam Klockenkemper", profile: "https://vt.milesplit.com/athletes/449636-sam-klockenkemper",
+    pr: { time: "15:46.12", meet: "Trinity/Valkyrie Invitational", place: "14th", date: "Sep 14-15, 2012" },
+    seasons: [
+      { year: "2012", grade: "Senior", races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "15:47.70", place: "22nd", date: "Nov 24" },
+        { meet: "TSSAA State CC Meet", time: "16:34.88", place: "1st", date: "Nov 3" },
+        { meet: "TSSAA Class A-AA Region 5", time: "16:54.04", place: "1st", date: "Oct 25" },
+        { meet: "Nashville Metro Championship", time: "16:32.90", place: "1st", date: "Oct 16" },
+        { meet: "Jesse Owens Classic", time: "16:57.55", place: "34th", date: "Oct 6" },
+        { meet: "Great American XC Festival", time: "15:49.10", place: "45th", date: "Sep 28-29" },
+        { meet: "Trinity/Valkyrie Invitational", time: "15:46.12", place: "14th", date: "Sep 14-15" },
+      ] },
+      { year: "2011", grade: "Junior", races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "16:13.00", place: "58th", date: "Nov 26" },
+        { meet: "TSSAA State CC Meet", time: "16:22.46", place: "1st", date: "Nov 5" },
+        { meet: "TSSAA DII A East/Middle, AAA Region 6, A-AA Region 5", time: "16:40.68", place: "1st", date: "Oct 27" },
+        { meet: "Nashville City Championships", time: "16:48.08", place: "3rd", date: "Oct 20" },
+        { meet: "Jesse Owens Classic", time: "16:08.52", place: "20th", date: "Oct 1" },
+        { meet: "Jr. Ward TN High School XC Classic", time: "17:17.14", place: "3rd", date: "Sep 17" },
+      ] },
+      { year: "2010", grade: "Sophomore", races: [
+        { meet: "Foot Locker South Regional", time: "16:41.00", place: "25th", date: "Nov 27" },
+        { meet: "TSSAA State CC Championships", time: "17:10.07", place: "6th", date: "Nov 6" },
+        { meet: "Region 5 A-AA, Region 6 AAA, DII A East/Middle", time: "17:27.50", place: "4th", date: "Oct 28" },
+        { meet: "Metro Championships", time: "17:45.84", place: "11th", date: "Oct 21" },
+        { meet: "Jesse Owens Classic", time: "16:47.95", place: "9th", date: "Oct 2" },
+        { meet: "34th Annual Jr. Ward TN Classic XC Meet", time: "17:37.00", place: "4th", date: "Sep 18" },
+      ] },
+      { year: "2009", grade: "Freshman", races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "13:22.93", place: "20th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "18:09.82", place: "27th", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "18:33.60", place: "18th", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "18:10.98", place: "22nd", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "18:20.35", place: "18th", date: "Oct 14" },
+        { meet: "Chickasaw Trails", time: "18:37.54", place: "64th", date: "Sep 12" },
+      ] },
+    ],
+  },
+  {
+    rank: 6, name: "Ryan Bailey", profile: "https://tn.milesplit.com/athletes/53330-ryan-bailey",
+    noData: true,
+    seasons: [
+    ],
+  },
+  {
+    rank: 8, name: "Jared Clark", profile: "https://tn.milesplit.com/athletes/2960248-jared-clark",
+    pr: { time: "16:28.87", meet: "MSCCA Midstate High School Championship Meet", place: "2nd", date: "Oct 17, 2015" },
+    seasons: [
+      { year: "2015", grade: "Junior", races: [
+        { meet: "Foot Locker South Regional", time: "16:40.00", place: "20th", date: "Nov 28" },
+        { meet: "TSSAA State CC Championships", time: "16:58.89", place: "5th", date: "Nov 7" },
+        { meet: "TSSAA Region 5 A-AA CC Championships", time: "17:06.91", place: "1st", date: "Oct 29" },
+        { meet: "Metro XC Championships", time: "17:16.34", place: "2nd", date: "Oct 22" },
+        { meet: "MSCCA Midstate HS Championship Meet", time: "16:28.87", place: "2nd", date: "Oct 17" },
+        { meet: "Tennessee Classic", time: "17:43.50", place: "16th", date: "Sep 19" },
+        { meet: "A.F. Bridges XC Invitational", time: "17:21.73", place: "5th", date: "Sep 12" },
+        { meet: "Voyles Classic XC Meet", time: "17:16.52", place: "40th", date: "Aug 29" },
+      ] },
+      { year: "2014", grade: "Sophomore", races: [
+        { meet: "Cross Country Coaches National Youth Championships", time: "18:08.17", place: "20th", date: "Nov 22" },
+        { meet: "TSSAA State CC Championships", time: "17:21.26", place: "12th", date: "Nov 1" },
+        { meet: "TSSAA A-AA Rn 5 & D2 A East/Mid & A-AA Rn6", time: "17:26.59", place: "3rd", date: "Oct 23" },
+        { meet: "Nashville City Championships", time: "17:05.36", place: "5th", date: "Oct 14" },
+        { meet: "16th Annual Jesse Owens Classic", time: "16:41.48", place: "6th", date: "Oct 4" },
+        { meet: "Tennessee Classic", time: "17:36.30", place: "11th", date: "Sep 20" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:12.18", place: "27th", date: "Aug 30" },
+      ] },
+      { year: "2013", grade: "Freshman", races: [
+        { meet: "TSSAA State CC Championships", time: "17:10.48", place: "15th", date: "Nov 2" },
+        { meet: "TSSAA Region 5 A-AA", time: "17:25.19", place: "3rd", date: "Oct 24" },
+        { meet: "Nashville City Championships", time: "17:45.81", place: "17th", date: "Oct 15" },
+        { meet: "15th Annual Jesse Owens Classic", time: "17:45.31", place: "31st", date: "Oct 5" },
+        { meet: "Tennessee Classic", time: "18:49.90", place: "23rd", date: "Sep 21" },
+        { meet: "Brooks Memphis Twilight Classic", time: "18:20.22", place: "77th", date: "Aug 31" },
+      ] },
+    ],
+  },
+  {
+    rank: 10, name: "Micah Wasserman", profile: "https://tn.milesplit.com/athletes/126849-micah-wasserman",
+    pr: { time: "16:38.53", meet: "Chickasaw Trails Invite", place: "9th", date: "Sep 6, 2008" },
+    seasons: [
+      { year: "2009", grade: null, races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "13:20.39", place: "19th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "18:04.51", place: "24th", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "17:52.19", place: "4th", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "18:02.40", place: "19th", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "17:56.13", place: "11th", date: "Oct 14" },
+      ] },
+      { year: "2008", grade: null, races: [
+        { meet: "TSSAA State CC Championships", time: "17:23.49", place: "17th", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "16:55.62", place: "2nd", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "17:42.93", place: "62nd", date: "Sep 20" },
+        { meet: "Chickasaw Trails Invite", time: "16:38.53", place: "9th", date: "Sep 6" },
+      ] },
+      { year: "2007", grade: null, races: [
+        { meet: "Nashville Metro Championships", time: "17:10.55", place: "7th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+        { meet: "TSSAA State CC Championship", time: "17:31.92", place: "20th", date: "Nov 3" },
+        { meet: "Region 5 A-AA & Region 6 AAA", time: "17:48.67", place: "12th", date: "Oct 25" },
+        { meet: "Metro XC Championships", time: "17:33.67", place: "10th", date: "Oct 18" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:30.60", place: "65th", date: "Oct 6" },
+      ] },
+    ],
+  },
+  {
+    rank: 11, name: "London Craddock", profile: "https://tn.milesplit.com/athletes/6357719-london-craddock",
+    pr: { time: "16:42.66", meet: "32nd Annual Frank Horton Invitational", place: "22nd", date: "Sep 25-26, 2020" },
+    seasons: [
+      { year: "2020", grade: "Senior", races: [
+        { meet: "TSSAA Region 6: Large Schools", time: "17:21.60", place: "30th", date: "Oct 27" },
+        { meet: "Coach Wood Invitational", time: "16:55.64", place: "28th", date: "Oct 16-17" },
+        { meet: "32nd Annual Frank Horton Invitational", time: "16:42.66", place: "22nd", date: "Sep 25-26" },
+        { meet: "Memphis Youth Athletics #1", time: "16:46.00", place: "12th", date: "Sep 19" },
+      ] },
+      { year: "2019", grade: "Junior", races: [
+        { meet: "Foot Locker South Regional", time: "17:26.00", place: "267th", date: "Nov 30" },
+        { meet: "TSSAA Div.1 Large \u2014 Region 6", time: "18:24.02", place: "43rd", date: "Oct 24" },
+        { meet: "Greater Louisville Classic", time: "17:12.40", place: "73rd", date: "Oct 4-5" },
+        { meet: "Wingfoot XC Classic", time: "17:11.50", place: "109th", date: "Sep 20-21" },
+        { meet: "Dickson Invitational", time: "17:27.31", place: "5th", date: "Sep 14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "17:26.29", place: "45th", date: "Aug 31" },
+      ] },
+      { year: "2018", grade: "Sophomore", races: [
+        { meet: "TSSAA Div.1 Large \u2014 Region 6", time: "18:05.79", place: "48th", date: "Oct 25" },
+        { meet: "Jesse Owens Classic", time: "18:41.85", place: "186th", date: "Oct 6" },
+        { meet: "Greater Louisville Classic", time: "18:18.80", place: "163rd", date: "Sep 28-29" },
+        { meet: "Dickson Invitational", time: "18:02.00", place: "10th", date: "Sep 15" },
+        { meet: "Brooks Memphis Twilight XC Classic", time: "18:24.84", place: "138th", date: "Sep 1" },
+      ] },
+      { year: "2017", grade: "Freshman", races: [
+        { meet: "TSSAA (Div.1) Region 6 Large School Qualifier", time: "18:51.68", place: "54th", date: "Oct 26" },
+        { meet: "Metro Nashville Championships", time: "18:39.12", place: "22nd", date: "Oct 19" },
+        { meet: "Greater Louisville Classic", time: "19:55.03", place: "285th", date: "Sep 29-30" },
+        { meet: "Dickson Invitational", time: "19:24.00", place: "17th", date: "Sep 16" },
+        { meet: "Brooks Memphis Twilight Classic", time: "18:39.95", place: "199th", date: "Sep 2" },
+      ] },
+      { year: "2016", grade: null, races: [
+        { meet: "TSSAA State CC Championships", time: "19:55.47", place: "148th", date: "Nov 5" },
+        { meet: "TSSAA Region 5 A-AA CC Championships", time: "20:21.02", place: "29th", date: "Oct 27" },
+        { meet: "Metro Nashville XC Championships", time: "21:32.27", place: "51st", date: "Oct 18" },
+        { meet: "Sharp Springs Invitational Meet", time: "20:44.93", place: "46th", date: "Sep 24" },
+      ] },
+    ],
+  },
+  {
+    rank: 12, name: "Christopher Hornsby", profile: "https://tn.milesplit.com/athletes/2358681-christopher-hornsby",
+    pr: { time: "16:42.84", meet: "16th Annual Jesse Owens Classic", place: "8th", date: "Oct 4, 2014" },
+    seasons: [
+      { year: "2014", grade: "Junior", races: [
+        { meet: "Foot Locker South Regional", time: "17:29.00", place: "103rd", date: "Nov 29" },
+        { meet: "TSSAA State CC Championships", time: "16:58.01", place: "6th", date: "Nov 1" },
+        { meet: "TSSAA A-AA Rn 5 & D2 A East/Mid & A-AA Rn6", time: "17:02.78", place: "1st", date: "Oct 23" },
+        { meet: "Nashville City Championships", time: "17:01.19", place: "4th", date: "Oct 14" },
+        { meet: "16th Annual Jesse Owens Classic", time: "16:42.84", place: "8th", date: "Oct 4" },
+        { meet: "Tennessee Classic", time: "17:28.70", place: "8th", date: "Sep 20" },
+      ] },
+      { year: "2013", grade: "Sophomore", races: [
+        { meet: "TSSAA State CC Championships", time: "17:06.12", place: "11th", date: "Nov 2" },
+        { meet: "TSSAA Region 5 A-AA", time: "17:21.79", place: "2nd", date: "Oct 24" },
+        { meet: "Nashville City Championships", time: "17:26.85", place: "12th", date: "Oct 15" },
+        { meet: "15th Annual Jesse Owens Classic", time: "17:03.24", place: "6th", date: "Oct 5" },
+        { meet: "Tennessee Classic", time: "17:37.70", place: "4th", date: "Sep 21" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:29.50", place: "30th", date: "Aug 31" },
+      ] },
+      { year: "2012", grade: "Freshman", races: [
+        { meet: "TSSAA State CC Meet", time: "18:38.83", place: "34th", date: "Nov 3" },
+        { meet: "TSSAA Class A-AA Region 5", time: "18:29.09", place: "11th", date: "Oct 25" },
+        { meet: "Nashville Metro Championship", time: "18:45.93", place: "28th", date: "Oct 16" },
+        { meet: "Jesse Owens Classic", time: "19:57.61", place: "205th", date: "Oct 6" },
+        { meet: "Trinity/Valkyrie Invitational", time: "17:46.64", place: "204th", date: "Sep 14-15" },
+      ] },
+    ],
+  },
+  {
+    rank: 13, name: "Ryan Graves", profile: "https://tn.milesplit.com/athletes/74186-ryan-graves",
+    pr: { time: "16:45.42", meet: "Chickasaw Trails Invite", place: "14th", date: "Sep 6, 2008" },
+    seasons: [
+      { year: "2009", grade: "Senior", races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "12:36.52", place: "6th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "16:47.98", place: "2nd", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "17:23.19", place: "1st", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "17:05.10", place: "5th", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "17:00.67", place: "2nd", date: "Oct 14" },
+        { meet: "Chickasaw Trails", time: "16:49.33", place: "13th", date: "Sep 12" },
+      ] },
+      { year: "2008", grade: "Junior", races: [
+        { meet: "TSSAA State CC Championships", time: "16:59.39", place: "6th", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "17:07.25", place: "4th", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "17:04.08", place: "28th", date: "Sep 20" },
+        { meet: "Chickasaw Trails Invite", time: "16:45.42", place: "14th", date: "Sep 6" },
+      ] },
+      { year: "2007", grade: "Sophomore", races: [
+        { meet: "Nashville Metro Championships", time: "17:01.01", place: "7th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+        { meet: "TSSAA State CC Championship", time: "17:33.06", place: "23rd", date: "Nov 3" },
+        { meet: "Region 5 A-AA & Region 6 AAA", time: "17:27.91", place: "6th", date: "Oct 25" },
+        { meet: "Metro XC Championships", time: "17:57.18", place: "20th", date: "Oct 18" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:19.20", place: "55th", date: "Oct 6" },
+        { meet: "Tennessee Classic", time: "17:50.42", place: "14th", date: "Sep 15" },
+      ] },
+      { year: "2006", grade: "Freshman", races: [
+        { meet: "Region 6 AAA, D-II Middle, Region 5 A-AA", time: "17:58.75", place: "", date: "Oct 26" },
+      ] },
+    ],
+  },
+  {
+    rank: 14, name: "David Gilmore", profile: "https://tn.milesplit.com/athletes/237346-david-gilmore",
+    pr: { time: "16:50.38", meet: "Jesse Owens Classic", place: "12th", date: "Oct 2, 2010" },
+    seasons: [
+      { year: "2010", grade: "Senior", races: [
+        { meet: "Foot Locker South Regional", time: "17:12.00", place: "223rd", date: "Nov 27" },
+        { meet: "TSSAA State CC Championships", time: "17:16.71", place: "10th", date: "Nov 6" },
+        { meet: "Region 5 A-AA, Region 6 AAA, DII A East/Middle", time: "17:32.70", place: "5th", date: "Oct 28" },
+        { meet: "Metro Championships", time: "17:48.56", place: "13th", date: "Oct 21" },
+        { meet: "Jesse Owens Classic", time: "16:50.38", place: "12th", date: "Oct 2" },
+        { meet: "34th Annual Jr. Ward TN Classic XC Meet", time: "17:52.97", place: "7th", date: "Sep 18" },
+      ] },
+      { year: "2009", grade: "Junior", races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "13:10.11", place: "12th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "18:28.84", place: "37th", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "17:54.89", place: "7th", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "18:02.85", place: "20th", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "18:02.05", place: "13th", date: "Oct 14" },
+        { meet: "Chickasaw Trails", time: "17:48.20", place: "32nd", date: "Sep 12" },
+      ] },
+      { year: "2008", grade: "Sophomore", races: [
+        { meet: "Tennessee Classic", time: "18:54.25", place: "147th", date: "Sep 20" },
+      ] },
+      { year: "2007", grade: "Freshman", races: [
+        { meet: "Nashville Metro Championships", time: "19:14.89", place: "54th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+      ] },
+    ],
+  },
+  {
+    rank: 15, name: "Jack Forte", profile: "https://tn.milesplit.com/athletes/2266678-jack-forte",
+    pr: { time: "16:51.00", meet: "Foot Locker South Regional", place: "55th", date: "Nov 29, 2014" },
+    seasons: [
+      { year: "2014", grade: "Senior", races: [
+        { meet: "Go Postal 2 Mile", time: "10:23.07", place: "29th", date: "Nov 15" },
+        { meet: "Foot Locker South Regional", time: "16:51.00", place: "55th", date: "Nov 29" },
+        { meet: "TSSAA State CC Championships", time: "17:27.59", place: "16th", date: "Nov 1" },
+        { meet: "TSSAA A-AA Rn 5 & D2 A East/Mid & A-AA Rn6", time: "17:20.41", place: "2nd", date: "Oct 23" },
+        { meet: "Nashville City Championships", time: "17:34.94", place: "14th", date: "Oct 14" },
+        { meet: "16th Annual Jesse Owens Classic", time: "17:01.24", place: "23rd", date: "Oct 4" },
+        { meet: "Tennessee Classic", time: "18:20.10", place: "35th", date: "Sep 20" },
+        { meet: "Brooks Memphis Twilight Classic", time: "18:25.49", place: "106th", date: "Aug 30" },
+      ] },
+      { year: "2013", grade: "Junior", races: [
+        { meet: "TSSAA State CC Championships", time: "17:38.63", place: "23rd", date: "Nov 2" },
+        { meet: "TSSAA Region 5 A-AA", time: "17:43.10", place: "6th", date: "Oct 24" },
+        { meet: "Nashville City Championships", time: "18:01.71", place: "20th", date: "Oct 15" },
+        { meet: "15th Annual Jesse Owens Classic", time: "18:13.26", place: "55th", date: "Oct 5" },
+        { meet: "Tennessee Classic", time: "18:20.10", place: "14th", date: "Sep 21" },
+        { meet: "Brooks Memphis Twilight Classic", time: "18:33.69", place: "92nd", date: "Aug 31" },
+      ] },
+      { year: "2012", grade: "Sophomore", races: [
+        { meet: "TSSAA State CC Meet", time: "18:28.30", place: "26th", date: "Nov 3" },
+        { meet: "TSSAA Class A-AA Region 5", time: "18:41.46", place: "12th", date: "Oct 25" },
+        { meet: "Nashville Metro Championship", time: "18:34.14", place: "24th", date: "Oct 16" },
+        { meet: "Jesse Owens Classic", time: "17:50.03", place: "32nd", date: "Oct 6" },
+        { meet: "Trinity/Valkyrie Invitational", time: "17:42.51", place: "199th", date: "Sep 14-15" },
+      ] },
+      { year: "2011", grade: "Freshman", races: [
+        { meet: "TSSAA DII A East/Middle, AAA Region 6, A-AA Region 5", time: "18:55.25", place: "31st", date: "Oct 27" },
+        { meet: "Nashville City Championships", time: "19:56.22", place: "51st", date: "Oct 20" },
+        { meet: "Jesse Owens Classic", time: "19:10.09", place: "168th", date: "Oct 1" },
+        { meet: "Jr. Ward TN High School XC Classic", time: "21:44.93", place: "173rd", date: "Sep 17" },
+      ] },
+    ],
+  },
+  {
+    rank: 16, name: "Stephen Wathen", profile: "https://tn.milesplit.com/athletes/73576-stephen-wathen",
+    pr: { time: "16:53.99", meet: "TSSAA State Cross Country Championship", place: "5th", date: "Nov 3, 2007" },
+    seasons: [
+      { year: "2007", grade: null, races: [
+        { meet: "Foot Locker South Regional", time: "16:54.00", place: "", date: "Nov 24" },
+        { meet: "TSSAA State CC Championship", time: "16:53.99", place: "5th", date: "Nov 3" },
+        { meet: "Region 5 A-AA & Region 6 AAA", time: "17:25.09", place: "4th", date: "Oct 25" },
+        { meet: "Metro XC Championships", time: "17:30.32", place: "9th", date: "Oct 18" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:07.29", place: "41st", date: "Oct 6" },
+        { meet: "Tennessee Classic", time: "17:31.02", place: "9th", date: "Sep 15" },
+      ] },
+      { year: "2006", grade: null, races: [
+        { meet: "Region 6 AAA, D-II Middle, Region 5 A-AA", time: "17:58.21", place: "9th", date: "Oct 26" },
+        { meet: "Metro XC Championships", time: "17:48.91", place: "20th", date: "Oct 19" },
+      ] },
+    ],
+  },
+  {
+    rank: 17, name: "Noah Daniel", profile: "https://tn.milesplit.com/athletes/12323513-noah-daniel",
+    pr: { time: "16:54.01", meet: "TSSAA State Cross Country Championship", place: "22nd", date: "Nov 7-8, 2024" },
+    seasons: [
+      { year: "2024", grade: "Sophomore", races: [
+        { meet: "Nike Cross Nationals SE Regional", time: "17:20.96", place: "380th", date: "Nov 23" },
+        { meet: "TSSAA State CC Championship", time: "16:54.01", place: "22nd", date: "Nov 7-8" },
+        { meet: "TSSAA XC DI Class A-AA Region 5", time: "17:18.45", place: "12th", date: "Oct 29" },
+        { meet: "MSCCA Championships", time: "18:45.14", place: "97th", date: "Oct 19" },
+        { meet: "Coleman Midgett Invitational", time: "18:03.28", place: "32nd", date: "Oct 5" },
+        { meet: "Southern Showcase", time: "18:49.33", place: "239th", date: "Sep 13-14" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "18:49.11", place: "103rd", date: "Aug 31" },
+      ] },
+      { year: "2023", grade: "Freshman", races: [
+        { meet: "TSSAA Division I A-AA Region 5", time: "18:29.50", place: "6th", date: "Oct 24" },
+        { meet: "Metro Nashville XC Championship", time: "19:00.69", place: "43rd", date: "Oct 17" },
+        { meet: "Coleman Midgett Invitational", time: "18:34.95", place: "68th", date: "Oct 7" },
+        { meet: "Louisville XC Classic", time: "19:14.20", place: "52nd", date: "Sep 29-30" },
+        { meet: "MSCCA Voyles Classic", time: "19:37.47", place: "203rd", date: "Sep 9" },
+        { meet: "City Auto Memphis Twilight XC Classic", time: "20:05.28", place: "64th", date: "Sep 2" },
+      ] },
+    ],
+  },
+  {
+    rank: 18, name: "Berket Mesele", profile: "https://tn.milesplit.com/athletes/5454864-berket-mesele",
+    pr: { time: "16:54.14", meet: "TSSAA Div.1 Large \u2014 Region 6", place: "10th", date: "Oct 25, 2018" },
+    seasons: [
+      { year: "2018", grade: "Junior", races: [
+        { meet: "Middle TN Hoka Postal Nationals (3200m)", time: "9:56.61", place: "13th", date: "Nov 10" },
+        { meet: "Foot Locker South Regional", time: "17:14.85", place: "46th", date: "Nov 24" },
+        { meet: "TSSAA State CC Championships", time: "17:25.05", place: "63rd", date: "Nov 3" },
+        { meet: "TSSAA Div.1 Large \u2014 Region 6", time: "16:54.14", place: "10th", date: "Oct 25" },
+        { meet: "Jesse Owens Classic", time: "17:15.22", place: "74th", date: "Oct 6" },
+        { meet: "Greater Louisville Classic", time: "17:18.30", place: "66th", date: "Sep 28-29" },
+        { meet: "Dickson Invitational", time: "17:38.00", place: "6th", date: "Sep 15" },
+        { meet: "Brooks Memphis Twilight XC Classic", time: "17:44.00", place: "81st", date: "Sep 1" },
+      ] },
+      { year: "2017", grade: "Sophomore", races: [
+        { meet: "TSSAA (Div.1) Region 6 Large School Qualifier", time: "18:08.45", place: "40th", date: "Oct 26" },
+        { meet: "Greater Louisville Classic", time: "18:14.11", place: "145th", date: "Sep 29-30" },
+        { meet: "Dickson Invitational", time: "19:03.00", place: "14th", date: "Sep 16" },
+        { meet: "Brooks Memphis Twilight Classic", time: "18:16.49", place: "157th", date: "Sep 2" },
+      ] },
+      { year: "2016", grade: "Freshman", races: [
+        { meet: "TSSAA State CC Championships", time: "18:43.68", place: "96th", date: "Nov 5" },
+        { meet: "TSSAA Region 5 A-AA CC Championships", time: "19:25.55", place: "19th", date: "Oct 27" },
+        { meet: "Metro Nashville XC Championships", time: "19:22.86", place: "28th", date: "Oct 18" },
+        { meet: "Sharp Springs Invitational Meet", time: "19:19.98", place: "22nd", date: "Sep 24" },
+        { meet: "Chickasaw Trails Invitational", time: "20:05.34", place: "202nd", date: "Sep 10" },
+        { meet: "Voyles Classic", time: "20:50.84", place: "48th", date: "Aug 27" },
+      ] },
+    ],
+  },
+  {
+    rank: 19, name: "Sam Brobeck", profile: "https://tn.milesplit.com/athletes/449632-sam-brobeck",
+    pr: { time: "16:55.67", meet: "Jesse Owens Classic", place: "15th", date: "Oct 2, 2010" },
+    seasons: [
+      { year: "2010", grade: "Senior", races: [
+        { meet: "TSSAA State CC Championships", time: "17:41.52", place: "24th", date: "Nov 6" },
+        { meet: "Region 5 A-AA, Region 6 AAA, DII A East/Middle", time: "17:46.20", place: "8th", date: "Oct 28" },
+        { meet: "Metro Championships", time: "18:26.07", place: "20th", date: "Oct 21" },
+        { meet: "Jesse Owens Classic", time: "16:55.67", place: "15th", date: "Oct 2" },
+        { meet: "34th Annual Jr. Ward TN Classic XC Meet", time: "19:19.25", place: "45th", date: "Sep 18" },
+      ] },
+      { year: "2009", grade: "Junior", races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "13:46.56", place: "30th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "17:49.36", place: "17th", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "18:12.05", place: "9th", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "18:15.03", place: "23rd", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "18:05.28", place: "14th", date: "Oct 14" },
+        { meet: "Chickasaw Trails", time: "18:27.45", place: "59th", date: "Sep 12" },
+      ] },
+      { year: "2008", grade: "Sophomore", races: [
+        { meet: "Chickasaw Trails Invite", time: "19:35.86", place: "125th", date: "Sep 6" },
+      ] },
+    ],
+  },
+  {
+    rank: 20, name: "John Gilpin", profile: "https://tn.milesplit.com/athletes/120260-john-gilpin",
+    pr: { time: "16:55.70", meet: "Region 5 A-AA", place: "3rd", date: "Oct 23, 2008" },
+    seasons: [
+      { year: "2009", grade: "Junior", races: [
+        { meet: "TSSAA State CC Championships", time: "17:33.23", place: "11th", date: "Nov 7" },
+        { meet: "Nashville Metro Championships", time: "17:34.94", place: "14th", date: "Oct 22" },
+        { meet: "Williamson County Championship", time: "17:32.74", place: "7th", date: "Oct 14" },
+      ] },
+      { year: "2008", grade: "Sophomore", races: [
+        { meet: "TSSAA State CC Championships", time: "17:13.67", place: "11th", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "16:55.70", place: "3rd", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "17:09.57", place: "33rd", date: "Sep 20" },
+        { meet: "Chickasaw Trails Invite", time: "17:15.34", place: "23rd", date: "Sep 6" },
+      ] },
+      { year: "2007", grade: "Freshman", races: [
+        { meet: "Nashville Metro Championships", time: "17:19.05", place: "13th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+        { meet: "TSSAA State CC Championship", time: "17:47.11", place: "31st", date: "Nov 3" },
+        { meet: "Metro XC Championships", time: "17:56.76", place: "18th", date: "Oct 18" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:32.19", place: "66th", date: "Oct 6" },
+        { meet: "Tennessee Classic", time: "17:52.41", place: "15th", date: "Sep 15" },
+      ] },
+    ],
+  },
+  {
+    rank: 21, name: "Tyler Masters", profile: "https://tn.milesplit.com/athletes/264556-tyler-masters",
+    pr: { time: "16:57.43", meet: "Jesse Owens Classic", place: "17th", date: "Oct 2, 2010" },
+    seasons: [
+      { year: "2010", grade: null, races: [
+        { meet: "TSSAA State CC Championships", time: "17:24.28", place: "14th", date: "Nov 6" },
+        { meet: "Region 5 A-AA, Region 6 AAA, DII A East/Middle", time: "17:35.60", place: "6th", date: "Oct 28" },
+        { meet: "Metro Championships", time: "17:40.04", place: "9th", date: "Oct 21" },
+        { meet: "Jesse Owens Classic", time: "16:57.43", place: "17th", date: "Oct 2" },
+      ] },
+      { year: "2008", grade: null, races: [
+        { meet: "Chickasaw Trails Invite", time: "17:42.09", place: "36th", date: "Sep 6" },
+      ] },
+    ],
+  },
+  {
+    rank: 22, name: "Nick Winn", profile: "https://tn.milesplit.com/athletes/53329-nick-winn",
+    pr: { time: "16:58.00", meet: "Foot Locker South Regional", place: "", date: "Nov 24, 2007" },
+    seasons: [
+      { year: "2007", grade: null, races: [
+        { meet: "Foot Locker South Regional", time: "16:58.00", place: "", date: "Nov 24" },
+        { meet: "TSSAA State CC Championship", time: "17:32.46", place: "21st", date: "Nov 3" },
+        { meet: "Region 5 A-AA & Region 6 AAA", time: "17:27.37", place: "5th", date: "Oct 25" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:39.53", place: "74th", date: "Oct 6" },
+        { meet: "Tennessee Classic", time: "17:43.09", place: "12th", date: "Sep 15" },
+      ] },
+    ],
+  },
+  {
+    rank: 23, name: "Willie Clark", profile: "https://tn.milesplit.com/athletes/489387-willie-clark",
+    pr: { time: "17:05.09", meet: "Jesse Owens Classic", place: "22nd", date: "Oct 2, 2010" },
+    seasons: [
+      { year: "2010", grade: "Senior", races: [
+        { meet: "TSSAA State CC Championships", time: "18:05.98", place: "37th", date: "Nov 6" },
+        { meet: "Region 5 A-AA, Region 6 AAA, DII A East/Middle", time: "17:52.00", place: "9th", date: "Oct 28" },
+        { meet: "Metro Championships", time: "18:18.97", place: "18th", date: "Oct 21" },
+        { meet: "Jesse Owens Classic", time: "17:05.09", place: "22nd", date: "Oct 2" },
+        { meet: "34th Annual Jr. Ward TN Classic XC Meet", time: "18:58.48", place: "29th", date: "Sep 18" },
+      ] },
+      { year: "2009", grade: "Junior", races: [
+        { meet: "A.F. Bridges Invitational (2 mile)", time: "14:00.19", place: "39th", date: "Sep 26" },
+        { meet: "TSSAA State CC Championships", time: "18:13.00", place: "28th", date: "Nov 7" },
+        { meet: "TSSAA Region 6 AAA & 5 A-AA", time: "18:22.22", place: "13th", date: "Oct 29" },
+        { meet: "Nashville Metro Championships", time: "18:33.12", place: "29th", date: "Oct 22" },
+        { meet: "Chickasaw Trails", time: "18:01.27", place: "45th", date: "Sep 12" },
+      ] },
+      { year: "2008", grade: "Sophomore", races: [
+        { meet: "TSSAA State CC Championships", time: "18:40.25", place: "63rd", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "18:25.96", place: "12th", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "19:35.78", place: "202nd", date: "Sep 20" },
+      ] },
+      { year: "2007", grade: "Freshman", races: [
+        { meet: "Nashville Metro Championships", time: "18:43.31", place: "41st", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+      ] },
+    ],
+  },
+  {
+    rank: 25, name: "Jonathan Gilbreath", profile: "https://tn.milesplit.com/athletes/126850-jonathan-gilbreath",
+    noData: true,
+    pr: { time: "17:14.12", meet: "Chickasaw Trails Invite", place: "22nd", date: "Sep 6, 2008" },
+    seasons: [
+      { year: "2008", grade: null, races: [
+        { meet: "TSSAA State CC Championships", time: "17:28.18", place: "19th", date: "Nov 1" },
+        { meet: "Region 5 A-AA", time: "17:57.07", place: "9th", date: "Oct 23" },
+        { meet: "Tennessee Classic", time: "17:28.81", place: "50th", date: "Sep 20" },
+        { meet: "Chickasaw Trails Invite", time: "17:14.12", place: "22nd", date: "Sep 6" },
+      ] },
+      { year: "2007", grade: null, races: [
+        { meet: "Nashville Metro Championships", time: "17:20.36", place: "15th", date: "listed under 2007 season with Oct 16, 2008 date on site" },
+        { meet: "TSSAA State CC Championship", time: "17:55.98", place: "37th", date: "Nov 3" },
+        { meet: "Brooks Memphis Twilight Classic", time: "17:47.49", place: "81st", date: "Oct 6" },
+      ] },
+    ],
+  },
+];
+
 (function render(){
   const list = document.getElementById('recordsList');
   const sexToggle = document.getElementById('sexToggle');
@@ -157,7 +789,70 @@ const GIRLS_RECORDS = [
     return d.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
   }
 
+  let selectedAlumnus = null;
+
+  function fmtSeasonDate(dateStr, year){
+    return `${dateStr}, ${year}`;
+  }
+
+  function renderAlumni(){
+    if (ALUMNI.length === 0){
+      list.innerHTML = `<div class="callout">No alumni added yet — check back once it's added.</div>`;
+      return;
+    }
+    const sorted = [...ALUMNI].sort((a, b) => a.rank - b.rank);
+    if (!selectedAlumnus) selectedAlumnus = sorted[0].name;
+    const athlete = sorted.find(a => a.name === selectedAlumnus);
+
+    const options = sorted.map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
+
+    let body;
+    if (athlete.noData){
+      body = `<div class="callout">No detailed XC race history on file for this athlete beyond their All-Time #${athlete.rank} entry. ${athlete.profile ? `<a href="${athlete.profile}" target="_blank" rel="noopener">View MileSplit profile →</a>` : ''}</div>`;
+    } else {
+      const prBox = athlete.pr ? `
+        <div style="margin-bottom:16px;">
+          <span class="pr-time-box" style="font-size:16px; padding:4px 10px;">${athlete.pr.time}<span class="pr-tag">HS PR</span></span>
+          <span style="color:var(--slate); font-size:13px; margin-left:8px;">${athlete.pr.meet}${athlete.pr.place ? ` · ${athlete.pr.place}` : ''} · ${athlete.pr.date}</span>
+        </div>
+      ` : '';
+      const seasonsHtml = athlete.seasons.map(s => `
+        <h4 class="link-subhead" style="margin-top:14px;">${s.year}${s.grade ? ` — ${s.grade}` : ''}</h4>
+        <div class="results-table athlete-view">
+          <div class="results-table-head"><div>Meet</div><div>Place</div><div>Time</div></div>
+          ${s.races.map((r, i) => {
+            const isPR = athlete.pr && r.time === athlete.pr.time;
+            return `
+            <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${isPR ? ' is-pr' : ''}">
+              <div class="rt-name">${r.meet}<div class="rt-sub">${fmtSeasonDate(r.date, s.year)}</div></div>
+              <div class="rt-place">${r.place || '—'}</div>
+              <div class="rt-time">${isPR ? `<span class="pr-time-box">${r.time}<span class="pr-tag">PR</span></span>` : r.time}</div>
+            </div>
+          `;
+          }).join('')}
+        </div>
+      `).join('');
+      body = prBox + seasonsHtml;
+    }
+
+    list.innerHTML = `
+      <div class="link-card" style="display:block; cursor:default;">
+        <div class="t" style="font-size:18px; margin-bottom:4px;">Alumni Careers</div>
+        <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Full high school XC career, season by season. All-time rank shown next to each name.</div>
+        <div style="margin-bottom:16px;">
+          <select id="alumniSelect" class="athlete-select">${options}</select>
+        </div>
+        ${body}
+      </div>
+    `;
+    document.getElementById('alumniSelect').addEventListener('change', (e) => {
+      selectedAlumnus = e.target.value;
+      renderAlumni();
+    });
+  }
+
   function render_list(){
+    if (currentSex === 'alumni'){ renderAlumni(); return; }
     const records = currentSex === 'boys' ? BOYS_RECORDS : GIRLS_RECORDS;
     if (records.length === 0){
       list.innerHTML = `<div class="callout">No ${currentSex} all-time list yet — check back once it's added.</div>`;
