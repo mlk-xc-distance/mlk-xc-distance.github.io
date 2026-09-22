@@ -820,21 +820,33 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           ${avg3 ? `<div><div class="label" style="color:var(--slate);">${avg3.label} Races Avg</div><div class="value" style="color:var(--pine);">${avg3.time}</div></div>` : ''}
           ${avg5 ? `<div><div class="label" style="color:var(--slate);">${avg5.label} Races Avg</div><div class="value" style="color:var(--pine);">${avg5.time}</div></div>` : ''}
         </div>` : ''}
-        <div class="results-table athlete-view">
-          <div class="results-table-head">
-            <div>Meet</div><div>Place</div><div>Time</div>
-          </div>
-          ${races.map((r, i) => {
-            const badge = badgeFor(selected, r.time, r.season);
-            return `
-            <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${badge === 'PR' ? ' is-pr' : ''}${badge === 'SB' ? ' is-sb' : ''}">
-              <div class="rt-name">${r.meetName}<div class="rt-sub">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}${r.season ? ` · ${r.season} season` : ''}</div></div>
-              <div class="rt-place">${r.place}</div>
-              <div class="rt-time">${timeCell(r.time, badge)}</div>
+        ${(() => {
+          const seasonGroups = [];
+          races.forEach(r => {
+            const season = r.season || r.date.slice(0, 4);
+            const last = seasonGroups[seasonGroups.length - 1];
+            if (last && last.season === season) last.races.push(r);
+            else seasonGroups.push({ season, races: [r] });
+          });
+          return seasonGroups.map(g => `
+            <h4 class="link-subhead" style="margin-top:16px;">${g.season} Season</h4>
+            <div class="results-table athlete-view">
+              <div class="results-table-head">
+                <div>Meet</div><div>Place</div><div>Time</div>
+              </div>
+              ${g.races.map((r, i) => {
+                const badge = badgeFor(selected, r.time, r.season);
+                return `
+                <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${badge === 'PR' ? ' is-pr' : ''}${badge === 'SB' ? ' is-sb' : ''}">
+                  <div class="rt-name">${r.meetName}<div class="rt-sub">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div></div>
+                  <div class="rt-place">${r.place}</div>
+                  <div class="rt-time">${timeCell(r.time, badge)}</div>
+                </div>
+              `;
+              }).join('')}
             </div>
-          `;
-          }).join('')}
-        </div>
+          `).join('');
+        })()}
       </div>
     `;
   }
