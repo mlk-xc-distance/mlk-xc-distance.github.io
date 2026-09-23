@@ -44,6 +44,9 @@
     background:var(--pine);
     border-bottom:3px solid var(--clay);
   }
+  #resultsList, #recordsList{
+    scroll-margin-top:115px;
+  }
   .nav{
     display:flex; align-items:center; justify-content:space-between;
     max-width:900px; margin:0 auto; padding:14px 20px;
