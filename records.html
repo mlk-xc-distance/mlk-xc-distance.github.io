@@ -1339,9 +1339,13 @@ const ALUMNI = [
     `;
     const options = sorted.map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
 
+    const recordsArr = athlete.gender === 'boys' ? BOYS_RECORDS : GIRLS_RECORDS;
+    const recordEntry = recordsArr.find(r => `${r.first} ${r.last}` === athlete.name);
+    const nameHeading = `<h3 class="link-subhead" style="font-size:16px; margin-bottom:10px;">${athlete.name}${recordEntry ? ` — Class of ${recordEntry.classYear}` : ''}</h3>`;
+
     let body;
     if (athlete.noData){
-      body = `<div class="callout">No detailed XC race history on file for this athlete beyond their All-Time #${athlete.rank} entry. ${athlete.profile ? `<a href="${athlete.profile}" target="_blank" rel="noopener">View MileSplit profile →</a>` : ''}</div>`;
+      body = nameHeading + `<div class="callout">No detailed XC race history on file for this athlete beyond their All-Time #${athlete.rank} entry. ${athlete.profile ? `<a href="${athlete.profile}" target="_blank" rel="noopener">View MileSplit profile →</a>` : ''}</div>`;
     } else {
       const prBox = athlete.pr ? `
         <div style="margin-bottom:16px;">
@@ -1372,7 +1376,7 @@ const ALUMNI = [
         </div>
       `;
       }).join('');
-      body = prBox + seasonsHtml;
+      body = nameHeading + prBox + seasonsHtml;
     }
 
     list.innerHTML = `
