@@ -69,6 +69,18 @@
   }
   .search-bar input::placeholder{color:var(--clay-soft); opacity:0.8;}
   .search-bar input:focus{outline:2px solid var(--clay); outline-offset:1px;}
+  .search-bar input{padding-right:32px;}
+  .search-clear-btn{
+    display:none;
+    position:absolute;
+    right:8px; top:50%; transform:translateY(-50%);
+    background:none; border:none;
+    color:var(--clay-soft);
+    font-size:20px; line-height:1;
+    cursor:pointer;
+    padding:2px 4px;
+  }
+  .search-clear-btn:hover{color:var(--chalk);}
   .search-results{
     display:none;
     position:absolute;

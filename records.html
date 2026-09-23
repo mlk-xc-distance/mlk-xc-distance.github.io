@@ -49,7 +49,7 @@
   </nav>
   <div class="search-bar">
     <div class="search-bar-inner">
-      <input type="text" id="siteSearchInput" placeholder="Search athletes (current & alumni)..." autocomplete="off">
+      <input type="text" id="siteSearchInput" placeholder="Search athletes (current & alumni)..." autocomplete="off"><button type="button" id="siteSearchClear" class="search-clear-btn" aria-label="Clear search">&times;</button>
       <div class="search-results" id="siteSearchResults"></div>
     </div>
   </div>
@@ -146,8 +146,13 @@ const SEARCH_INDEX = [
 
     const input = document.getElementById('siteSearchInput');
     const resultsEl = document.getElementById('siteSearchResults');
+    const clearBtn = document.getElementById('siteSearchClear');
     if (!input) return;
+    function updateClearBtn(){
+      clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+    }
     input.addEventListener('input', () => {
+      updateClearBtn();
       const q = input.value.trim().toLowerCase();
       if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; return; }
       const matches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
@@ -158,6 +163,15 @@ const SEARCH_INDEX = [
       }
       resultsEl.style.display = 'block';
     });
+    if (clearBtn){
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        updateClearBtn();
+        input.focus();
+      });
+    }
     document.addEventListener('click', (e) => {
       if (!e.target.closest('.search-bar')) resultsEl.style.display = 'none';
     });
