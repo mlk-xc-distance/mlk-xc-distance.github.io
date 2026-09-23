@@ -981,11 +981,23 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const races = racesFor(selected);
     const avg3 = avgTimeStr(races, 3);
     const avg5 = races.length > 3 ? avgTimeStr(races, 5) : null;
+
+    const eligibleRaces = races.filter(r => isFiveK(r.meetName));
+    const prSeconds = eligibleRaces.length ? Math.min(...eligibleRaces.map(r => timeToSeconds(r.time))) : null;
+    const prRace = eligibleRaces.find(r => timeToSeconds(r.time) === prSeconds);
+    const currentSeason = races.length ? (races[0].season || races[0].date.slice(0, 4)) : null;
+    const seasonEligible = eligibleRaces.filter(r => (r.season || r.date.slice(0, 4)) === currentSeason);
+    const sbSeconds = seasonEligible.length ? Math.min(...seasonEligible.map(r => timeToSeconds(r.time))) : null;
+    const sbRace = seasonEligible.find(r => timeToSeconds(r.time) === sbSeconds);
+    const showSB = sbRace && (!prRace || sbRace.time !== prRace.time);
+
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
         <div class="t" style="font-size:18px; margin-bottom:2px;">${selected} — Race History</div>
-        ${(avg3 || avg5) ? `
+        ${(avg3 || avg5 || prRace || showSB) ? `
         <div class="meet-facts" style="border-top:none; padding-top:0; margin-top:0; margin-bottom:14px; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr));">
+          ${prRace ? `<div><div class="label" style="color:var(--slate);">Personal Record</div><div class="value">${timeCell(prRace.time, 'PR')}</div></div>` : ''}
+          ${showSB ? `<div><div class="label" style="color:var(--slate);">${currentSeason} Season Best</div><div class="value">${timeCell(sbRace.time, 'SB')}</div></div>` : ''}
           ${avg3 ? `<div><div class="label" style="color:var(--slate);">${avg3.label} Races Avg</div><div class="value" style="color:var(--pine);">${avg3.time}</div></div>` : ''}
           ${avg5 ? `<div><div class="label" style="color:var(--slate);">${avg5.label} Races Avg</div><div class="value" style="color:var(--pine);">${avg5.time}</div></div>` : ''}
         </div>` : ''}
