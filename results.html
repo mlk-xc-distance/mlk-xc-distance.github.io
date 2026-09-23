@@ -989,7 +989,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const seasonEligible = eligibleRaces.filter(r => (r.season || r.date.slice(0, 4)) === currentSeason);
     const sbSeconds = seasonEligible.length ? Math.min(...seasonEligible.map(r => timeToSeconds(r.time))) : null;
     const sbRace = seasonEligible.find(r => timeToSeconds(r.time) === sbSeconds);
-    const showSB = sbRace && (!prRace || sbRace.time !== prRace.time);
+    const showSB = !!sbRace;
 
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
