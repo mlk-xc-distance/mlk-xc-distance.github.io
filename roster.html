@@ -193,6 +193,7 @@ const SEARCH_INDEX = [
       <div class="roster-filters" id="sortToggle" role="group" aria-label="Sort order">
         <button data-sort="grade" aria-pressed="false">By Grade</button>
         <button data-sort="time" class="active" aria-pressed="true">By PR</button>
+        <button data-sort="sb" aria-pressed="false">By SB</button>
       </div>
     </div>
 
@@ -296,6 +297,46 @@ const ATHLETE_TIMES = {
   "Ava Sanderfur": "43:37.05",
 };
 
+// Each athlete's fastest time so far THIS season (2026). Update whenever new results come in —
+// athletes with no 2026 race yet are simply left out and sort to the end.
+const ATHLETE_SB_TIMES = {
+  "Brent Ferrell": "15:45.49",
+  "Miles Fowler": "17:06.58",
+  "Dillon Fell": "17:40.26",
+  "Claude Yriart": "18:54.66",
+  "Rolando Muniz-Huerta": "18:54.87",
+  "Samuel Petrony": "19:19.35",
+  "Tanner Jones": "19:44.90",
+  "Will Blocher": "21:41.30",
+  "Cooper Wallace": "22:03.40",
+  "Harper Bush": "22:16.71",
+  "Joseph Lambert": "23:21.78",
+  "Winston Walker": "23:31.02",
+  "Ben Lewis": "23:42.86",
+  "Cooper Hubbard": "23:46.74",
+  "Liam Durham": "24:21.02",
+  "Campbell Gnetz": "25:08.85",
+  "Ethan Newberry": "25:09.97",
+  "Oscar Spitzer": "25:13.22",
+  "Jack Edmonson": "25:56.40",
+  "Damien Tellez": "26:13.05",
+  "Colin Dinh": "26:23.26",
+  "Brandon Johnson": "26:25.19",
+  "Will Lindstrom": "27:10.48",
+  "Vicki Grammer": "24:25.46",
+  "Ruby York": "24:49.44",
+  "Ellianna Wicker": "25:20.70",
+  "Eleanor Bonino": "25:34.96",
+  "Emmy Kotras": "25:50.44",
+  "Margaret Ward": "26:20.53",
+  "Olivia Collins": "29:39.64",
+  "Nevaeh Bowers": "36:37.27",
+  "Kenzie Wilcox": "38:10.27",
+  "Leah Hatt": "38:28.09",
+  "Ivy Brame-Blake": "43:28.02",
+  "Ava Sanderfur": "43:37.05",
+};
+
 function timeToSeconds(t){
   if (!t) return null;
   const [m, s] = t.split(":").map(Number);
@@ -319,12 +360,15 @@ const GRADE_SORT_ORDER = { Sr: 0, Jr: 1, So: 2, Fr: 3 };
 
 const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
   const prTime = ATHLETE_TIMES[`${first} ${last}`] || null;
+  const sbTime = ATHLETE_SB_TIMES[`${first} ${last}`] || null;
   return {
     first, last, gender, classYear,
     grade: GRADE_BY_CLASS_YEAR[classYear] || "",
     photo: "photos/" + slug(first, last) + ".jpg",
     prTime,
     prSeconds: timeToSeconds(prTime),
+    sbTime,
+    sbSeconds: timeToSeconds(sbTime),
     manualRank: (MANUAL_RANK[`${first} ${last}`] !== undefined) ? MANUAL_RANK[`${first} ${last}`] : null,
   };
 });
@@ -350,6 +394,18 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
         if (a.prSeconds != null && b.prSeconds != null) return a.prSeconds - b.prSeconds;
         if (a.prSeconds != null) return -1;
         if (b.prSeconds != null) return 1;
+        if (a.manualRank != null && b.manualRank != null) return a.manualRank - b.manualRank;
+        if (a.manualRank != null) return -1;
+        if (b.manualRank != null) return 1;
+        return a.first.localeCompare(b.first);
+      });
+    }
+    if (currentSort === 'sb'){
+      // Season best first; athletes with no 2026 race yet fall back to manual rank, then alphabetical.
+      return [...list].sort((a, b) => {
+        if (a.sbSeconds != null && b.sbSeconds != null) return a.sbSeconds - b.sbSeconds;
+        if (a.sbSeconds != null) return -1;
+        if (b.sbSeconds != null) return 1;
         if (a.manualRank != null && b.manualRank != null) return a.manualRank - b.manualRank;
         if (a.manualRank != null) return -1;
         if (b.manualRank != null) return 1;
