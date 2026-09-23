@@ -147,26 +147,58 @@ const SEARCH_INDEX = [
     const resultsEl = document.getElementById('siteSearchResults');
     const clearBtn = document.getElementById('siteSearchClear');
     if (!input) return;
+    let currentMatches = [];
+    let highlightedIndex = -1;
     function updateClearBtn(){
       clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
     }
-    input.addEventListener('input', () => {
-      updateClearBtn();
-      const q = input.value.trim().toLowerCase();
-      if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; return; }
-      const matches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
-      if (matches.length === 0){
+    function renderResults(){
+      if (currentMatches.length === 0){
         resultsEl.innerHTML = '<div class="search-empty">No matches found.</div>';
       } else {
-        resultsEl.innerHTML = matches.map(m => `<a class="search-result" href="${m.url}"><span>${m.name}</span><span class="search-result-tag">${m.type === 'current' ? 'Current' : 'Alumni'}</span></a>`).join('');
+        resultsEl.innerHTML = currentMatches.map((m, i) => `<a class="search-result${i === highlightedIndex ? ' highlighted' : ''}" href="${m.url}"><span>${m.name}</span><span class="search-result-tag">${m.type === 'current' ? 'Current' : 'Alumni'}</span></a>`).join('');
       }
+    }
+    input.addEventListener('input', () => {
+      updateClearBtn();
+      highlightedIndex = -1;
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; currentMatches = []; return; }
+      currentMatches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+      renderResults();
       resultsEl.style.display = 'block';
+    });
+    input.addEventListener('keydown', (e) => {
+      if (resultsEl.style.display !== 'block' || currentMatches.length === 0) return;
+      if (e.key === 'ArrowDown'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex + 1) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex - 1 + currentMatches.length) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter'){
+        if (highlightedIndex >= 0 && currentMatches[highlightedIndex]){
+          e.preventDefault();
+          window.location.href = currentMatches[highlightedIndex].url;
+        }
+      } else if (e.key === 'Escape'){
+        resultsEl.style.display = 'none';
+        input.blur();
+      }
     });
     if (clearBtn){
       clearBtn.addEventListener('click', () => {
         input.value = '';
         resultsEl.style.display = 'none';
         resultsEl.innerHTML = '';
+        currentMatches = [];
+        highlightedIndex = -1;
         updateClearBtn();
         input.focus();
       });
