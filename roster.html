@@ -454,12 +454,12 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
   function cardHtml(a){
     return `
       <div class="athlete">
-        <div class="avatar">
+        <a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="avatar" style="text-decoration:none;">
           <span class="init">${initials(a)}</span>
           <img src="${a.photo}" alt="${a.first} ${a.last}" style="display:none;"
                onload="this.style.display='block'; this.previousElementSibling.style.display='none';"
                onerror="this.style.display='none';">
-        </div>
+        </a>
         <div class="name"><a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="roster-name-link">${a.first} ${a.last}</a></div>
         <div class="meta">${a.grade}</div>
       </div>
