@@ -47,6 +47,123 @@
       <li><a href="index.html#links">Links</a></li>
     </ul>
   </nav>
+  <div class="search-bar">
+    <div class="search-bar-inner">
+      <input type="text" id="siteSearchInput" placeholder="Search athletes (current & alumni)..." autocomplete="off">
+      <div class="search-results" id="siteSearchResults"></div>
+    </div>
+
+  <script>
+  (function(){
+const SEARCH_INDEX = [
+  { name: "Simon Ally", type: "current", url: "results.html?athlete=" + encodeURIComponent("Simon Ally") },
+  { name: "Praveen Bhave", type: "current", url: "results.html?athlete=" + encodeURIComponent("Praveen Bhave") },
+  { name: "Sachin Bhave", type: "current", url: "results.html?athlete=" + encodeURIComponent("Sachin Bhave") },
+  { name: "Will Blocher", type: "current", url: "results.html?athlete=" + encodeURIComponent("Will Blocher") },
+  { name: "Eleanor Bonino", type: "current", url: "results.html?athlete=" + encodeURIComponent("Eleanor Bonino") },
+  { name: "Nevaeh Bowers", type: "current", url: "results.html?athlete=" + encodeURIComponent("Nevaeh Bowers") },
+  { name: "Ivy Brame-Blake", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ivy Brame-Blake") },
+  { name: "Harper Bush", type: "current", url: "results.html?athlete=" + encodeURIComponent("Harper Bush") },
+  { name: "Olivia Collins", type: "current", url: "results.html?athlete=" + encodeURIComponent("Olivia Collins") },
+  { name: "Liam Durham", type: "current", url: "results.html?athlete=" + encodeURIComponent("Liam Durham") },
+  { name: "Jack Edmonson", type: "current", url: "results.html?athlete=" + encodeURIComponent("Jack Edmonson") },
+  { name: "Dillon Fell", type: "current", url: "results.html?athlete=" + encodeURIComponent("Dillon Fell") },
+  { name: "Brent Ferrell", type: "current", url: "results.html?athlete=" + encodeURIComponent("Brent Ferrell") },
+  { name: "Miles Fowler", type: "current", url: "results.html?athlete=" + encodeURIComponent("Miles Fowler") },
+  { name: "Campbell Gnetz", type: "current", url: "results.html?athlete=" + encodeURIComponent("Campbell Gnetz") },
+  { name: "Vicki Grammer", type: "current", url: "results.html?athlete=" + encodeURIComponent("Vicki Grammer") },
+  { name: "Leah Hatt", type: "current", url: "results.html?athlete=" + encodeURIComponent("Leah Hatt") },
+  { name: "Cooper Hubbard", type: "current", url: "results.html?athlete=" + encodeURIComponent("Cooper Hubbard") },
+  { name: "Brandon Johnson", type: "current", url: "results.html?athlete=" + encodeURIComponent("Brandon Johnson") },
+  { name: "Tanner Jones", type: "current", url: "results.html?athlete=" + encodeURIComponent("Tanner Jones") },
+  { name: "Emmy Kotras", type: "current", url: "results.html?athlete=" + encodeURIComponent("Emmy Kotras") },
+  { name: "Joseph Lambert", type: "current", url: "results.html?athlete=" + encodeURIComponent("Joseph Lambert") },
+  { name: "Ben Lewis", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ben Lewis") },
+  { name: "Will Lindstrom", type: "current", url: "results.html?athlete=" + encodeURIComponent("Will Lindstrom") },
+  { name: "Rolando Muniz-Huerta", type: "current", url: "results.html?athlete=" + encodeURIComponent("Rolando Muniz-Huerta") },
+  { name: "Ethan Newberry", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ethan Newberry") },
+  { name: "Samuel Petrony", type: "current", url: "results.html?athlete=" + encodeURIComponent("Samuel Petrony") },
+  { name: "Ava Sanderfur", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ava Sanderfur") },
+  { name: "Oscar Spitzer", type: "current", url: "results.html?athlete=" + encodeURIComponent("Oscar Spitzer") },
+  { name: "Damien Tellez", type: "current", url: "results.html?athlete=" + encodeURIComponent("Damien Tellez") },
+  { name: "Winston Walker", type: "current", url: "results.html?athlete=" + encodeURIComponent("Winston Walker") },
+  { name: "Cooper Wallace", type: "current", url: "results.html?athlete=" + encodeURIComponent("Cooper Wallace") },
+  { name: "Margaret Ward", type: "current", url: "results.html?athlete=" + encodeURIComponent("Margaret Ward") },
+  { name: "Ellianna Wicker", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ellianna Wicker") },
+  { name: "Kenzie Wilcox", type: "current", url: "results.html?athlete=" + encodeURIComponent("Kenzie Wilcox") },
+  { name: "Aidan Withers", type: "current", url: "results.html?athlete=" + encodeURIComponent("Aidan Withers") },
+  { name: "Ruby York", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ruby York") },
+  { name: "Claude Yriart", type: "current", url: "results.html?athlete=" + encodeURIComponent("Claude Yriart") },
+  { name: "Colin Dinh", type: "current", url: "results.html?athlete=" + encodeURIComponent("Colin Dinh") },
+  { name: "Wyatt Boling", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Wyatt Boling") },
+  { name: "Colter Lewis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Colter Lewis") },
+  { name: "Korben Lewis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Korben Lewis") },
+  { name: "Miles Ally", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Miles Ally") },
+  { name: "Sam Klockenkemper", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sam Klockenkemper") },
+  { name: "Ryan Bailey", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Ryan Bailey") },
+  { name: "Jared Clark", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jared Clark") },
+  { name: "Micah Wasserman", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Micah Wasserman") },
+  { name: "London Craddock", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("London Craddock") },
+  { name: "Christopher Hornsby", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Christopher Hornsby") },
+  { name: "Ryan Graves", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Ryan Graves") },
+  { name: "David Gilmore", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("David Gilmore") },
+  { name: "Jack Forte", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jack Forte") },
+  { name: "Stephen Wathen", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Stephen Wathen") },
+  { name: "Noah Daniel", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Noah Daniel") },
+  { name: "Berket Mesele", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Berket Mesele") },
+  { name: "Sam Brobeck", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sam Brobeck") },
+  { name: "John Gilpin", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("John Gilpin") },
+  { name: "Tyler Masters", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Tyler Masters") },
+  { name: "Nick Winn", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Nick Winn") },
+  { name: "Willie Clark", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Willie Clark") },
+  { name: "Jonathan Gilbreath", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jonathan Gilbreath") },
+  { name: "Diana Warrick", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Diana Warrick") },
+  { name: "Sybil Levine", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sybil Levine") },
+  { name: "Kara Reed", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Kara Reed") },
+  { name: "Carrie Higgins", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Carrie Higgins") },
+  { name: "Alexa Romersa", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Alexa Romersa") },
+  { name: "Christina Curtis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Christina Curtis") },
+  { name: "Hayden Maclachlan", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Hayden Maclachlan") },
+  { name: "Victoria Gross", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Victoria Gross") },
+  { name: "Eliza Deshon", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Eliza Deshon") },
+  { name: "Sophia Hardin", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sophia Hardin") },
+  { name: "Annika Dichtl", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Annika Dichtl") },
+  { name: "Naila Kailani", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Naila Kailani") },
+  { name: "Uma Plambeck", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Uma Plambeck") },
+  { name: "Leslie Veliz", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Leslie Veliz") },
+  { name: "Youli Yao", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Youli Yao") },
+  { name: "Natey Kinzounza", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Natey Kinzounza") },
+  { name: "Nicole Rammer", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Nicole Rammer") },
+  { name: "Gabby Havron", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Gabby Havron") },
+  { name: "Sophia Brame-Goldthwaite", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sophia Brame-Goldthwaite") },
+  { name: "Amber Moore", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Amber Moore") },
+  { name: "Anna Reside", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Anna Reside") },
+  { name: "Kya Lambert", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Kya Lambert") },
+  { name: "Anna Claire Raines", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Anna Claire Raines") },
+  { name: "Meg Tennant", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Meg Tennant") },
+];
+
+    const input = document.getElementById('siteSearchInput');
+    const resultsEl = document.getElementById('siteSearchResults');
+    if (!input) return;
+    input.addEventListener('input', () => {
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; return; }
+      const matches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+      if (matches.length === 0){
+        resultsEl.innerHTML = '<div class="search-empty">No matches found.</div>';
+      } else {
+        resultsEl.innerHTML = matches.map(m => `<a class="search-result" href="${m.url}"><span>${m.name}</span><span class="search-result-tag">${m.type === 'current' ? 'Current' : 'Alumni'}</span></a>`).join('');
+      }
+      resultsEl.style.display = 'block';
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-bar')) resultsEl.style.display = 'none';
+    });
+  })();
+  </script>
+  </div>
+
 </header>
 
 <section id="results" style="padding-top:40px;">
