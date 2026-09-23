@@ -696,15 +696,21 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     return time;
   }
 
-  function badgeFor(name, time, season){
-    const allTimes = racesFor(name).map(r => timeToSeconds(r.time));
+  function isFiveK(meetName){
+    return !/\b(4000m|3200m|2\s*mile|3\s*mile)\b/i.test(meetName);
+  }
+
+  function badgeFor(name, time, season, raceMeetName){
+    if (raceMeetName && !isFiveK(raceMeetName)) return null;
+    const eligibleRaces = racesFor(name).filter(r => isFiveK(r.meetName));
+    const allTimes = eligibleRaces.map(r => timeToSeconds(r.time));
     if (allTimes.length && timeToSeconds(time) === Math.min(...allTimes)) return 'PR';
-    const seasonTimes = racesFor(name).filter(r => r.season === season).map(r => timeToSeconds(r.time));
+    const seasonTimes = eligibleRaces.filter(r => r.season === season).map(r => timeToSeconds(r.time));
     if (seasonTimes.length && timeToSeconds(time) === Math.min(...seasonTimes)) return 'SB';
     return null;
   }
 
-  function finisherTable(finishers, season){
+  function finisherTable(finishers, season, currentMeetName){
     if (!finishers || finishers.length === 0) return '';
     const sorted = [...finishers].sort((a, b) => timeToSeconds(a.time) - timeToSeconds(b.time));
     return `
@@ -713,7 +719,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           <div>Place</div><div>Name</div><div>Time</div>
         </div>
         ${sorted.map((f, i) => {
-          const badge = badgeFor(f.name, f.time, season);
+          const badge = badgeFor(f.name, f.time, season, currentMeetName);
           return `
           <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${badge === 'PR' ? ' is-pr' : ''}${badge === 'SB' ? ' is-sb' : ''}">
             <div class="rt-place">${f.place}</div>
@@ -751,8 +757,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
             ${r.girlsPlace ? `<div><div class="label" style="color:var(--slate);">Girls Team</div><div class="value" style="color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
           </div>` : ''}
           <div class="results-columns">
-            ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4))}</div>` : ''}
-            ${r.topGirls ? `<div><h4 class="link-subhead" style="margin-top:14px;">Girls</h4>${finisherTable(r.topGirls, r.season || r.date.slice(0, 4))}</div>` : ''}
+            ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
+            ${r.topGirls ? `<div><h4 class="link-subhead" style="margin-top:14px;">Girls</h4>${finisherTable(r.topGirls, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
           </div>
           ${r.resultsLink ? `<div style="margin-top:14px;"><a href="${r.resultsLink}" target="_blank" rel="noopener" style="color:var(--clay); font-weight:600; text-decoration:underline;">Official Results →</a></div>` : ''}
         </div>
@@ -835,7 +841,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
                 <div>Meet</div><div>Place</div><div>Time</div>
               </div>
               ${g.races.map((r, i) => {
-                const badge = badgeFor(selected, r.time, r.season);
+                const badge = badgeFor(selected, r.time, r.season, r.meetName);
                 return `
                 <div class="results-table-row${i % 2 === 1 ? ' alt' : ''}${badge === 'PR' ? ' is-pr' : ''}${badge === 'SB' ? ' is-sb' : ''}">
                   <div class="rt-name">${r.meetName}<div class="rt-sub">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div></div>
@@ -872,6 +878,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   function prLeaderboard(){
     const board = {}; // name -> { gender, seconds, time, meetName, date, location }
     ALL_RESULTS.forEach(r => {
+      if (!isFiveK(r.meetName)) return;
       [["boys", r.topBoys], ["girls", r.topGirls]].forEach(([gender, finishers]) => {
         (finishers || []).forEach(f => {
           const secs = timeToSeconds(f.time);
@@ -916,6 +923,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     ALL_RESULTS.forEach(r => {
       const rSeason = r.season || r.date.slice(0, 4);
       if (rSeason !== season) return;
+      if (!isFiveK(r.meetName)) return;
       [["boys", r.topBoys], ["girls", r.topGirls]].forEach(([gender, finishers]) => {
         (finishers || []).forEach(f => {
           const secs = timeToSeconds(f.time);
