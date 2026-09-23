@@ -1320,18 +1320,24 @@ const ALUMNI = [
     return !/\b(4000m|4k|3200m|2\s*mile|3\s*mile)\b/i.test(meetName);
   }
 
+  let selectedAlumniGender = 'boys';
+
   function renderAlumni(){
     if (ALUMNI.length === 0){
       list.innerHTML = `<div class="callout">No alumni added yet — check back once it's added.</div>`;
       return;
     }
-    const sorted = [...ALUMNI].sort((a, b) => a.rank - b.rank);
-    if (!selectedAlumnus) selectedAlumnus = sorted[0].name;
+    const sorted = [...ALUMNI].filter(a => a.gender === selectedAlumniGender).sort((a, b) => a.rank - b.rank);
+    if (!selectedAlumnus || !sorted.some(a => a.name === selectedAlumnus)) selectedAlumnus = sorted[0].name;
     const athlete = sorted.find(a => a.name === selectedAlumnus);
 
-    const boysOpts = sorted.filter(a => a.gender === 'boys').map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
-    const girlsOpts = sorted.filter(a => a.gender === 'girls').map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
-    const options = `<optgroup label="Boys">${boysOpts}</optgroup><optgroup label="Girls">${girlsOpts}</optgroup>`;
+    const genderTabs = `
+      <div class="roster-filters" style="margin-bottom:14px;" role="group" aria-label="Filter alumni by team">
+        <button type="button" data-alumni-gender="boys" class="${selectedAlumniGender === 'boys' ? 'active' : ''}" aria-pressed="${selectedAlumniGender === 'boys'}">Boys</button>
+        <button type="button" data-alumni-gender="girls" class="${selectedAlumniGender === 'girls' ? 'active' : ''}" aria-pressed="${selectedAlumniGender === 'girls'}">Girls</button>
+      </div>
+    `;
+    const options = sorted.map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
 
     let body;
     if (athlete.noData){
@@ -1373,6 +1379,7 @@ const ALUMNI = [
       <div class="link-card" style="display:block; cursor:default;">
         <div class="t" style="font-size:18px; margin-bottom:4px;">Alumni Careers</div>
         <div style="font-size:13px; color:var(--slate); margin-bottom:14px;">Full high school XC career, season by season. All-time rank shown next to each name.</div>
+        ${genderTabs}
         <div style="margin-bottom:16px;">
           <select id="alumniSelect" class="athlete-select">${options}</select>
         </div>
@@ -1382,6 +1389,13 @@ const ALUMNI = [
     document.getElementById('alumniSelect').addEventListener('change', (e) => {
       selectedAlumnus = e.target.value;
       renderAlumni();
+    });
+    list.querySelectorAll('[data-alumni-gender]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedAlumniGender = btn.dataset.alumniGender;
+        selectedAlumnus = null;
+        renderAlumni();
+      });
     });
   }
 
