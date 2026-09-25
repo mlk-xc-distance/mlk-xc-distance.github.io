@@ -336,7 +336,7 @@ const MEETS = [
   { name: "The Southern Showcase", location: "John Hunt Running Park, Huntsville, AL", address: "2151 Airport Rd SW, Huntsville, AL 35801", lat: 34.6892, lon: -86.5868, parking: "No fee. John Hunt lots fill up fast — the lot across the street at Get-A-Way Skate Park is a great backup option.", parkingAddress: "3685 Alex McAllister Drive SW, Huntsville, AL 35805", parkingMapLabel: "Directions to Skate Park Lot", courseMapImg: "maps/southern-showcase.jpg", date: "2026-09-19", time: "Boys Varsity (Blue) <strong>7:50 AM</strong> · Girls (Crimson) <strong>9:00 AM</strong> · Boys JV (Crimson) <strong>9:30 AM</strong> — <strong>moved 30 min earlier due to heat</strong>", raceHour: "07:50", lastRaceHour: "09:30", alertBadge: "NEW RACE TIMES!", link: "https://al.milesplit.com/meets/719044-the-southern-showcase-powered-by-huntsville-high-school-2026/info", results: "https://al.milesplit.com/meets/719044-the-southern-showcase-powered-by-huntsville-high-school-2026/results" },
   { name: "Hoka Frank Horton Night Classic", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", lat: 35.1381, lon: -89.8338, parking: "$7/car in advance, $10/car day-of; buying ahead also secures a better parking spot.", parkingMap: "https://runsignup.com/TicketEvent/HortonStore26", parkingMapLabel: "Buy Parking Pass Online (Save $3)", parkingMapTitle: "Buying your parking pass ahead of time also secures a better spot", courseMapImg: "maps/frank-horton.jpg", parkingMapImg: "maps/frank-horton-parking.jpg", date: "2026-10-03", time: "Girls Purple Varsity 7:00 PM · Boys Purple Varsity 7:30 PM · Boys Gold Varsity 8:30 PM · Awards 9:00 PM", raceHour: "19:00", lastRaceHour: "20:30", link: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/info", results: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/results", officialSite: "https://thefrankhorton.com/event-info/" },
   { name: "TSIAA Week 5 (Frank Horton alternate)", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "17:50", parking: "TBD", date: "2026-10-05", time: "All Boys and Girls HS (3.1 mi) 5:50 PM (for athletes that can't travel to Frank Horton in Memphis or don't meet the roster/time limits for that race)", link: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/info", results: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/results" },
-  { name: "MSCCA Championships", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "09:00", parking: "TBD", date: "2026-10-17", time: "Boys Varsity 9:00 AM · Girls Varsity 9:40 AM", link: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/info", results: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/results", alertBadge: "2ND WEEKEND OF FALL BREAK" },
+  { name: "MSCCA Championships", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "09:00", parking: "TBD", date: "2026-10-17", time: "Boys Varsity 1:30 PM · Girls Varsity 2:15 PM · Combined JV 3:00 PM", raceHour: "13:30", lastRaceHour: "15:00", link: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/info", results: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/results", alertBadge: ["2ND WEEKEND OF FALL BREAK", "NEW RACE TIMES!"] },
   { name: "Regionals", location: "Sanders Ferry Park, Hendersonville, TN", address: "513 Sanders Ferry Rd, Hendersonville, TN 37075", lat: 36.2527, lon: -86.6060, date: "2026-10-27", time: "TBD" },
   { name: "State Championship", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", lat: 35.1381, lon: -89.8338, date: "2026-11-06", time: "TBD" },
 ];
@@ -517,7 +517,7 @@ const MEETS = [
     const countdownText = daysUntil === 0 ? "Today!" : daysUntil === 1 ? "Tomorrow!" : `${daysUntil} days away`;
     const heroSlides = [`
       <div class="kicker">Next meet</div>
-      ${next.alertBadge ? `<div class="alert-badge">${next.alertBadge}</div>` : ''}
+      ${next.alertBadge ? (Array.isArray(next.alertBadge) ? next.alertBadge : [next.alertBadge]).map(b => `<div class="alert-badge">${b}</div>`).join('') : ''}
       <h1>${meetNameHtml(next)}</h1>
       <div class="countdown-badge">${countdownText}</div>
     `];
@@ -608,7 +608,7 @@ const MEETS = [
       <li class="meet-row ${cls}">
         <div class="num">${i + 1}</div>
         <div>
-          <div class="meet-name">${meetNameHtml(m)}${(m.alertBadge && !isPast) ? ` <span class="alert-badge-row">${m.alertBadge}</span>` : ''}</div>
+          <div class="meet-name">${meetNameHtml(m)}${(m.alertBadge && !isPast) ? (Array.isArray(m.alertBadge) ? m.alertBadge : [m.alertBadge]).map(b => ` <span class="alert-badge-row">${b}</span>`).join('') : ''}</div>
           <div class="meet-loc">${locHtml}</div>
           ${parkingHtml}
           ${weatherHtml}
