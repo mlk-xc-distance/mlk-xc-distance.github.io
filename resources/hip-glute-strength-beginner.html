@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#14225E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MLK XC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="../favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<title>Hip/Glute Strength Routine — MLK Cross Country</title>
+<meta name="description" content="Beginner hip and glute strength routine for injury prevention — Martin Luther King High School Cross Country.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="site">
+  <nav class="nav">
+    <a class="team-name" href="../index.html">MLK <span>XC</span> <span class="year">2026</span></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="navlinks" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);">Menu</button>
+    <ul id="navlinks">
+      <li><a href="../index.html#next-meet">Next Meet</a></li>
+      <li><a href="../index.html#calendar">Calendar</a></li>
+      <li><a href="../roster.html">Roster</a></li>
+      <li><a href="https://photos.app.goo.gl/stjjs3EQkY86BbVC6" target="_blank" rel="noopener">Photos</a></li>
+      <li><a href="../results.html">Results</a></li>
+      <li><a href="../records.html">Records</a></li>
+      <li><a href="../index.html#links" class="nav-current">Links</a></li>
+    </ul>
+  </nav>
+  <div class="search-bar">
+    <div class="search-bar-inner">
+      <input type="text" id="siteSearchInput" placeholder="Search athletes (current & alumni)..." autocomplete="off"><button type="button" id="siteSearchClear" class="search-clear-btn" aria-label="Clear search">&times;</button>
+      <div class="search-results" id="siteSearchResults"></div>
+    </div>
+  </div>
+</header>
+
+<section class="wrap" id="main" style="padding-top:32px; padding-bottom:48px;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px; margin-bottom:6px;">
+    <h1 style="font-family:'Oswald', sans-serif; font-size:clamp(24px,4vw,34px); color:var(--pine); margin:0;">Hip/Glute Strength Routine</h1>
+    <a href="hip-glute-strength-beginner.pdf" target="_blank" rel="noopener" class="link-card" style="display:inline-block; padding:8px 16px; margin:0;">
+      <span style="font-weight:600; color:var(--clay);">Printable PDF version →</span>
+    </a>
+  </div>
+  <p style="color:var(--slate); font-size:15px; margin-bottom:20px;">Beginner-level injury-prevention exercises for the hip and glute muscles.</p>
+
+  <div class="callout" style="margin-bottom:24px;">Always complete all reps on one side before moving to the other, unless the exercise says otherwise.</div>
+
+  <div id="exerciseList"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div id="dailyQuote" class="quote-line"></div>
+    <div class="foot-links">
+      <a href="../index.html">Home</a> · <a href="../roster.html">Roster</a> · <a href="../results.html">Results</a> · <a href="../records.html">Records</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../quotes.js"></script>
+
+<script>
+
+  (function(){
+const SEARCH_INDEX = [
+  { name: "Simon Ally", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Simon Ally") },
+  { name: "Praveen Bhave", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Praveen Bhave") },
+  { name: "Sachin Bhave", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Sachin Bhave") },
+  { name: "Will Blocher", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Will Blocher") },
+  { name: "Eleanor Bonino", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Eleanor Bonino") },
+  { name: "Nevaeh Bowers", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Nevaeh Bowers") },
+  { name: "Ivy Brame-Blake", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ivy Brame-Blake") },
+  { name: "Harper Bush", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Harper Bush") },
+  { name: "Olivia Collins", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Olivia Collins") },
+  { name: "Liam Durham", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Liam Durham") },
+  { name: "Jack Edmonson", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Jack Edmonson") },
+  { name: "Dillon Fell", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Dillon Fell") },
+  { name: "Brent Ferrell", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Brent Ferrell") },
+  { name: "Miles Fowler", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Miles Fowler") },
+  { name: "Campbell Gnetz", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Campbell Gnetz") },
+  { name: "Vicki Grammer", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Vicki Grammer") },
+  { name: "Leah Hatt", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Leah Hatt") },
+  { name: "Cooper Hubbard", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Cooper Hubbard") },
+  { name: "Brandon Johnson", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Brandon Johnson") },
+  { name: "Tanner Jones", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Tanner Jones") },
+  { name: "Emmy Kotras", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Emmy Kotras") },
+  { name: "Joseph Lambert", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Joseph Lambert") },
+  { name: "Ben Lewis", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ben Lewis") },
+  { name: "Will Lindstrom", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Will Lindstrom") },
+  { name: "Rolando Muniz-Huerta", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Rolando Muniz-Huerta") },
+  { name: "Ethan Newberry", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ethan Newberry") },
+  { name: "Samuel Petrony", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Samuel Petrony") },
+  { name: "Ava Sanderfur", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ava Sanderfur") },
+  { name: "Oscar Spitzer", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Oscar Spitzer") },
+  { name: "Damien Tellez", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Damien Tellez") },
+  { name: "Winston Walker", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Winston Walker") },
+  { name: "Cooper Wallace", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Cooper Wallace") },
+  { name: "Margaret Ward", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Margaret Ward") },
+  { name: "Ellianna Wicker", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ellianna Wicker") },
+  { name: "Kenzie Wilcox", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Kenzie Wilcox") },
+  { name: "Aidan Withers", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Aidan Withers") },
+  { name: "Ruby York", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Ruby York") },
+  { name: "Claude Yriart", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Claude Yriart") },
+  { name: "Colin Dinh", type: "current", url: "../results.html?athlete=" + encodeURIComponent("Colin Dinh") },
+  { name: "Wyatt Boling", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Wyatt Boling") },
+  { name: "Colter Lewis", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Colter Lewis") },
+  { name: "Korben Lewis", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Korben Lewis") },
+  { name: "Miles Ally", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Miles Ally") },
+  { name: "Sam Klockenkemper", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Sam Klockenkemper") },
+  { name: "Ryan Bailey", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Ryan Bailey") },
+  { name: "Jared Clark", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Jared Clark") },
+  { name: "Micah Wasserman", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Micah Wasserman") },
+  { name: "London Craddock", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("London Craddock") },
+  { name: "Christopher Hornsby", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Christopher Hornsby") },
+  { name: "Ryan Graves", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Ryan Graves") },
+  { name: "David Gilmore", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("David Gilmore") },
+  { name: "Jack Forte", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Jack Forte") },
+  { name: "Stephen Wathen", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Stephen Wathen") },
+  { name: "Noah Daniel", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Noah Daniel") },
+  { name: "Berket Mesele", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Berket Mesele") },
+  { name: "Sam Brobeck", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Sam Brobeck") },
+  { name: "John Gilpin", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("John Gilpin") },
+  { name: "Tyler Masters", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Tyler Masters") },
+  { name: "Nick Winn", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Nick Winn") },
+  { name: "Willie Clark", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Willie Clark") },
+  { name: "Jonathan Gilbreath", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Jonathan Gilbreath") },
+  { name: "Diana Warrick", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Diana Warrick") },
+  { name: "Sybil Levine", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Sybil Levine") },
+  { name: "Kara Reed", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Kara Reed") },
+  { name: "Carrie Higgins", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Carrie Higgins") },
+  { name: "Alexa Romersa", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Alexa Romersa") },
+  { name: "Christina Curtis", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Christina Curtis") },
+  { name: "Hayden Maclachlan", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Hayden Maclachlan") },
+  { name: "Victoria Gross", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Victoria Gross") },
+  { name: "Eliza Deshon", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Eliza Deshon") },
+  { name: "Sophia Hardin", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Sophia Hardin") },
+  { name: "Annika Dichtl", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Annika Dichtl") },
+  { name: "Naila Kailani", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Naila Kailani") },
+  { name: "Uma Plambeck", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Uma Plambeck") },
+  { name: "Leslie Veliz", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Leslie Veliz") },
+  { name: "Youli Yao", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Youli Yao") },
+  { name: "Natey Kinzounza", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Natey Kinzounza") },
+  { name: "Nicole Rammer", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Nicole Rammer") },
+  { name: "Gabby Havron", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Gabby Havron") },
+  { name: "Sophia Brame-Goldthwaite", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Sophia Brame-Goldthwaite") },
+  { name: "Amber Moore", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Amber Moore") },
+  { name: "Anna Reside", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Anna Reside") },
+  { name: "Kya Lambert", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Kya Lambert") },
+  { name: "Anna Claire Raines", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Anna Claire Raines") },
+  { name: "Meg Tennant", type: "alumni", url: "../records.html?alumni=" + encodeURIComponent("Meg Tennant") },
+];
+
+    const input = document.getElementById('siteSearchInput');
+    const resultsEl = document.getElementById('siteSearchResults');
+    const clearBtn = document.getElementById('siteSearchClear');
+    if (!input) return;
+    let currentMatches = [];
+    let highlightedIndex = -1;
+    function updateClearBtn(){
+      clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+    }
+    function renderResults(){
+      if (currentMatches.length === 0){
+        resultsEl.innerHTML = '<div class="search-empty">No matches found.</div>';
+      } else {
+        resultsEl.innerHTML = currentMatches.map((m, i) => `<a class="search-result${i === highlightedIndex ? ' highlighted' : ''}" href="${m.url}"><span>${m.name}</span><span class="search-result-tag">${m.type === 'current' ? 'Current' : 'Alumni'}</span></a>`).join('');
+      }
+    }
+    input.addEventListener('input', () => {
+      updateClearBtn();
+      highlightedIndex = -1;
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; currentMatches = []; return; }
+      currentMatches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+      renderResults();
+      resultsEl.style.display = 'block';
+    });
+    input.addEventListener('keydown', (e) => {
+      if (resultsEl.style.display !== 'block' || currentMatches.length === 0) return;
+      if (e.key === 'ArrowDown'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex + 1) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex - 1 + currentMatches.length) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter'){
+        if (highlightedIndex >= 0 && currentMatches[highlightedIndex]){
+          e.preventDefault();
+          window.location.href = currentMatches[highlightedIndex].url;
+        }
+      } else if (e.key === 'Escape'){
+        resultsEl.style.display = 'none';
+        input.blur();
+      }
+    });
+    if (clearBtn){
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        currentMatches = [];
+        highlightedIndex = -1;
+        updateClearBtn();
+        input.focus();
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-bar')) resultsEl.style.display = 'none';
+    });
+  })();
+  </script>
+<script>
+const EXERCISES = [
+  { name: "Unilateral Deadlift", dosage: "10-15 reps · 2 sets · each leg", desc: "Stand tall with feet hip-width apart. Lean forward while at the same time raising the left leg behind you, balancing on the right leg. Keep abs and back engaged and the lifted leg strong, glute firing. Don't bend at the waist and then kick back — the lean and the leg lift should happen together, like a pendulum. Hips should stay squared to the ground; don't open to the side of the lifted leg. Bend as far as you can without breaking form, staying slow and controlled. A broom handle held against your back and the back of your lifting leg can help — you should feel it touching both spots the whole time, which tells you they're moving in unison. Doing this in front of a mirror or window also helps. Focus on balance, stability, and smooth movement." },
+  { name: "Clamshell Progression", dosage: "15-20 reps · 2 sets · each progression, each leg", desc: "Lie on your side, head supported on your bottom arm, spine straight, knees bent at about 45° with heels in line with your spine. Progression 1: keeping feet together, lift the top knee up and open (15 reps) without rolling your hips open — hips should always face forward. Progression 2: keeping knees together, raise and lower your heel with the foot in dorsiflexion (toes pointed toward shins), 15 reps. Progression 3: raise the entire top leg with the knee bent at 45°, hold the knee steady in the open position, and pulse just your heel upward for 15 pulses, foot in dorsiflexion. Flip over and repeat on the other side." },
+  { name: "Donkey Kicks", dosage: "15-20 reps · 2 sets · each leg", desc: "Hands and knees on the floor in a tabletop position. Keeping the knee bent at 90°, raise the heel of the right leg toward the ceiling and lower back to start. Keep all the leg muscles engaged to hold that 90° angle throughout, and keep your back flat and steady with hips tucked under to prevent low-back sag — imagine balancing a glass of water on your back. Don't bend at the elbows. Complete 15 reps on the right side before switching to the left." },
+  { name: "Fire Hydrant", dosage: "15-20 reps · 2 sets · each leg", desc: "Hands and knees on the floor in a tabletop position. Keeping the right leg bent at 90°, lift it out to the side (like a dog at a fire hydrant). Keep your back flat and steady, hips tucked under so the low back doesn't sag — again, imagine balancing a glass of water on your back so you don't \u201copen\u201d too far to the side. Hips should stay facing the ground. Don't bend at the elbows — there's a tendency to bend the elbow opposite the lifting leg. Complete 15 reps on the right side before switching to the left." },
+  { name: "Monster Walk", dosage: "25 steps each way · 2 sets", desc: "With a resistance band around your ankles, lower into a good squat position (chest up, knees not past your toes, butt down) and step 25 steps to the left, then 25 steps back to the right. Stay low the entire time — don't rise up and down with each step. This can also be done without the band, as long as you hold that low squat position throughout." },
+  { name: "Stair Squats", dosage: "15-20 reps · 2 sets · each leg", desc: "Stand sideways on a stair with your left leg hanging off the edge. Flex the hanging foot toward the shin and squat, trying to tap the left heel to the ground. Your hips must stay level throughout — don't let the left hip drop as the leg lowers (in a mirror, your waistband should stay level). The knee of the squatting leg shouldn't travel past the toe. Sit back into the squat with your chest up; it won't be a very deep squat, and that's fine — this is about hip stability, not depth. Complete 15 reps on the right leg before switching to the left." },
+  { name: "Glute Bridge", dosage: "15-20 reps · 2 sets · each leg", desc: "Lie on your back with feet flat on the ground, knees bent, heels directly below the knees. Raise your hips into a bridge position with the left leg extended straight up in the air, arms flat on the ground for stability. Lower your hips to hover just above the ground, then raise back to the bridge — that's one rep, with the left leg staying in the air throughout. Complete 15 reps before switching legs." },
+  { name: "Hip Hike", dosage: "15-20 reps · 2 sets · each leg", desc: "Stand on your right foot with your pelvis in a neutral position. Drop the left side of your pelvis several inches below the right side, then activate your right hip muscle to lift the left side back to neutral." },
+  { name: "Side Hip Bridge", dosage: "15-20 reps · 2 sets · each side", desc: "Lie on your side with your feet propped on a surface about 1-2 feet off the ground. Push your bottom foot down and lift your torso using your hip muscles while keeping your spine stable, then return to the starting position." },
+  { name: "Iron Cross", dosage: "10-20 reps · each leg", desc: "Lie on your back with arms out to your sides. Swing your right leg across your torso up toward your left hand, keeping your shoulders flat against the ground while allowing your torso and hips to rotate naturally with the movement. Repeat on the other side." },
+  { name: "Scorpion", dosage: "10-20 reps · each leg", desc: "Lie face down (prone) with arms out to your sides. Swing your right leg across your back up toward your left hand, keeping your shoulders and chest as flat against the ground as possible. As with Iron Cross, expect a good amount of natural rotation through the torso and hips. Repeat on the other side." },
+  { name: "V-ups", dosage: "20 sec · 2 sets · rest 15 sec between sets", desc: "Start in a \u201cboat hold\u201d with shins parallel to the ground. Slowly open into a flat, hovering position without letting your shoulder blades or legs touch the ground, then return to the boat pose. Keep your chest up (heart to the sky) and spine straight, without rounding your back at the top of the V. Can be modified by holding behind the knees in the V position." },
+  { name: "Mason Twists", dosage: "20 sec · 2 sets · rest 15 sec between sets", desc: "Hold a medicine ball or other weight while in the same boat-hold position. Keep your chest up and avoid rounding your back, and really rotate through the upper body leading with the shoulder — not just swinging your hands back and forth." },
+  { name: "Back Extensions", dosage: "20 sec holds · 2 sets · rest 15 sec between sets", desc: "Lie on your stomach with arms stretched straight out in front as if reaching to touch a wall with your fingertips, and legs stretched straight out behind as if reaching a wall with your toes. Lift your arms, head, and chest while simultaneously lifting your entire legs (quads included) off the ground, and hold — keep stretching through the fingers and toes the whole time. There's a tendency to collapse and bend the arms and legs during the hold, so stay long. Squeeze the legs together and pull the shoulders away from your ears so they aren't tight up by your neck." },
+];
+
+document.getElementById('exerciseList').innerHTML = EXERCISES.map(ex => `
+  <div class="link-card" style="display:block; cursor:default; margin-bottom:14px;">
+    <div style="display:flex; justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+      <h3 style="font-family:'Oswald', sans-serif; font-size:19px; color:var(--pine); margin:0;">${ex.name}</h3>
+      <span style="background:var(--stone-dk); color:var(--pine); padding:3px 10px; border-radius:12px; font-size:12.5px; font-weight:600; white-space:nowrap;">${ex.dosage}</span>
+    </div>
+    <p style="color:var(--slate); font-size:14.5px; line-height:1.65; margin:0;">${ex.desc}</p>
+  </div>
+`).join('');
+</script>
+
+</body>
+</html>
