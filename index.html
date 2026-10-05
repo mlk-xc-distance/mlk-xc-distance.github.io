@@ -433,7 +433,7 @@ const MEETS = [
   }
   function fetchWeather(m){
     if (m.raceHour){
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
       return fetch(url)
         .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
         .then(data => {
@@ -448,8 +448,11 @@ const MEETS = [
           const temp = Math.round(data.hourly.temperature_2m[idx]);
           const rain = data.hourly.precipitation_probability[idx];
           const desc = WEATHER_CODES[code] || "—";
+          const hum = data.hourly.relative_humidity_2m ? data.hourly.relative_humidity_2m[idx] : null;
+          const dew = data.hourly.dew_point_2m ? data.hourly.dew_point_2m[idx] : null;
+          const extra = (hum != null ? ` · ${Math.round(hum)}% humidity` : '') + (dew != null ? ` · dew point ${Math.round(dew)}°F` : '');
           const hourLabel = new Date(targetHour).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-          return `${desc}, ${temp}°F · ${rain}% chance of rain (at ${hourLabel} start)`;
+          return `${desc}, ${temp}°F · ${rain}% chance of rain${extra} (at ${hourLabel} start)`;
         });
     }
     const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
@@ -485,7 +488,7 @@ const MEETS = [
     return String(nh).padStart(2,'0') + ":" + String(nm).padStart(2,'0');
   }
   function fetchHistoricalWeather(m){
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode&temperature_unit=fahrenheit&timezone=America%2FChicago`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=America%2FChicago`;
     return fetch(url)
       .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
       .then(data => {
@@ -516,7 +519,16 @@ const MEETS = [
         const midIdx = idxs[Math.floor(idxs.length / 2)];
         const desc = WEATHER_CODES[codes[midIdx]] || "—";
         const tempStr = hi === lo ? `${hi}°F` : `${lo}–${hi}°F`;
-        return `${desc}, ${tempStr} · ${maxRain}% chance of rain (race day)`;
+        const hums = data.hourly.relative_humidity_2m, dews = data.hourly.dew_point_2m;
+        const spread = (arr, unit) => {
+          const vals = arr ? idxs.map(i => arr[i]).filter(v => v != null) : [];
+          if (!vals.length) return null;
+          const a = Math.round(Math.min(...vals)), b = Math.round(Math.max(...vals));
+          return a === b ? `${a}${unit}` : `${a}–${b}${unit}`;
+        };
+        const humStr = spread(hums, '%'), dewStr = spread(dews, '°F');
+        const extra = (humStr ? ` · ${humStr} humidity` : '') + (dewStr ? ` · dew point ${dewStr}` : '');
+        return `${desc}, ${tempStr} · ${maxRain}% chance of rain${extra} (race day)`;
       });
   }
   function loadHistoricalWeatherInto(valueId, wrapperId, m){
