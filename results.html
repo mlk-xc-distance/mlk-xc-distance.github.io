@@ -646,6 +646,7 @@ const RESULTS_HISTORY = [
     date: "2025-09-05",
     season: "2025",
     location: "The Hermitage, Hermitage, TN",
+    lat: 36.2150, lon: -86.6130, raceHour: "08:15", raceEnd: "10:15",
     topBoys: [
       { place: 25, name: "Brent Ferrell", time: "16:27.74" },
       { place: 54, name: "Simon Ally", time: "16:59.31" },
@@ -681,6 +682,7 @@ const RESULTS_HISTORY = [
     date: "2025-09-12",
     season: "2025",
     location: "John Hunt Park, Huntsville, AL",
+    lat: 34.6892, lon: -86.5868, raceHour: "08:00", raceEnd: "10:30",
     topBoys: [
       { place: 56, name: "Miles Fowler", time: "19:11.14" },
       { place: 59, name: "Samuel Petrony", time: "19:16.56" },
@@ -704,7 +706,8 @@ const RESULTS_HISTORY = [
     meetName: "Dickson Invitational",
     date: "2025-09-20",
     season: "2025",
-    location: "Dickson, TN",
+    location: "Buckner City Park, Dickson, TN",
+    lat: 36.0912, lon: -87.4108, raceHour: "09:00", raceEnd: "11:00",
     topBoys: [
       { place: 16, name: "Sachin Bhave", time: "18:15.00" },
       { place: 24, name: "Dillon Fell", time: "18:44.00" },
@@ -733,9 +736,10 @@ const RESULTS_HISTORY = [
   },
   {
     meetName: "Hoka Frank Horton Night Classic",
-    date: "2025-10-03",
+    date: "2025-10-04",
     season: "2025",
     location: "Shelby Farms Park, Memphis, TN",
+    lat: 35.1381, lon: -89.8338, raceHour: "19:00", raceEnd: "21:00",
     topBoys: [
       { place: 32, name: "Tanner Jones", time: "18:26.70" },
       { place: 34, name: "Brent Ferrell", time: "16:11.80" },
@@ -766,6 +770,7 @@ const RESULTS_HISTORY = [
     date: "2025-10-18",
     season: "2025",
     location: "Buckner City Park, Dickson, TN",
+    lat: 36.0912, lon: -87.4108, raceHour: "09:00", raceEnd: "11:00",
     topBoys: [
       { place: 12, name: "Simon Ally", time: "16:58.15" },
       { place: 14, name: "Brent Ferrell", time: "17:01.49" },
@@ -799,6 +804,7 @@ const RESULTS_HISTORY = [
     date: "2025-10-28",
     season: "2025",
     location: "Sanders Ferry Park, Hendersonville, TN",
+    lat: 36.2527, lon: -86.6060, raceHour: "15:00", raceEnd: "17:00",
     topBoys: [
       { place: 2, name: "Simon Ally", time: "15:40.11" },
       { place: 2, name: "Tanner Jones", time: "18:21.05" },
@@ -833,6 +839,7 @@ const RESULTS_HISTORY = [
     date: "2025-11-06",
     season: "2025",
     location: "Shelby Farms Park, Memphis, TN",
+    lat: 35.1381, lon: -89.8338, raceHour: "14:00", raceEnd: "16:00",
     topBoys: [
       { place: 7, name: "Simon Ally", time: "16:14.52" },
       { place: 8, name: "Brent Ferrell", time: "16:20.74" },
@@ -849,6 +856,7 @@ const RESULTS_HISTORY = [
     date: "2025-11-22",
     season: "2025",
     location: "WakeMed Soccer Complex, Cary, NC",
+    lat: 35.80, lon: -78.76, raceHour: "08:30", raceEnd: "11:30",
     topBoys: [
       { place: 43, name: "Simon Ally", time: "16:21.20" },
       { place: 111, name: "Brent Ferrell", time: "16:47.30" },
@@ -931,7 +939,11 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     `;
   }
 
-  // ---- Race-day weather (recorded conditions during each meet's race window) ----
+  // ---- Race-day weather (conditions during each meet's race window) ----
+  // Each meet needs lat, lon, and raceHour. The window ends at raceEnd if given,
+  // otherwise one hour after lastRaceHour (or after raceHour if that's missing too).
+  // Recent meets use the forecast service's recent-past data; older ones use the historical archive.
+  const WX_ARCHIVE_AFTER_DAYS = 80;
   function addHoursToTime(hhmm, hoursToAdd){
     const [h, mnt] = hhmm.split(":").map(Number);
     let total = h * 60 + mnt + hoursToAdd * 60;
@@ -945,25 +957,47 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   function wxIdFor(r){
     return 'wx-' + r.date + '-' + r.meetName.replace(/[^a-z0-9]/gi, '');
   }
+  function wxUsesArchive(r){
+    const ageDays = (Date.now() - Date.parse(r.date + 'T12:00:00Z')) / 86400000;
+    return ageDays > WX_ARCHIVE_AFTER_DAYS;
+  }
+  function wxWindow(r){
+    const start = r.raceHour || '07:00';
+    const end = r.raceEnd || (r.raceHour ? addHoursToTime(r.lastRaceHour || r.raceHour, 1) : '17:00');
+    return { start, end };
+  }
+  function wxCacheGet(key){ try { return localStorage.getItem(key); } catch (e) { return null; } }
+  function wxCacheSet(key, val){ try { localStorage.setItem(key, val); } catch (e) {} }
+
   function fetchRaceWeather(r){
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${r.lat}&longitude=${r.lon}&start_date=${r.date}&end_date=${r.date}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,cloud_cover&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto`;
+    const archive = wxUsesArchive(r);
+    const { start, end } = wxWindow(r);
+    const cacheKey = `wx1|${r.date}|${r.lat}|${r.lon}|${start}|${end}`;
+    if (archive){
+      const hit = wxCacheGet(cacheKey);   // archived days never change, so remember them
+      if (hit) return Promise.resolve(hit);
+    }
+    const base = archive ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
+    const url = `${base}?latitude=${r.lat}&longitude=${r.lon}&start_date=${r.date}&end_date=${r.date}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,cloud_cover&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto`;
     return fetch(url)
       .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
       .then(data => {
         const h = data.hourly;
-        const start = r.raceHour || '07:00';
-        const end = r.raceHour ? addHoursToTime(r.lastRaceHour || r.raceHour, 1) : '17:00';
-        const iStart = h.time.findIndex(t => t.slice(0, 13) === `${r.date}T${start}`.slice(0, 13));
-        const iEnd = h.time.findIndex(t => t.slice(0, 13) === `${r.date}T${end}`.slice(0, 13));
+        const hourIdx = hhmm => h.time.findIndex(t => t.slice(0, 13) === `${r.date}T${hhmm}`.slice(0, 13));
+        const iStart = hourIdx(start), iEnd = hourIdx(end);
         if (iStart === -1 || iEnd === -1 || iEnd < iStart) throw new Error("race window not found");
-        const idxs = [];
-        for (let i = iStart; i <= iEnd; i++) idxs.push(i);
-        const vals = key => h[key] ? idxs.map(i => h[key][i]).filter(v => v != null) : [];
-        const temps = vals('temperature_2m'), hums = vals('relative_humidity_2m'), dews = vals('dew_point_2m');
-        const rains = vals('precipitation'), clouds = vals('cloud_cover');
+        const range = (a, b) => { const out = []; for (let i = a; i <= b; i++) out.push(i); return out; };
+        const idxs = range(iStart, iEnd);
+        // Hourly rainfall is the total for the PRECEDING hour, so the race window's rain
+        // lives in the timestamps just after each hour it overlaps.
+        const endMinutes = Number(end.split(':')[1]);
+        const rainIdxs = range(iStart + 1, Math.min(iEnd + (endMinutes > 0 ? 1 : 0), h.time.length - 1));
+        const pick = (key, ix) => h[key] ? ix.map(i => h[key][i]).filter(v => v != null) : [];
+        const temps = pick('temperature_2m', idxs), hums = pick('relative_humidity_2m', idxs), dews = pick('dew_point_2m', idxs);
+        const clouds = pick('cloud_cover', idxs), rains = pick('precipitation', rainIdxs);
         if (!temps.length) throw new Error("no data");
         const sum = a => a.reduce((s, v) => s + v, 0);
-        const range = (a, unit) => {
+        const span = (a, unit) => {
           const lo = Math.round(Math.min(...a)), hi = Math.round(Math.max(...a));
           return lo === hi ? `${lo}${unit}` : `${lo}–${hi}${unit}`;
         };
@@ -973,11 +1007,13 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         let desc = null;
         if (rains.length && totalRain >= 0.02) desc = avgTemp <= 34 ? 'Wintry mix' : 'Rain';
         else if (avgCloud != null) desc = avgCloud < 25 ? 'Clear' : avgCloud < 60 ? 'Partly cloudy' : 'Cloudy';
-        const parts = [`${desc ? desc + ', ' : ''}${range(temps, '°F')}`];
-        if (hums.length) parts.push(`${range(hums, '%')} humidity`);
-        if (dews.length) parts.push(`dew point ${range(dews, '°F')}`);
+        const parts = [`${desc ? desc + ', ' : ''}${span(temps, '°F')}`];
+        if (hums.length) parts.push(`${span(hums, '%')} humidity`);
+        if (dews.length) parts.push(`dew point ${span(dews, '°F')}`);
         if (rains.length) parts.push(totalRain < 0.01 ? 'no rain' : `${totalRain.toFixed(2)} in rain`);
-        return `${parts.join(' · ')} (${fmt12(start)}–${fmt12(end)})`;
+        const text = `${parts.join(' · ')} (${fmt12(start)}–${fmt12(end)})`;
+        if (archive) wxCacheSet(cacheKey, text);
+        return text;
       });
   }
   function loadMeetWeather(r){
@@ -1012,7 +1048,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           <div class="meet-facts" style="border-top:none; padding-top:0; margin-top:0; margin-bottom:8px; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));">
             ${r.boysPlace ? `<div><div class="label" style="color:var(--slate);">Boys Team</div><div class="value" style="color:var(--pine);">${r.boysPlace}</div></div>` : ''}
             ${r.girlsPlace ? `<div><div class="label" style="color:var(--slate);">Girls Team</div><div class="value" style="color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
-            ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="grid-column:1 / -1;"><div class="label" style="color:var(--slate);">Race Day Weather</div><div class="value" id="${wxIdFor(r)}" style="color:var(--pine);">Loading weather…</div></div>` : ''}
+            ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="grid-column:1 / -1;"><div class="label" style="color:var(--slate);">Race Day Weather${wxUsesArchive(r) ? ' (historical estimate)' : ''}</div><div class="value" id="${wxIdFor(r)}" style="color:var(--pine);">Loading weather…</div></div>` : ''}
           </div>` : ''}
           <div class="results-columns">
             ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
