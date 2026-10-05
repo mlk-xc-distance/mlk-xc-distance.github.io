@@ -279,6 +279,7 @@ const RESULTS = [
     meetName: "MSCCA Voyles Classic",
     date: "2026-09-05",
     location: "The Hermitage, Hermitage, TN",
+    lat: 36.2150, lon: -86.6130, raceHour: "07:45", lastRaceHour: "09:20",
     boysPlace: "3rd · 109 pts · Avg 18:05",
     girlsPlace: "10th · 228 pts · Avg 25:13",
     resultsLink: "https://tn.milesplit.com/meets/724605-mscca-voyles-classic-2026/results",
@@ -326,6 +327,7 @@ const RESULTS = [
     meetName: "The Southern Showcase",
     date: "2026-09-19",
     location: "John Hunt Running Park, Huntsville, AL",
+    lat: 34.6892, lon: -86.5868, raceHour: "07:50", lastRaceHour: "09:30",
     resultsLink: "https://al.milesplit.com/meets/719044-the-southern-showcase-powered-by-huntsville-high-school-2026/results",
     topBoys: [
       { place: 29, name: "Brent Ferrell", time: "15:45.49" },
@@ -360,6 +362,7 @@ const RESULTS = [
     meetName: "Hoka Frank Horton Night Classic",
     date: "2026-10-03",
     location: "Shelby Farms Park, Memphis, TN",
+    lat: 35.1381, lon: -89.8338, raceHour: "19:00", lastRaceHour: "20:30",
     boysPlace: "Gold: 17th · 516 pts · Avg 17:25<br>Purple: 41st · 1067 pts · Avg 21:34",
     girlsPlace: "Purple: 23rd · 573 pts · Avg 24:27",
     resultsLink: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/results",
@@ -928,6 +931,64 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     `;
   }
 
+  // ---- Race-day weather (recorded conditions during each meet's race window) ----
+  function addHoursToTime(hhmm, hoursToAdd){
+    const [h, mnt] = hhmm.split(":").map(Number);
+    let total = h * 60 + mnt + hoursToAdd * 60;
+    total = ((total % 1440) + 1440) % 1440;
+    return String(Math.floor(total / 60)).padStart(2, '0') + ":" + String(total % 60).padStart(2, '0');
+  }
+  function fmt12(hhmm){
+    const [h, mnt] = hhmm.split(":").map(Number);
+    return `${h % 12 || 12}:${String(mnt).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
+  }
+  function wxIdFor(r){
+    return 'wx-' + r.date + '-' + r.meetName.replace(/[^a-z0-9]/gi, '');
+  }
+  function fetchRaceWeather(r){
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${r.lat}&longitude=${r.lon}&start_date=${r.date}&end_date=${r.date}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,cloud_cover&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto`;
+    return fetch(url)
+      .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
+      .then(data => {
+        const h = data.hourly;
+        const start = r.raceHour || '07:00';
+        const end = r.raceHour ? addHoursToTime(r.lastRaceHour || r.raceHour, 1) : '17:00';
+        const iStart = h.time.findIndex(t => t.slice(0, 13) === `${r.date}T${start}`.slice(0, 13));
+        const iEnd = h.time.findIndex(t => t.slice(0, 13) === `${r.date}T${end}`.slice(0, 13));
+        if (iStart === -1 || iEnd === -1 || iEnd < iStart) throw new Error("race window not found");
+        const idxs = [];
+        for (let i = iStart; i <= iEnd; i++) idxs.push(i);
+        const vals = key => h[key] ? idxs.map(i => h[key][i]).filter(v => v != null) : [];
+        const temps = vals('temperature_2m'), hums = vals('relative_humidity_2m'), dews = vals('dew_point_2m');
+        const rains = vals('precipitation'), clouds = vals('cloud_cover');
+        if (!temps.length) throw new Error("no data");
+        const sum = a => a.reduce((s, v) => s + v, 0);
+        const range = (a, unit) => {
+          const lo = Math.round(Math.min(...a)), hi = Math.round(Math.max(...a));
+          return lo === hi ? `${lo}${unit}` : `${lo}–${hi}${unit}`;
+        };
+        const totalRain = sum(rains);
+        const avgTemp = sum(temps) / temps.length;
+        const avgCloud = clouds.length ? sum(clouds) / clouds.length : null;
+        let desc = null;
+        if (rains.length && totalRain >= 0.02) desc = avgTemp <= 34 ? 'Wintry mix' : 'Rain';
+        else if (avgCloud != null) desc = avgCloud < 25 ? 'Clear' : avgCloud < 60 ? 'Partly cloudy' : 'Cloudy';
+        const parts = [`${desc ? desc + ', ' : ''}${range(temps, '°F')}`];
+        if (hums.length) parts.push(`${range(hums, '%')} humidity`);
+        if (dews.length) parts.push(`dew point ${range(dews, '°F')}`);
+        if (rains.length) parts.push(totalRain < 0.01 ? 'no rain' : `${totalRain.toFixed(2)} in rain`);
+        return `${parts.join(' · ')} (${fmt12(start)}–${fmt12(end)})`;
+      });
+  }
+  function loadMeetWeather(r){
+    const id = wxIdFor(r);
+    const valueEl = document.getElementById(id);
+    if (!valueEl) return;
+    fetchRaceWeather(r)
+      .then(text => { valueEl.textContent = text; })
+      .catch(() => { const w = document.getElementById(id + '-wrap'); if (w) w.remove(); });
+  }
+
   function renderByMeet(){
     if (ALL_RESULTS.length === 0){
       list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
@@ -947,10 +1008,11 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         <div class="link-card" data-meet="${r.meetName}" data-date="${r.date}" style="display:block; margin-bottom:18px; cursor:default;">
           <div class="t" style="font-size:18px; margin-bottom:2px;">${r.meetName}</div>
           <div class="d" style="margin-bottom:12px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div>
-          ${(r.boysPlace || r.girlsPlace) ? `
+          ${(r.boysPlace || r.girlsPlace || r.lat != null) ? `
           <div class="meet-facts" style="border-top:none; padding-top:0; margin-top:0; margin-bottom:8px; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));">
             ${r.boysPlace ? `<div><div class="label" style="color:var(--slate);">Boys Team</div><div class="value" style="color:var(--pine);">${r.boysPlace}</div></div>` : ''}
             ${r.girlsPlace ? `<div><div class="label" style="color:var(--slate);">Girls Team</div><div class="value" style="color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
+            ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="grid-column:1 / -1;"><div class="label" style="color:var(--slate);">Race Day Weather</div><div class="value" id="${wxIdFor(r)}" style="color:var(--pine);">Loading weather…</div></div>` : ''}
           </div>` : ''}
           <div class="results-columns">
             ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
@@ -960,6 +1022,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         </div>
       `).join('')}
     `).join('');
+    ALL_RESULTS.filter(r => r.lat != null).forEach(loadMeetWeather);
   }
 
   function allAthleteNames(){
