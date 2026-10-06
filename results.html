@@ -997,10 +997,10 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   function fetchRaceWeather(r){
     const archive = wxUsesArchive(r);
     const { start, end } = wxWindow(r);
-    const cacheKey = `wx1|${r.date}|${r.lat}|${r.lon}|${start}|${end}`;
+    const cacheKey = `wx2|${r.date}|${r.lat}|${r.lon}|${start}|${end}`;
     if (archive){
       const hit = wxCacheGet(cacheKey);   // archived days never change, so remember them
-      if (hit) return Promise.resolve(hit);
+      if (hit){ try { return Promise.resolve(JSON.parse(hit)); } catch (e) {} }
     }
     const base = archive ? 'https://archive-api.open-meteo.com/v1/archive' : 'https://api.open-meteo.com/v1/forecast';
     const url = `${base}?latitude=${r.lat}&longitude=${r.lon}&start_date=${r.date}&end_date=${r.date}&hourly=temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,cloud_cover&temperature_unit=fahrenheit&precipitation_unit=inch&timezone=auto`;
@@ -1037,16 +1037,45 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         if (dews.length) parts.push(`dew point ${span(dews, '°F')}`);
         if (rains.length) parts.push(totalRain < 0.01 ? 'no rain' : `${totalRain.toFixed(2)} in rain`);
         const text = `${parts.join(' · ')} (${fmt12(start)}–${fmt12(end)})`;
-        if (archive) wxCacheSet(cacheKey, text);
-        return text;
+        const avgDew = dews.length ? sum(dews) / dews.length : null;
+        const out = { text, temp: avgTemp, dew: avgDew };
+        if (archive) wxCacheSet(cacheKey, JSON.stringify(out));
+        return out;
       });
+  }
+  // Race-day conditions score: average temp + average dew point over the race window.
+  const WX_BANDS = [
+    [100, 'Ideal',      '',          0],
+    [110, 'Good',       'up to 0.5%', 1],
+    [120, 'Fair',       '0.5–1%',     2],
+    [130, 'Warm',       '1–2%',       3],
+    [140, 'Hot',        '2–3%',       4],
+    [150, 'Tough',      '3–4.5%',     5],
+    [160, 'Very tough', '4.5–6%',     6],
+    [Infinity, 'Brutal','6%+',        7],
+  ];
+  const WX_SHADES = ['#E4EAFF','#D2DCFF','#BFCDFF','#A0B5FF','#6F8CF0','#2F4FE0','#1F3480','#14225E'];
+  function wxScoreBadge(w){
+    if (w.temp == null) return '';
+    let label, slow = '', lvl;
+    if (w.temp < 40 || w.dew == null){
+      if (w.temp >= 40) return '';
+      label = 'Cold'; lvl = 1;
+    } else {
+      const sum = w.temp + w.dew;
+      const b = WX_BANDS.find(x => sum < x[0]);
+      label = b[1]; slow = b[2]; lvl = b[3];
+    }
+    const dark = lvl >= 5;
+    const note = slow ? ` · ~${slow} slower than ideal` : '';
+    return `<div style="margin-top:6px;"><span title="Estimate based on average temperature + dew point during the race window. Sun, wind and shade are not included." style="display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; background:${WX_SHADES[lvl]}; color:${dark ? '#fff' : 'var(--pine)'};">Conditions: ${label}${note}</span></div>`;
   }
   function loadMeetWeather(r){
     const id = wxIdFor(r);
     const valueEl = document.getElementById(id);
     if (!valueEl) return;
     fetchRaceWeather(r)
-      .then(text => { valueEl.textContent = text; })
+      .then(w => { valueEl.textContent = w.text; valueEl.insertAdjacentHTML('beforeend', wxScoreBadge(w)); })
       .catch(() => { const w = document.getElementById(id + '-wrap'); if (w) w.remove(); });
   }
 
