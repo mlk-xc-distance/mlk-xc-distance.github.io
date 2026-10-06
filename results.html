@@ -1068,7 +1068,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     }
     const dark = lvl >= 5;
     const note = slow ? ` · ~${slow} slower than ideal` : '';
-    return `<div style="margin-top:6px;"><span title="Estimate based on average temperature + dew point during the race window. Sun, wind and shade are not included." style="display:inline-block; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; background:${WX_SHADES[lvl]}; color:${dark ? '#fff' : 'var(--pine)'};">Conditions: ${label}${note}</span></div>`;
+    const tip = 'Temp + dew point estimate; sun, wind and footing not included.';
+    return `<div style="margin-top:6px;"><span role="button" tabindex="0" title="${tip}" onclick="var n=this.parentNode.querySelector('.wx-tip'); n.style.display = n.style.display==='none' ? 'block' : 'none';" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" style="display:inline-block; cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; background:${WX_SHADES[lvl]}; color:${dark ? '#fff' : 'var(--pine)'};">Conditions: ${label}${note}</span><div class="wx-tip" style="display:none; font-size:12px; color:var(--slate); margin-top:4px;">${tip}</div></div>`;
   }
   function loadMeetWeather(r){
     const id = wxIdFor(r);
@@ -1092,7 +1093,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       if (!seasons.includes(season)) seasons.push(season);
     });
 
-    list.innerHTML = seasons.map(season => `
+    const condNote = `<p style="font-size:13px; color:var(--slate); line-height:1.5; margin:0 0 18px; max-width:640px;">Race-day conditions are estimated from average temperature + dew point during the race. "Ideal" is uncommon, since it takes cool, dry air. Sun, wind and course footing aren't included.</p>`;
+    list.innerHTML = condNote + seasons.map(season => `
       <h3 class="link-group-head" style="font-size:28px; margin-bottom:14px;">${season} Season</h3>
       ${sorted.filter(r => (r.season || r.date.slice(0, 4)) === season).map(r => `
         <div class="link-card" data-meet="${r.meetName}" data-date="${r.date}" style="display:block; margin-bottom:34px; cursor:default; padding:0; overflow:hidden;">
