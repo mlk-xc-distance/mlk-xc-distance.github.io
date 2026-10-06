@@ -224,8 +224,8 @@ const SEARCH_INDEX = [
       <div class="roster-filters" id="gradeFilters" role="group" aria-label="Filter by grade"></div>
       <div class="roster-filters" id="sortToggle" role="group" aria-label="Sort order">
         <button data-sort="grade" aria-pressed="false">By Grade</button>
-        <button data-sort="time" class="active" aria-pressed="true">By PR</button>
-        <button data-sort="sb" aria-pressed="false">By SB</button>
+        <button data-sort="time" aria-pressed="false">By PR</button>
+        <button data-sort="sb" class="active" aria-pressed="true">By SB</button>
       </div>
     </div>
 
@@ -416,7 +416,7 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
   const gradesPresent = GRADE_ORDER.filter(g => ROSTER.some(a => a.grade === g));
 
   let currentGrade = 'All';
-  let currentSort = 'time';
+  let currentSort = 'sb';
 
   function initials(a){ return (a.first[0] + a.last[0]).toUpperCase(); }
 
