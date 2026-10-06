@@ -1093,22 +1093,26 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     });
 
     list.innerHTML = seasons.map(season => `
-      <h3 class="link-group-head">${season} Season</h3>
+      <h3 class="link-group-head" style="font-size:28px; margin-bottom:14px;">${season} Season</h3>
       ${sorted.filter(r => (r.season || r.date.slice(0, 4)) === season).map(r => `
-        <div class="link-card" data-meet="${r.meetName}" data-date="${r.date}" style="display:block; margin-bottom:18px; cursor:default;">
-          <div class="t" style="font-size:18px; margin-bottom:2px;">${r.meetName}</div>
-          <div class="d" style="margin-bottom:12px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div>
-          ${(r.boysPlace || r.girlsPlace || r.lat != null) ? `
-          <div class="meet-facts" style="border-top:none; padding-top:0; margin-top:0; margin-bottom:8px; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr));">
-            ${r.boysPlace ? `<div><div class="label" style="color:var(--slate);">Boys Team</div><div class="value" style="color:var(--pine);">${r.boysPlace}</div></div>` : ''}
-            ${r.girlsPlace ? `<div><div class="label" style="color:var(--slate);">Girls Team</div><div class="value" style="color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
-            ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="grid-column:1 / -1;"><div class="label" style="color:var(--slate);">Race Day Weather${wxUsesArchive(r) ? ' (historical estimate)' : ''}</div><div class="value" id="${wxIdFor(r)}" style="color:var(--pine);">Loading weather…</div></div>` : ''}
+        <div class="link-card" data-meet="${r.meetName}" data-date="${r.date}" style="display:block; margin-bottom:34px; cursor:default; padding:0; overflow:hidden;">
+          <div style="background:var(--pine); color:#fff; padding:16px 18px 14px;">
+            <div style="font-family:'Oswald', sans-serif; font-weight:600; font-size:24px; line-height:1.2; letter-spacing:0.01em; color:#fff;">${r.meetName}</div>
+            <div style="font-size:14px; color:var(--clay-soft); margin-top:4px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div>
+          </div>
+          <div style="padding:16px 18px 18px;">
+          ${(r.boysPlace || r.girlsPlace) ? `
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:14px 24px; margin-bottom:14px;">
+            ${r.boysPlace ? `<div><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Boys Team</div><div style="font-size:16px; font-weight:600; line-height:1.35; color:var(--pine);">${r.boysPlace}</div></div>` : ''}
+            ${r.girlsPlace ? `<div><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Girls Team</div><div style="font-size:16px; font-weight:600; line-height:1.35; color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
           </div>` : ''}
+          ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="border-top:1px solid var(--line); padding-top:10px; margin-bottom:6px;"><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Race Day Weather${wxUsesArchive(r) ? ' (historical estimate)' : ''}</div><div id="${wxIdFor(r)}" style="font-size:14px; color:var(--slate); line-height:1.4;">Loading weather…</div></div>` : ''}
           <div class="results-columns">
             ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
             ${r.topGirls ? `<div><h4 class="link-subhead" style="margin-top:14px;">Girls</h4>${finisherTable(r.topGirls, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
           </div>
           ${r.resultsLink ? `<div style="margin-top:14px;"><a href="${r.resultsLink}" target="_blank" rel="noopener" style="color:var(--clay); font-weight:600; text-decoration:underline;">Official Results →</a></div>` : ''}
+          </div>
         </div>
       `).join('')}
     `).join('');
