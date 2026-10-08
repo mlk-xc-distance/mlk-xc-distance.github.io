@@ -1625,7 +1625,12 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     viewToggle.querySelectorAll('button').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
     btn.classList.add('active');
     btn.setAttribute('aria-pressed', 'true');
+    const prevView = currentView;
     currentView = btn.dataset.view;
+    // Coming from an individual's results page: show that athlete's chart.
+    if (currentView === 'compare' && prevView === 'athlete' && athleteSelect.value){
+      compareSelected = [athleteSelect.value];
+    }
     athletePicker.style.display = currentView === 'athlete' ? 'block' : 'none';
     if (currentView === 'meet') renderByMeet();
     else if (currentView === 'athlete') renderByAthlete();
