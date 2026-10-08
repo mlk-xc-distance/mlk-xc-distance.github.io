@@ -1237,6 +1237,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       b.classList.toggle('active', b.dataset.view === 'athlete');
       b.setAttribute('aria-pressed', b.dataset.view === 'athlete' ? 'true' : 'false');
     });
+    currentView = 'athlete';
     athletePicker.style.display = 'block';
     renderByAthlete();
     list.scrollIntoView({ behavior: 'smooth', block: 'start' });
