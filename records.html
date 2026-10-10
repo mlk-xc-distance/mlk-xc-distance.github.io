@@ -1526,7 +1526,7 @@ const ALUMNI = [
         <button type="button" data-alumni-gender="girls" class="${selectedAlumniGender === 'girls' ? 'active' : ''}" aria-pressed="${selectedAlumniGender === 'girls'}">Girls</button>
       </div>
     `;
-    const options = (hiddenPick ? `<option value="${hiddenPick.name}" selected>${hiddenPick.name}</option>` : '') + sorted.map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
+    const options = sorted.map(a => `<option value="${a.name}" ${a.name === selectedAlumnus ? 'selected' : ''}>#${a.rank} — ${a.name}</option>`).join('');
 
     const recordsArr = athlete.gender === 'boys' ? BOYS_RECORDS : GIRLS_RECORDS;
     const recordEntry = recordsArr.find(r => `${r.first} ${r.last}` === athlete.name);
@@ -1568,6 +1568,13 @@ const ALUMNI = [
       body = nameHeading + prBox + seasonsHtml;
     }
 
+    if (hiddenPick){
+      // Search-only alumnus: shown on their own, with no Careers header, dropdown or list entry.
+      list.innerHTML = `<div class="link-card" style="display:block; cursor:default;">${body}
+        <div style="margin-top:16px;"><a href="javascript:void(0)" id="backToCareers" style="color:var(--clay); font-weight:600; font-size:14px;">← Alumni Careers</a></div></div>`;
+      document.getElementById('backToCareers').addEventListener('click', () => { selectedAlumnus = null; renderAlumni(); });
+      return;
+    }
     list.innerHTML = `
       <div class="link-card" style="display:block; cursor:default;">
         <div class="t" style="font-size:18px; margin-bottom:4px;">Alumni Careers</div>
