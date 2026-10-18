@@ -10,7 +10,7 @@
    Bump CACHE_VERSION any time you want to force old caches to
    clear out (not usually necessary — normal edits don't need this).
    ============================================================ */
-const CACHE_VERSION = 'mlk-xc-v2';
+const CACHE_VERSION = 'mlk-xc-v3';
 
 const APP_SHELL = [
   'index.html',
@@ -20,6 +20,7 @@ const APP_SHELL = [
   'style.css',
   'quotes.js',
   'alumni-data.js',
+  'roster-data.js',
   'manifest.json',
   'icon-192.png',
   'icon-512.png',

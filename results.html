@@ -255,6 +255,7 @@ const SEARCH_INDEX = [
 </footer>
 <script src="quotes.js"></script>
 <script src="alumni-data.js"></script>
+<script src="roster-data.js"></script>
 
 <script>
 /* ============================================================
@@ -1487,29 +1488,52 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
 
   // Season overlay: every athlete's whole career, each season drawn by calendar date
   // (Aug-Dec), so different years line up week for week.
-  const SEASON_DASH = ['', '7,4', '2,4', '9,3,2,3', '4,4,1,4'];
-  function seasonsFor(name){
-    if (isAlumOnly(name)) return alumniSeasons(name);
-    const by = {};
-    racesFor(name).forEach(x => { (by[x.date.slice(0,4)] = by[x.date.slice(0,4)] || []).push(x); });
-    return Object.keys(by).sort().reverse().map(y => ({ year: y, grade: null, races: by[y].sort((p, q) => p.date.localeCompare(q.date)) }));
-  }
+  // ---- Career timeline: one continuous line per athlete, Fr -> Sr, aligned by grade ----
+  const GRADE_NAME = {7:'7th', 8:'8th', 9:'Freshman', 10:'Sophomore', 11:'Junior', 12:'Senior'};
+  const gradeNum = (g) => { g = String(g || '').toLowerCase(); return /^fr/.test(g) ? 9 : /^so/.test(g) ? 10 : /^j/.test(g) ? 11 : /^se|^sr/.test(g) ? 12 : null; };
+  const classYearByName = (typeof ROSTER_RAW !== 'undefined') ? Object.fromEntries(ROSTER_RAW.map(([f, l, g, cy]) => [f + ' ' + l, cy])) : {};
   const seasonDay = (iso) => Date.UTC(2001, +iso.slice(5,7) - 1, +iso.slice(8,10)) / 86400000; // year-agnostic day number
+  const SEASON_START = Date.UTC(2001, 7, 15) / 86400000, SEASON_END = Date.UTC(2001, 11, 20) / 86400000;
+
+  // Returns [{year, grade, est, races}] oldest first, with a grade (9-12) for every season.
+  function careerSeasons(name){
+    const alum = isAlumOnly(name);
+    let seasons;
+    if (alum){
+      seasons = alumniSeasons(name).slice().reverse();
+      const a = alumniByName(name);
+      seasons = seasons.map(s => ({ ...s, grade: gradeNum(s.grade) }));
+    } else {
+      const by = {};
+      racesFor(name).forEach(x => { (by[x.date.slice(0,4)] = by[x.date.slice(0,4)] || []).push(x); });
+      seasons = Object.keys(by).sort().map(y => ({ year: y, grade: null, races: by[y].sort((p, q) => p.date.localeCompare(q.date)) }));
+    }
+    if (!seasons.length) return [];
+    // Work out the grade for each season: a known grade, else the class year, else assume a freshman start.
+    const known = seasons.find(s => s.grade);
+    let cy = alum ? (alumniByName(name) || {}).classYear : classYearByName[name];
+    let offset = null, est = false; // grade = year + offset
+    if (known) offset = known.grade - (+known.year);
+    else if (cy) offset = 13 - cy; // class of cy runs its senior season in fall cy-1
+    else { est = true; offset = (seasons.length >= 5 ? 9 - seasons.length + 4 : 9) - (+seasons[0].year); }
+    return seasons.map(s => ({ ...s, grade: Math.max(7, Math.min(12, (+s.year) + offset)), est: est || !s.grade && !known && !cy }));
+  }
+
   function buildRaceNumberChart(names){
-    const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    const series = names.map((name, ai) => ({ name, color: COMPARE_COLORS[ai % COMPARE_COLORS.length], seasons: seasonsFor(name), alum: isAlumOnly(name) }));
-    let minSec = Infinity, maxSec = -Infinity, minD = Infinity, maxD = -Infinity;
-    series.forEach(s => s.seasons.forEach(se => se.races.forEach(x => {
-      const t = timeToSeconds(x.time), d = seasonDay(x.date);
-      if (t < minSec) minSec = t; if (t > maxSec) maxSec = t;
-      if (d < minD) minD = d; if (d > maxD) maxD = d;
-    })));
+    const series = names.map((name, ai) => ({ name, color: COMPARE_COLORS[ai % COMPARE_COLORS.length], seasons: careerSeasons(name), alum: isAlumOnly(name) }));
+    let minSec = Infinity, maxSec = -Infinity, minG = 12, maxG = 9;
+    series.forEach(s => s.seasons.forEach(se => {
+      if (se.grade < minG) minG = se.grade; if (se.grade > maxG) maxG = se.grade;
+      se.races.forEach(x => { const t = timeToSeconds(x.time); if (t < minSec) minSec = t; if (t > maxSec) maxSec = t; });
+    }));
     if (!isFinite(minSec)) return '<div class="callout">No race data for this selection.</div>';
+    minG = Math.min(minG, 9); maxG = 12;
     const pad = (maxSec - minSec) * 0.1 || 10; minSec -= pad; maxSec += pad;
-    minD -= 4; maxD += 4;
-    const W = 900, H = 420, mL = 70, mR = 24, mT = 20, mB = 46;
+    const W = 900, H = 420, mL = 70, mR = 16, mT = 20, mB = 44;
     const plotW = W - mL - mR, plotH = H - mT - mB;
-    const xFor = (d) => mL + ((d - minD) / (maxD - minD)) * plotW;
+    const nSlots = maxG - minG + 1, gap = 8;
+    const slotW = (plotW - gap * (nSlots - 1)) / nSlots;
+    const xFor = (grade, iso) => mL + (grade - minG) * (slotW + gap) + Math.max(0, Math.min(1, (seasonDay(iso) - SEASON_START) / (SEASON_END - SEASON_START))) * slotW;
     const yFor = (sec) => mT + ((maxSec - sec) / (maxSec - minSec)) * plotH;
     const intervals = [15, 30, 60, 120, 300, 600];
     const interval = intervals.find(st => (maxSec - minSec) / st <= 20) || 600;
@@ -1518,42 +1542,42 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       const y = yFor(sec);
       grid += `<line x1="${mL}" y1="${y}" x2="${W - mR}" y2="${y}" stroke="#D9DFEF"/><text x="${mL - 10}" y="${y + 4}" font-size="12" fill="#5B6479" text-anchor="end" font-family="Source Sans 3, sans-serif">${mmssClean(sec)}</text>`;
     }
-    let xl = '';
-    for (let m = 7; m <= 11; m++){ // Aug..Dec month starts
-      const d = Date.UTC(2001, m, 1) / 86400000;
-      if (d < minD || d > maxD) continue;
-      const x = xFor(d);
-      xl += `<line x1="${x}" y1="${mT}" x2="${x}" y2="${H - mB}" stroke="#D9DFEF" stroke-dasharray="3,3"/><text x="${x}" y="${H - mB + 20}" font-size="12" font-weight="700" fill="var(--pine)" text-anchor="middle" font-family="Oswald, sans-serif">${MON[m].toUpperCase()} 1</text>`;
+    let bands = '';
+    for (let g = minG; g <= maxG; g++){
+      const x0 = mL + (g - minG) * (slotW + gap);
+      bands += `<rect x="${x0}" y="${mT}" width="${slotW}" height="${plotH}" fill="${(g - minG) % 2 ? '#EEF2FF' : '#F6F8FF'}"/>`
+        + `<text x="${x0 + slotW / 2}" y="${H - mB + 22}" font-size="12" font-weight="700" fill="var(--pine)" text-anchor="middle" font-family="Oswald, sans-serif">${(GRADE_NAME[g] || g + 'th').toUpperCase()}</text>`;
     }
     let lines = '', legend = '';
     series.forEach(s => {
-      let chips = '';
-      s.seasons.forEach((se, si) => {
-        const dash = SEASON_DASH[si % SEASON_DASH.length];
-        const op = Math.max(0.45, 1 - si * 0.13);
-        const pts = se.races.map(x => [xFor(seasonDay(x.date)), yFor(timeToSeconds(x.time)), x]);
-        if (pts.length > 1) lines += `<polyline points="${pts.map(p => p[0] + ',' + p[1]).join(' ')}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-opacity="${op}" ${dash ? `stroke-dasharray="${dash}"` : ''}/>`;
-        pts.forEach(([x, y, rc]) => {
-          const first = s.name.split(' ')[0].replace(/'/g, "\\'");
-          const tip = `${first} ${se.year}: ${rc.time} · ${rc.meetName}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-          lines += `<circle cx="${x}" cy="${y}" r="3.8" fill="${s.color}" fill-opacity="${op}" style="cursor:pointer;" onmouseenter="showChartTooltip(event, '${tip}')" onmouseleave="hideChartTooltip()" onclick="showChartTooltip(event, '${tip}')"></circle><circle cx="${x}" cy="${y}" r="12" fill="transparent" style="cursor:pointer;" onmouseenter="showChartTooltip(event, '${tip}')" onmouseleave="hideChartTooltip()" onclick="showChartTooltip(event, '${tip}')"></circle>`;
-        });
-        chips += `<span style="display:inline-flex; align-items:center; gap:4px; margin-left:12px; font-size:12px; color:var(--slate); opacity:${op};"><svg width="22" height="8"><line x1="0" y1="4" x2="22" y2="4" stroke="${s.color}" stroke-width="2.5" ${dash ? `stroke-dasharray="${dash}"` : ''}/></svg>${se.year}${se.grade ? ' ' + se.grade : ''}</span>`;
+      const pts = [];
+      s.seasons.forEach(se => se.races.forEach(x => pts.push({ x: xFor(se.grade, x.date), y: yFor(timeToSeconds(x.time)), rc: x, se })));
+      // one continuous line, but don't bridge a skipped school year
+      let seg = [], prevGrade = null;
+      const flush = () => { if (seg.length > 1) lines += `<polyline points="${seg.join(' ')}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round"/>`; seg = []; };
+      pts.forEach(p => { if (prevGrade !== null && p.se.grade - prevGrade > 1) flush(); seg.push(p.x + ',' + p.y); prevGrade = p.se.grade; });
+      flush();
+      pts.forEach(p => {
+        const first = s.name.split(' ')[0].replace(/'/g, "\\'");
+        const tip = `${first} · ${GRADE_NAME[p.se.grade] ? GRADE_NAME[p.se.grade].slice(0,3) : p.se.grade + 'th'} ${p.se.year}${p.se.est ? ' (grade est.)' : ''}: ${p.rc.time} · ${p.rc.meetName}`.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        lines += `<circle cx="${p.x}" cy="${p.y}" r="3.6" fill="${s.color}" style="cursor:pointer;" onmouseenter="showChartTooltip(event, '${tip}')" onmouseleave="hideChartTooltip()" onclick="showChartTooltip(event, '${tip}')"></circle><circle cx="${p.x}" cy="${p.y}" r="12" fill="transparent" style="cursor:pointer;" onmouseenter="showChartTooltip(event, '${tip}')" onmouseleave="hideChartTooltip()" onclick="showChartTooltip(event, '${tip}')"></circle>`;
       });
-      legend += `<div style="margin-bottom:6px;"><span style="display:inline-flex; align-items:center; gap:6px;"><span style="width:12px; height:12px; border-radius:50%; background:${s.color}; display:inline-block;"></span><span style="font-size:13px; color:var(--pine); font-weight:600;">${s.name}${s.alum ? ' <span style="font-weight:400; color:var(--slate);">(alumni)</span>' : ''}</span></span>${chips}</div>`;
+      const yrs = s.seasons.length ? (s.seasons[0].year === s.seasons[s.seasons.length - 1].year ? s.seasons[0].year : s.seasons[0].year + '–' + s.seasons[s.seasons.length - 1].year) : '';
+      legend += `<span style="display:inline-flex; align-items:center; gap:6px; margin-right:18px; margin-bottom:6px;"><span style="width:12px; height:12px; border-radius:50%; background:${s.color}; display:inline-block;"></span><span style="font-size:13px; color:var(--pine); font-weight:600;">${s.name}</span><span style="font-size:12px; color:var(--slate);">${s.alum ? 'alumni · ' : ''}${yrs}</span></span>`;
     });
+    const anyEst = series.some(s => s.seasons.some(se => se.est));
     return `
       <div style="margin-bottom:10px;">${legend}</div>
       <div style="overflow-x:auto; position:relative;">
         <svg viewBox="0 0 ${W} ${H}" style="width:100%; min-width:600px; height:auto;">
-          ${grid}
+          ${bands}${grid}
           <line x1="${mL}" y1="${mT}" x2="${mL}" y2="${H - mB}" stroke="#5B6479"/>
           <line x1="${mL}" y1="${H - mB}" x2="${W - mR}" y2="${H - mB}" stroke="#5B6479"/>
-          ${xl}${lines}
+          ${lines}
         </svg>
       </div>
       <div id="chartTooltip" style="position:fixed; display:none; background:var(--pine); color:white; padding:6px 10px; border-radius:4px; font-size:13px; font-weight:600; pointer-events:none; z-index:1000; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.2);"></div>
-      <div style="font-size:12px; color:var(--slate); margin-top:6px;">Every season is placed by calendar date, so different years line up week for week. Each athlete's whole career is shown, with older seasons fainter and dashed. A current athlete's line stops at their latest race. Faster times plot lower. Tap or hover a point for the time and meet.</div>
+      <div style="font-size:12px; color:var(--slate); margin-top:6px;">One timeline per athlete, lined up by grade (each block runs August to December), so careers from different years can be compared. Faster times plot lower. Tap or hover a point for the time and meet.${anyEst ? ' Where an alumnus has no recorded grade, their first season is assumed to be freshman year.' : ''}</div>
     `;
   }
 
