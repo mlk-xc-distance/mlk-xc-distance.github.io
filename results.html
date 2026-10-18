@@ -1747,6 +1747,10 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   }
 
   function renderByCompare(){
+    // Remember scroll positions so ticking a box lower in a list doesn't jump back to the top.
+    const keepScroll = {};
+    list.querySelectorAll('[data-scrollbox]').forEach(b => { keepScroll[b.dataset.scrollbox] = b.scrollTop; });
+    const keepY = window.scrollY;
     const names = allAthleteNames();
     if (names.length === 0){
       list.innerHTML = `<div class="callout">No results posted yet — check back after race day.</div>`;
@@ -1778,14 +1782,14 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         <div class="results-columns" style="margin-bottom:18px;">
           <div>
             <h4 class="link-subhead">Boys</h4>
-            <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
+            <div data-scrollbox="boys" style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
               ${checkboxList(boys)}
               ${alumSection('boys')}
             </div>
           </div>
           <div>
             <h4 class="link-subhead">Girls</h4>
-            <div style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
+            <div data-scrollbox="girls" style="max-height:260px; overflow-y:auto; border:1px solid var(--line); border-radius:3px; padding:8px 14px;">
               ${checkboxList(girls)}
               ${alumSection('girls')}
             </div>
@@ -1813,6 +1817,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       });
     });
 
+    list.querySelectorAll('[data-scrollbox]').forEach(b => { if (keepScroll[b.dataset.scrollbox]) b.scrollTop = keepScroll[b.dataset.scrollbox]; });
+    if (keepY) window.scrollTo(0, keepY);
     list.querySelectorAll('[data-chart-mode]').forEach(b => b.addEventListener('click', () => { chartMode = b.dataset.chartMode; renderByCompare(); }));
 
     const clearBtn = document.getElementById('clearCompareBtn');
