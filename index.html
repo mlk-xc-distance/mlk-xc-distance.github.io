@@ -558,14 +558,14 @@ const MEETS = [
     const hasCourseMap = !!next.courseMapImg;
     if (hasParkingMap) heroSlides.push(`
       <div class="hero-map-slide">
-        <div class="hero-map-label">Parking Map</div>
-        <img src="${next.parkingMapImg}" alt="Parking map for ${next.name}" class="hero-map-img">
+        <div class="hero-map-label">Parking Map<span class="hero-map-zoomhint">tap to zoom</span></div>
+        <img src="${next.parkingMapImg}" alt="Parking map for ${next.name}" class="hero-map-img" onclick="openMapViewer(this.src, 'Parking Map')">
       </div>
     `);
     if (hasCourseMap) heroSlides.push(`
       <div class="hero-map-slide">
-        <div class="hero-map-label">Course Map</div>
-        <img src="${next.courseMapImg}" alt="Course map for ${next.name}" class="hero-map-img">
+        <div class="hero-map-label">Course Map<span class="hero-map-zoomhint">tap to zoom</span></div>
+        <img src="${next.courseMapImg}" alt="Course map for ${next.name}" class="hero-map-img" onclick="openMapViewer(this.src, 'Course Map')">
       </div>
     `);
 
@@ -690,6 +690,176 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
 }
+</script>
+
+<div class="map-viewer" id="mapViewer" role="dialog" aria-modal="true" aria-label="Map viewer">
+  <div class="mv-bar"><div class="mv-title" id="mvTitle">Map</div>
+    <div class="mv-north" id="mvNorth" title="True north" style="display:none;"><svg viewBox="0 0 40 40" width="38" height="38"><circle cx="20" cy="20" r="18" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.45)"/><polygon points="20,5 25,22 20,19 15,22" fill="#ff5a4d"/><polygon points="20,35 25,22 20,19 15,22" fill="#fff" opacity=".8"/></svg><span>N</span></div>
+    <button class="mv-btn" id="mvLoc" aria-label="Show my location" title="Show my location" style="display:none;">&#9673;</button>
+    <button class="mv-btn" id="mvCompass" aria-label="Rotate map with compass" title="Rotate map to match your compass" style="display:none; font-size:13px;">Compass</button>
+    <button class="mv-btn" id="mvOut" aria-label="Zoom out">&minus;</button>
+    <button class="mv-btn" id="mvIn" aria-label="Zoom in">+</button>
+    <button class="mv-btn" id="mvReset" aria-label="Reset" style="font-size:13px;">Fit</button>
+    <button class="mv-btn" id="mvClose" aria-label="Close">&times;</button></div>
+  <div class="mv-stage" id="mvStage"><div class="mv-rot" id="mvRot"><div class="mv-world" id="mvWorld"><img class="mv-img" id="mvImg" alt="" draggable="false"><div class="mv-ring" id="mvRing"></div><div class="mv-me" id="mvMe"><div class="mv-dot" id="mvDot"></div></div></div></div></div>
+  <div class="mv-status" id="mvStatus"></div>
+  <div class="mv-hint" id="mvHint">Pinch, scroll or double-tap to zoom &middot; drag to move</div>
+</div>
+<script>
+/* Map viewer: zoom/pan, optional live location dot and compass rotation.
+   MAP_GEO: for each course map, image-pixel = coef . [lon, lat, 1] (fit from GPS recordings of the course),
+   w/h = image size, up = true bearing of the image's "up" direction (0 = north-up). Positions are approximate. */
+const MAP_GEO = {"maps/voyles-classic.jpg": {"w": 1400, "h": 971, "fx": [127970.3829, -5134.9649, 11270608.7388], "fy": [-449.2435, -159643.8214, 5742354.2738], "up": 1.84, "lat0": 36.2105, "lon0": -86.614}, "maps/frank-horton.jpg": {"w": 1279, "h": 531, "fx": [116639.9118, 1445.528, 10428337.696], "fy": [634.3893, -141779.4965, 5040750.5664], "up": -0.58, "lat0": 35.1493, "lon0": -89.8364}, "maps/southern-showcase.jpg": {"w": 1800, "h": 1350, "fx": [112458.3348, 821.6301, 9709334.6188], "fy": [1712.3717, -137381.2572, 4914029.3557], "up": -0.34, "lat0": 34.6853, "lon0": -86.5834}};
+(function(){
+  const viewer = document.getElementById('mapViewer'), stage = document.getElementById('mvStage'), rot = document.getElementById('mvRot'),
+        world = document.getElementById('mvWorld'), img = document.getElementById('mvImg'), me = document.getElementById('mvMe'),
+        dot = document.getElementById('mvDot'), ring = document.getElementById('mvRing'), status = document.getElementById('mvStatus'),
+        btnLoc = document.getElementById('mvLoc'), btnComp = document.getElementById('mvCompass'), north = document.getElementById('mvNorth');
+  let s = 1, x = 0, y = 0, baseW = 0, baseH = 0, theta = 0, geo = null, geoKey = null; const MAXS = 10;
+  const pts = new Map(); let lastDist = 0, lastMid = null, lastTap = 0, dragMoved = false;
+  let watchId = null, fix = null, compassOn = false, heading = null, orientHandler = null, orientEvt = null;
+
+  const rad = d => d * Math.PI / 180;
+  function stageCenter(){ const r = stage.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
+  // screen point -> coordinates inside the rotator (undo the map rotation about the stage centre)
+  function toLocal(cx, cy){ const [ox, oy] = stageCenter(), dx = cx - ox, dy = cy - oy, c = Math.cos(rad(-theta)), sn = Math.sin(rad(-theta)); const r = stage.getBoundingClientRect(); return [r.width / 2 + dx * c - dy * sn, r.height / 2 + dx * sn + dy * c]; }
+  function clamp(){
+    const W = stage.clientWidth, H = stage.clientHeight, sw = baseW * s, sh = baseH * s;
+    x = sw <= W ? (W - sw) / 2 : Math.min(0, Math.max(W - sw, x));
+    y = sh <= H ? (H - sh) / 2 : Math.min(0, Math.max(H - sh, y));
+  }
+  function apply(){
+    clamp();
+    world.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
+    rot.style.transform = `rotate(${theta}deg)`;
+    dot.style.transform = `scale(${1 / s})`;
+    if (geo) north.firstElementChild.style.transform = `rotate(${theta - geo.up}deg)`;
+  }
+  function fit(){
+    const W = stage.clientWidth, H = stage.clientHeight, nw = img.naturalWidth || 1, nh = img.naturalHeight || 1;
+    const k = Math.min(W / nw, (H - 60) / nh);
+    baseW = nw * k; baseH = nh * k; world.style.width = baseW + 'px'; world.style.height = baseH + 'px';
+    s = 1; x = (W - baseW) / 2; y = (H - baseH) / 2 + 20; apply();
+  }
+  function zoomAtLocal(px, py, factor){
+    const ns = Math.min(MAXS, Math.max(1, s * factor)); if (ns === s) return;
+    x = px - (px - x) * (ns / s); y = py - (py - y) * (ns / s); s = ns; apply();
+  }
+  const zoomAt = (cx, cy, f) => { const [px, py] = toLocal(cx, cy); zoomAtLocal(px, py, f); };
+  function say(t){ status.textContent = t || ''; status.style.display = t ? 'block' : 'none'; }
+
+  /* ---- live location ---- */
+  function pixelFor(lat, lon){ return [geo.fx[0]*lon + geo.fx[1]*lat + geo.fx[2], geo.fy[0]*lon + geo.fy[1]*lat + geo.fy[2]]; }
+  function showFix(center){
+    if (!fix || !geo) return;
+    const [px, py] = pixelFor(fix.lat, fix.lon), u = px / geo.w, v = py / geo.h;
+    const away = Math.max(Math.abs(u - 0.5) - 0.5, Math.abs(v - 0.5) - 0.5);
+    if (away > 0.08){
+      me.style.display = ring.style.display = 'none';
+      const R = 6371000, d = Math.hypot((fix.lat - geo.lat0) * Math.PI / 180 * R, (fix.lon - geo.lon0) * Math.PI / 180 * R * Math.cos(rad(geo.lat0)));
+      say(`You're not at this course (about ${d > 1609 ? (d / 1609.344).toFixed(1) + ' mi' : Math.round(d * 3.281) + ' ft'} from it).`);
+      return;
+    }
+    me.style.display = 'block'; me.style.left = (u * 100) + '%'; me.style.top = (v * 100) + '%';
+    const pxPerM = Math.abs(geo.fx[0]) / (111320 * Math.cos(rad(fix.lat)));
+    ring.style.display = 'block'; ring.style.left = (u * 100) + '%'; ring.style.top = (v * 100) + '%';
+    ring.style.width = Math.min(60, (2 * fix.acc * pxPerM / geo.w) * 100) + '%';
+    say(`Location accuracy about ±${Math.round(fix.acc * 3.281)} ft — approximate.`);
+    if (center){
+      s = Math.max(s, 2.5); const W = stage.clientWidth, H = stage.clientHeight;
+      x = W / 2 - u * baseW * s; y = H / 2 - v * baseH * s; apply();
+    }
+  }
+  function startLocation(){
+    if (!navigator.geolocation){ say('This device or browser does not support location.'); return; }
+    if (watchId !== null){ showFix(true); return; }
+    say('Finding you…');
+    watchId = navigator.geolocation.watchPosition(p => {
+      const first = !fix; fix = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 20 };
+      showFix(first);
+    }, err => {
+      watchId = null;
+      say(err.code === 1 ? 'Location is blocked. Allow location for this site in your browser settings.' : 'Could not get your location. Try again outdoors.');
+    }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 });
+    btnLoc.classList.add('on');
+  }
+  function stopLocation(){ if (watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId = null; } fix = null; me.style.display = ring.style.display = 'none'; btnLoc.classList.remove('on'); }
+
+  /* ---- compass: rotate so true north on the map points to true north ---- */
+  function angDiff(a, b){ return ((a - b + 540) % 360) - 180; }
+  function onOrient(e){
+    let h = null;
+    if (typeof e.webkitCompassHeading === 'number') h = e.webkitCompassHeading;          // iOS
+    else if (e.absolute && typeof e.alpha === 'number') h = (360 - e.alpha) % 360;       // Android absolute
+    if (h === null) return;
+    heading = heading === null ? h : (heading + angDiff(h, heading) * 0.25 + 360) % 360;   // smooth
+    theta = geo.up - heading; apply();
+  }
+  async function startCompass(){
+    if (compassOn){ stopCompass(); return; }
+    try {
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
+        const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted'){ say('Compass permission was not allowed.'); return; }
+      }
+    } catch (err){ say('Could not start the compass on this device.'); return; }
+    if (!('ondeviceorientationabsolute' in window) && !('ondeviceorientation' in window)){ say('This device does not have a compass.'); return; }
+    orientEvt = ('ondeviceorientationabsolute' in window) ? 'deviceorientationabsolute' : 'deviceorientation';
+    heading = null; compassOn = true; btnComp.classList.add('on'); say('Compass on — hold your phone flat or upright; map follows true north.');
+    orientHandler = onOrient; window.addEventListener(orientEvt, orientHandler, true);
+    setTimeout(() => { if (compassOn && heading === null) say('No compass reading yet. Move your phone in a figure-8 to calibrate.'); }, 2500);
+  }
+  function stopCompass(){
+    if (orientHandler) window.removeEventListener(orientEvt, orientHandler, true);
+    compassOn = false; heading = null; btnComp.classList.remove('on'); theta = 0; apply(); say('');
+  }
+
+  window.openMapViewer = function(src, label){
+    document.getElementById('mvTitle').textContent = label || 'Map';
+    geoKey = Object.keys(MAP_GEO).find(k => src.endsWith(k)) || null; geo = geoKey ? MAP_GEO[geoKey] : null;
+    if (geo && geo.lat0 === undefined){ geo.lat0 = (36.2); geo.lon0 = (-86.6); }
+    btnLoc.style.display = btnComp.style.display = north.style.display = geo ? '' : 'none';
+    say(''); theta = 0;
+    viewer.classList.add('open'); document.body.style.overflow = 'hidden';
+    img.onload = fit; img.src = src; if (img.complete) fit();
+  };
+  function close(){ stopLocation(); if (compassOn) stopCompass(); viewer.classList.remove('open'); document.body.style.overflow = ''; pts.clear(); say(''); }
+  document.getElementById('mvClose').addEventListener('click', close);
+  document.getElementById('mvReset').addEventListener('click', () => { fit(); });
+  btnLoc.addEventListener('click', startLocation);
+  btnComp.addEventListener('click', startCompass);
+  const mid = () => stageCenter();
+  document.getElementById('mvIn').addEventListener('click', () => zoomAt(...mid(), 1.6));
+  document.getElementById('mvOut').addEventListener('click', () => zoomAt(...mid(), 1 / 1.6));
+  document.addEventListener('keydown', e => { if (!viewer.classList.contains('open')) return; if (e.key === 'Escape') close(); if (e.key === '+' || e.key === '=') zoomAt(...mid(), 1.4); if (e.key === '-') zoomAt(...mid(), 1/1.4); });
+  stage.addEventListener('wheel', e => { e.preventDefault(); zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.0018)); }, { passive:false });
+  stage.addEventListener('pointerdown', e => {
+    stage.setPointerCapture(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]); dragMoved = false;
+    if (pts.size === 2){ const [a, b] = [...pts.values()]; lastDist = Math.hypot(a[0]-b[0], a[1]-b[1]); lastMid = [(a[0]+b[0])/2, (a[1]+b[1])/2]; }
+    stage.classList.add('dragging');
+  });
+  stage.addEventListener('pointermove', e => {
+    if (!pts.has(e.pointerId)) return;
+    const prev = pts.get(e.pointerId); pts.set(e.pointerId, [e.clientX, e.clientY]);
+    const c = Math.cos(rad(-theta)), sn = Math.sin(rad(-theta));
+    const pan = (dx, dy) => { x += dx * c - dy * sn; y += dx * sn + dy * c; };   // screen delta -> rotator frame
+    if (pts.size === 1){ const dx = e.clientX - prev[0], dy = e.clientY - prev[1]; if (Math.abs(dx) + Math.abs(dy) > 1) dragMoved = true; pan(dx, dy); apply(); }
+    else if (pts.size === 2){
+      const [a, b] = [...pts.values()], d = Math.hypot(a[0]-b[0], a[1]-b[1]), m = [(a[0]+b[0])/2, (a[1]+b[1])/2];
+      dragMoved = true; pan(m[0] - lastMid[0], m[1] - lastMid[1]);
+      if (lastDist) zoomAt(m[0], m[1], d / lastDist);
+      lastDist = d; lastMid = m; apply();
+    }
+  });
+  function up(e){
+    pts.delete(e.pointerId); if (pts.size < 2) lastDist = 0; if (!pts.size) stage.classList.remove('dragging');
+    if (e.type === 'pointerup' && !dragMoved && pts.size === 0){
+      const now = Date.now();
+      if (now - lastTap < 320){ if (s > 1.05) fit(); else zoomAt(e.clientX, e.clientY, 3); lastTap = 0; } else lastTap = now;
+    }
+  }
+  stage.addEventListener('pointerup', up); stage.addEventListener('pointercancel', up);
+  window.addEventListener('resize', () => { if (viewer.classList.contains('open')) fit(); });
+})();
 </script>
 </body>
 </html>
