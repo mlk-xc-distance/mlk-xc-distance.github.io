@@ -1021,6 +1021,19 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const [h, mnt] = hhmm.split(":").map(Number);
     return `${h % 12 || 12}:${String(mnt).padStart(2, '0')} ${h >= 12 ? 'PM' : 'AM'}`;
   }
+  // Course elevation from GPS watch recordings (barometric altimeter; approximate, rounded to 5 ft).
+  // Keyed by venue and season, since courses can change from year to year.
+  const COURSE_ELEV = {
+    '2026|The Hermitage, Hermitage, TN':            { gain: 145, loss: 150, low: 486, high: 545 },
+    '2026|John Hunt Running Park, Huntsville, AL':  { gain: 100, loss: 100, low: 610, high: 656 },
+    '2026|Shelby Farms Park, Memphis, TN':          { gain: 105, loss: 105, low: 331, high: 371 },
+  };
+  function elevFor(r){ return COURSE_ELEV[r.date.slice(0, 4) + '|' + r.location] || null; }
+  function elevBlock(r){
+    const e = elevFor(r);
+    if (!e) return '';
+    return `<div style="border-top:1px solid var(--line); padding-top:10px; margin-bottom:6px;"><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Course Elevation</div><div title="From a GPS watch recording of the course; approximate." style="font-size:14px; color:var(--slate); line-height:1.4;">~${e.gain} ft gain · ~${e.loss} ft loss <span style="white-space:nowrap;">(low ${e.low} ft · high ${e.high} ft)</span></div></div>`;
+  }
   function wxIdFor(r){
     return 'wx-' + r.date + '-' + r.meetName.replace(/[^a-z0-9]/gi, '');
   }
@@ -1151,6 +1164,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
             ${r.girlsPlace ? `<div><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Girls Team</div><div style="font-size:16px; font-weight:600; line-height:1.35; color:var(--pine);">${r.girlsPlace}</div></div>` : ''}
           </div>` : ''}
           ${r.lat != null ? `<div id="${wxIdFor(r)}-wrap" style="border-top:1px solid var(--line); padding-top:10px; margin-bottom:6px;"><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Race Day Weather${wxUsesArchive(r) ? ' (historical estimate)' : ''}</div><div id="${wxIdFor(r)}" style="font-size:14px; color:var(--slate); line-height:1.4;">Loading weather…</div></div>` : ''}
+          ${elevBlock(r)}
           <div class="results-columns">
             ${r.topBoys ? `<div><h4 class="link-subhead" style="margin-top:14px;">Boys</h4>${finisherTable(r.topBoys, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
             ${r.topGirls ? `<div><h4 class="link-subhead" style="margin-top:14px;">Girls</h4>${finisherTable(r.topGirls, r.season || r.date.slice(0, 4), r.meetName)}</div>` : ''}
