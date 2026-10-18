@@ -1398,6 +1398,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   const COMPARE_MAX = 5;
   const COMPARE_COLORS = ['#2F4FE0', '#C0392B', '#1F8A55', '#B8860B', '#7A4FC0'];
   let compareSelected = [];
+  let chartMode = 'meets'; // 'meets' (by race date) or 'career' (Fr→Sr timeline)
 
   function mmss(seconds){
     const m = Math.floor(seconds / 60);
@@ -1582,7 +1583,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   }
 
   function buildComparisonChart(names){
-    if (names.some(isAlumOnly)) return buildRaceNumberChart(names);
+    if (names.length && (chartMode === 'career' || names.some(isAlumOnly))) return buildRaceNumberChart(names);
     if (names.length === 0){
       return `<div class="callout">Pick 1–${COMPARE_MAX} athletes above to see their times.</div>`;
     }
@@ -1790,6 +1791,12 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
             </div>
           </div>
         </div>
+        ${(() => {
+          const forced = compareSelected.some(isAlumOnly);
+          const career = forced || chartMode === 'career';
+          const btn = (mode, label, on, dis) => `<button type="button" data-chart-mode="${mode}" ${dis ? 'disabled' : ''} style="font-size:12px; font-weight:600; padding:5px 12px; border:1px solid var(--clay); border-radius:3px; cursor:${dis ? 'default' : 'pointer'}; background:${on ? 'var(--clay)' : 'white'}; color:${on ? 'white' : 'var(--clay)'}; opacity:${dis ? .5 : 1};">${label}</button>`;
+          return `<div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap; margin-bottom:10px;"><span style="font-size:12px; color:var(--slate); margin-right:4px;">View:</span>${btn('meets', 'By race date', !career, forced)}${btn('career', 'Career timeline (Fr → Sr)', career, false)}${forced ? '<span style="font-size:12px; color:var(--slate);">Alumni are always shown on the career timeline.</span>' : ''}</div>`;
+        })()}
         <div id="compareChartArea">${buildComparisonChart(compareSelected)}</div>
       </div>
     `;
@@ -1805,6 +1812,8 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         renderByCompare();
       });
     });
+
+    list.querySelectorAll('[data-chart-mode]').forEach(b => b.addEventListener('click', () => { chartMode = b.dataset.chartMode; renderByCompare(); }));
 
     const clearBtn = document.getElementById('clearCompareBtn');
     if (clearBtn){
