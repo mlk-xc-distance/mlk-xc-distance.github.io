@@ -695,13 +695,12 @@ if ("serviceWorker" in navigator) {
 <div class="map-viewer" id="mapViewer" role="dialog" aria-modal="true" aria-label="Map viewer">
   <div class="mv-bar"><div class="mv-title" id="mvTitle">Map</div>
     <div class="mv-north" id="mvNorth" title="True north" style="display:none;"><svg viewBox="0 0 40 40" width="38" height="38"><circle cx="20" cy="20" r="18" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.45)"/><polygon points="20,5 25,22 20,19 15,22" fill="#ff5a4d"/><polygon points="20,35 25,22 20,19 15,22" fill="#fff" opacity=".8"/></svg><span>N</span></div>
-    <button class="mv-btn" id="mvLoc" aria-label="Show my location" title="Show my location" style="display:none;">&#9673;</button>
-    <button class="mv-btn" id="mvCompass" aria-label="Rotate map with compass" title="Rotate map to match your compass" style="display:none; font-size:13px;">Compass</button>
+    <button class="mv-btn mv-loc" id="mvLoc" aria-label="Show my location" title="Show my location" style="display:none;"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path id="mvArrow" d="M21 3 L14.5 21 L11.5 12.5 L3 9.5 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
     <button class="mv-btn" id="mvOut" aria-label="Zoom out">&minus;</button>
     <button class="mv-btn" id="mvIn" aria-label="Zoom in">+</button>
     <button class="mv-btn" id="mvReset" aria-label="Reset" style="font-size:13px;">Fit</button>
     <button class="mv-btn" id="mvClose" aria-label="Close">&times;</button></div>
-  <div class="mv-stage" id="mvStage"><div class="mv-rot" id="mvRot"><div class="mv-world" id="mvWorld"><img class="mv-img" id="mvImg" alt="" draggable="false"><div class="mv-ring" id="mvRing"></div><div class="mv-me" id="mvMe"><div class="mv-dot" id="mvDot"></div></div></div></div></div>
+  <div class="mv-stage" id="mvStage"><div class="mv-rot" id="mvRot"><div class="mv-world" id="mvWorld"><img class="mv-img" id="mvImg" alt="" draggable="false"><div class="mv-ring" id="mvRing"></div><div class="mv-me" id="mvMe"><div class="mv-cone" id="mvCone"></div><div class="mv-dot" id="mvDot"></div></div></div></div></div>
   <div class="mv-status" id="mvStatus"></div>
   <div class="mv-hint" id="mvHint">Pinch, scroll or double-tap to zoom &middot; drag to move</div>
 </div>
@@ -713,11 +712,11 @@ const MAP_GEO = {"maps/voyles-classic.jpg": {"w": 1400, "h": 971, "fx": [127970.
 (function(){
   const viewer = document.getElementById('mapViewer'), stage = document.getElementById('mvStage'), rot = document.getElementById('mvRot'),
         world = document.getElementById('mvWorld'), img = document.getElementById('mvImg'), me = document.getElementById('mvMe'),
-        dot = document.getElementById('mvDot'), ring = document.getElementById('mvRing'), status = document.getElementById('mvStatus'),
-        btnLoc = document.getElementById('mvLoc'), btnComp = document.getElementById('mvCompass'), north = document.getElementById('mvNorth');
+        dot = document.getElementById('mvDot'), cone = document.getElementById('mvCone'), ring = document.getElementById('mvRing'), status = document.getElementById('mvStatus'),
+        btnLoc = document.getElementById('mvLoc'), arrow = document.getElementById('mvArrow'), north = document.getElementById('mvNorth');
   let s = 1, x = 0, y = 0, baseW = 0, baseH = 0, theta = 0, geo = null, geoKey = null; const MAXS = 10;
   const pts = new Map(); let lastDist = 0, lastMid = null, lastTap = 0, dragMoved = false;
-  let watchId = null, fix = null, compassOn = false, heading = null, orientHandler = null, orientEvt = null;
+  let mode = 0, watchId = null, fix = null, compassOn = false, heading = null, orientHandler = null, orientEvt = null;
 
   const rad = d => d * Math.PI / 180;
   function stageCenter(){ const r = stage.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; }
@@ -733,6 +732,8 @@ const MAP_GEO = {"maps/voyles-classic.jpg": {"w": 1400, "h": 971, "fx": [127970.
     world.style.transform = `translate(${x}px, ${y}px) scale(${s})`;
     rot.style.transform = `rotate(${theta}deg)`;
     dot.style.transform = `scale(${1 / s})`;
+    cone.style.transform = `scale(${1 / s}) rotate(${compassOn && heading !== null ? (heading - geo.up) : 0}deg)`; cone.style.display = (compassOn && heading !== null) ? 'block' : 'none';
+    north.style.display = (geo && compassOn) ? '' : 'none';
     if (geo) north.firstElementChild.style.transform = `rotate(${theta - geo.up}deg)`;
   }
   function fit(){
@@ -770,20 +771,29 @@ const MAP_GEO = {"maps/voyles-classic.jpg": {"w": 1400, "h": 971, "fx": [127970.
       x = W / 2 - u * baseW * s; y = H / 2 - v * baseH * s; apply();
     }
   }
+  // One button, like Apple Maps: off -> show me (north-up) -> follow my heading (map rotates) -> back to show me
+  function setMode(m){
+    mode = m;
+    btnLoc.classList.toggle('on', m === 2);
+    btnLoc.classList.toggle('live', m === 1);
+    arrow.setAttribute('fill', m ? 'currentColor' : 'none');
+    arrow.parentNode.style.transform = m === 2 ? 'rotate(-45deg)' : '';
+    btnLoc.title = btnLoc.ariaLabel = m === 0 ? 'Show my location' : m === 1 ? 'Rotate map to the direction I face' : 'Back to north-up';
+  }
   function startLocation(){
     if (!navigator.geolocation){ say('This device or browser does not support location.'); return; }
+    setMode(1);
     if (watchId !== null){ showFix(true); return; }
     say('Finding you…');
     watchId = navigator.geolocation.watchPosition(p => {
       const first = !fix; fix = { lat: p.coords.latitude, lon: p.coords.longitude, acc: p.coords.accuracy || 20 };
       showFix(first);
     }, err => {
-      watchId = null;
+      watchId = null; setMode(0);
       say(err.code === 1 ? 'Location is blocked. Allow location for this site in your browser settings.' : 'Could not get your location. Try again outdoors.');
     }, { enableHighAccuracy: true, maximumAge: 2000, timeout: 20000 });
-    btnLoc.classList.add('on');
   }
-  function stopLocation(){ if (watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId = null; } fix = null; me.style.display = ring.style.display = 'none'; btnLoc.classList.remove('on'); }
+  function stopLocation(){ if (watchId !== null){ navigator.geolocation.clearWatch(watchId); watchId = null; } fix = null; me.style.display = ring.style.display = 'none'; setMode(0); }
 
   /* ---- compass: rotate so true north on the map points to true north ---- */
   function angDiff(a, b){ return ((a - b + 540) % 360) - 180; }
@@ -796,37 +806,40 @@ const MAP_GEO = {"maps/voyles-classic.jpg": {"w": 1400, "h": 971, "fx": [127970.
     theta = geo.up - heading; apply();
   }
   async function startCompass(){
-    if (compassOn){ stopCompass(); return; }
     try {
       if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function'){
-        const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted'){ say('Compass permission was not allowed.'); return; }
+        const r = await DeviceOrientationEvent.requestPermission(); if (r !== 'granted'){ say('Compass permission was not allowed.'); return false; }
       }
-    } catch (err){ say('Could not start the compass on this device.'); return; }
-    if (!('ondeviceorientationabsolute' in window) && !('ondeviceorientation' in window)){ say('This device does not have a compass.'); return; }
+    } catch (err){ say('Could not start the compass on this device.'); return false; }
+    if (!('ondeviceorientationabsolute' in window) && !('ondeviceorientation' in window)){ say('This device does not have a compass.'); return false; }
     orientEvt = ('ondeviceorientationabsolute' in window) ? 'deviceorientationabsolute' : 'deviceorientation';
-    heading = null; compassOn = true; btnComp.classList.add('on'); say('Compass on — hold your phone flat or upright; map follows true north.');
+    heading = null; compassOn = true; say('Map now turns to the direction you face. Tap the arrow again to go back to north-up.');
     orientHandler = onOrient; window.addEventListener(orientEvt, orientHandler, true);
     setTimeout(() => { if (compassOn && heading === null) say('No compass reading yet. Move your phone in a figure-8 to calibrate.'); }, 2500);
+    return true;
   }
   function stopCompass(){
     if (orientHandler) window.removeEventListener(orientEvt, orientHandler, true);
-    compassOn = false; heading = null; btnComp.classList.remove('on'); theta = 0; apply(); say('');
+    compassOn = false; heading = null; theta = 0; apply(); say('');
   }
 
   window.openMapViewer = function(src, label){
     document.getElementById('mvTitle').textContent = label || 'Map';
     geoKey = Object.keys(MAP_GEO).find(k => src.endsWith(k)) || null; geo = geoKey ? MAP_GEO[geoKey] : null;
     if (geo && geo.lat0 === undefined){ geo.lat0 = (36.2); geo.lon0 = (-86.6); }
-    btnLoc.style.display = btnComp.style.display = north.style.display = geo ? '' : 'none';
-    say(''); theta = 0;
+    btnLoc.style.display = geo ? '' : 'none'; north.style.display = 'none';
+    setMode(0); say(''); theta = 0;
     viewer.classList.add('open'); document.body.style.overflow = 'hidden';
     img.onload = fit; img.src = src; if (img.complete) fit();
   };
   function close(){ stopLocation(); if (compassOn) stopCompass(); viewer.classList.remove('open'); document.body.style.overflow = ''; pts.clear(); say(''); }
   document.getElementById('mvClose').addEventListener('click', close);
   document.getElementById('mvReset').addEventListener('click', () => { fit(); });
-  btnLoc.addEventListener('click', startLocation);
-  btnComp.addEventListener('click', startCompass);
+  btnLoc.addEventListener('click', async () => {
+    if (mode === 0) startLocation();
+    else if (mode === 1){ if (await startCompass()){ setMode(2); apply(); } }
+    else { stopCompass(); setMode(1); showFix(true); }
+  });
   const mid = () => stageCenter();
   document.getElementById('mvIn').addEventListener('click', () => zoomAt(...mid(), 1.6));
   document.getElementById('mvOut').addEventListener('click', () => zoomAt(...mid(), 1 / 1.6));
