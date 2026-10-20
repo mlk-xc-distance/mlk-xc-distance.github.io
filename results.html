@@ -973,6 +973,14 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   function isFiveK(meetName){
     return !/\b(4000m|4k|3200m|2\s*mile|3\s*mile)\b/i.test(meetName);
   }
+  // Distance chip: set r.distance on a result to override (e.g. "4000m"); otherwise 5K unless the meet name says otherwise
+  function distChip(r){
+    let d = r.distance;
+    if (!d){ const m = (r.meetName || '').match(/\b(4000m|4k|3200m|2\s*mile|3\s*mile)\b/i); d = m ? m[1] : '5K'; }
+    const five = /^5k$|^5000m$/i.test(d);
+    const label = five ? '5K · 5000m' : d;
+    return `<span title="Race distance" style="display:inline-block; margin-left:8px; padding:1px 8px; border-radius:10px; font-size:12px; font-weight:700; letter-spacing:.04em; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.4); color:#fff; vertical-align:1px;">${label}</span>`;
+  }
 
   function badgeFor(name, time, season, raceMeetName){
     if (raceMeetName && !isFiveK(raceMeetName)) return null;
@@ -1155,7 +1163,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
         <div class="link-card" data-meet="${r.meetName}" data-date="${r.date}" style="display:block; margin-bottom:34px; cursor:default; padding:0; overflow:hidden;">
           <div style="background:var(--pine); color:#fff; padding:16px 18px 14px;">
             <div style="font-family:'Oswald', sans-serif; font-weight:600; font-size:24px; line-height:1.2; letter-spacing:0.01em; color:#fff;">${r.meetName}</div>
-            <div style="font-size:14px; color:var(--clay-soft); margin-top:4px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}</div>
+            <div style="font-size:14px; color:var(--clay-soft); margin-top:4px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}${distChip(r)}</div>
           </div>
           <div style="padding:16px 18px 18px;">
           ${(r.boysPlace || r.girlsPlace) ? `
