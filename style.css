@@ -668,6 +668,10 @@
 .mv-btn{ pointer-events:auto; background:rgba(255,255,255,.14); color:#fff; border:1px solid rgba(255,255,255,.35); border-radius:6px; min-width:38px; height:40px; padding:0 7px; font-size:21px; line-height:1; cursor:pointer; }
 .mv-btn:hover{ background:rgba(255,255,255,.28); }
 .mv-btn.on{ background:#2F7BFF; border-color:#fff; }
+.mv-loc{ display:inline-flex; align-items:center; justify-content:center; }
+.mv-loc.live{ color:#6FA3FF; border-color:#6FA3FF; }
+.mv-loc svg{ transition:transform .2s ease; }
+.mv-cone{ position:absolute; left:-26px; top:-60px; width:52px; height:60px; display:none; pointer-events:none; transform-origin:26px 60px; background:linear-gradient(to top, rgba(47,123,255,.55), rgba(47,123,255,0)); clip-path:polygon(50% 100%, 0 0, 100% 0); }
 .mv-north{ display:flex; align-items:center; gap:2px; color:#fff; font-weight:700; font-size:13px; pointer-events:none; }
 .mv-north svg{ transition:transform .15s linear; }
 .mv-status{ position:absolute; bottom:44px; left:12px; right:12px; text-align:center; color:#fff; background:rgba(10,16,40,.85); border:1px solid rgba(255,255,255,.25); border-radius:8px; padding:8px 12px; font-size:14px; display:none; z-index:2; pointer-events:none; }
