@@ -679,8 +679,14 @@
 .hero-map-zoomhint{ font-family:'Source Sans 3',sans-serif; font-size:12px; font-weight:400; text-transform:none; letter-spacing:0; color:var(--clay-soft); opacity:.85; margin-left:8px; }
 
 /* ---- Team dinner button + info window ---- */
-.dinner-btn{ margin-top:14px; background:#fff; color:var(--pine); border:0; border-radius:999px; padding:10px 18px; font-family:'Oswald',sans-serif; font-weight:600; font-size:15px; letter-spacing:.04em; text-transform:uppercase; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.25); }
-.dinner-btn:hover{ background:var(--clay-soft); }
+.dinner-btn{ position:relative; display:inline-flex; align-items:center; gap:12px; text-align:left; margin-top:14px; background:#fff; color:var(--pine); border:2px solid var(--clay); border-radius:12px; padding:9px 12px 9px 16px; font-family:'Oswald',sans-serif; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,.25); animation:dinnerPulse 2.2s ease-out infinite; }
+.dinner-btn:hover,.dinner-btn:focus-visible{ background:var(--clay-soft); }
+.dinner-btn-main{ display:block; font-weight:600; font-size:15px; letter-spacing:.04em; text-transform:uppercase; line-height:1.2; }
+.dinner-btn-sub{ display:block; font-family:'Source Sans 3',sans-serif; font-size:13px; color:var(--slate); margin-top:2px; }
+.dinner-btn-txt{ display:block; flex:0 1 auto; }
+.dinner-btn-go{ flex:none; width:30px; height:30px; border-radius:50%; background:var(--clay); color:#fff; font-size:24px; line-height:28px; text-align:center; font-family:'Source Sans 3',sans-serif; }
+@keyframes dinnerPulse{ 0%{ box-shadow:0 2px 10px rgba(0,0,0,.25), 0 0 0 0 rgba(255,255,255,.55); } 70%,100%{ box-shadow:0 2px 10px rgba(0,0,0,.25), 0 0 0 12px rgba(255,255,255,0); } }
+@media (prefers-reduced-motion: reduce){ .dinner-btn{ animation:none; } }
 .dinner-modal{ position:fixed; inset:0; z-index:6000; background:rgba(10,16,40,.78); display:none; align-items:center; justify-content:center; padding:16px; }
 .dinner-modal.open{ display:flex; }
 .dinner-card{ position:relative; background:#fff; color:#1a2040; border-radius:14px; max-width:520px; width:100%; max-height:calc(100vh - 32px); overflow:auto; padding:24px 22px 22px; box-shadow:0 12px 40px rgba(0,0,0,.45); }
