@@ -585,7 +585,6 @@ const MEETS = [
         ${linkFact("Address", mapsUrl(next), next.address || "")}
         ${next.parking ? `<div><div class="label">Parking</div><div class="value">${next.parking}${(next.parkingAddress || next.parkingMap) ? `<br><a href="${next.parkingAddress ? universalMapsUrl(next.parkingAddress) : next.parkingMap}" target="_blank" rel="noopener" ${next.parkingMapTitle ? `title="${next.parkingMapTitle}"` : ''} style="color:var(--clay-soft); font-size:14px;">${next.parkingMapLabel || 'Link to Parking Map'}</a>` : ''}</div></div>` : ''}
         ${inForecastWindow(next) ? `<div id="heroWeatherFact"><div class="label">Weather</div><div class="value" id="heroWeatherValue">Loading forecast…</div></div>` : ''}
-        ${next.dinner ? `<div><div class="label">Team Dinner</div><div class="value"><a href="#" onclick="openDinner(); return false;">Tue 10/27, 6:30&ndash;7:00 PM &middot; Details &amp; RSVP &rarr;</a></div></div>` : ''}
         ${linkFact("Official Site", next.officialSite, "Meet Website →")}
         ${linkFact("Results", next.results, "Official Results →")}
         ${linkFact("Stream", next.stream, "Watch live →")}
