@@ -553,7 +553,7 @@ const MEETS = [
       ${next.alertBadge ? (Array.isArray(next.alertBadge) ? next.alertBadge : [next.alertBadge]).map(b => `<div class="alert-badge">${b}</div>`).join('') : ''}
       <h1>${meetNameHtml(next)}</h1>
       <div class="countdown-badge">${countdownText}</div>
-      ${next.dinner ? `<div><button type="button" class="dinner-btn" onclick="openDinner()">&#127835; Team Dinner &middot; Details &amp; RSVP</button></div>` : ''}
+      ${next.dinner ? `<div><button type="button" class="dinner-btn" onclick="openDinner()"><span class="dinner-btn-txt"><span class="dinner-btn-main">&#127835; Team Dinner &middot; Tap for details &amp; RSVP</span><span class="dinner-btn-sub">RSVP by Sat 10/24, 10 AM</span></span><span class="dinner-btn-go" aria-hidden="true">&rsaquo;</span></button></div>` : ''}
     `];
     const hasParkingMap = !!next.parkingMapImg;
     const hasCourseMap = !!next.courseMapImg;
