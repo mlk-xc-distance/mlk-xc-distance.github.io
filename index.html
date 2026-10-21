@@ -358,7 +358,7 @@ const MEETS = [
   { name: "Hoka Frank Horton Night Classic", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", lat: 35.1381, lon: -89.8338, parking: "$7/car in advance, $10/car day-of; buying ahead also secures a better parking spot.", parkingMap: "https://runsignup.com/TicketEvent/HortonStore26", parkingMapLabel: "Buy Parking Pass Online (Save $3)", parkingMapTitle: "Buying your parking pass ahead of time also secures a better spot", courseMapImg: "maps/frank-horton.jpg", parkingMapImg: "maps/frank-horton-parking.jpg", date: "2026-10-03", time: "Girls Purple Varsity 7:00 PM · Boys Purple Varsity 7:30 PM · Boys Gold Varsity 8:30 PM · Awards 9:00 PM", raceHour: "19:00", lastRaceHour: "20:30", link: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/info", results: "https://tn.milesplit.com/meets/723708-hoka-frank-horton-night-classic-hs-2026/results", officialSite: "https://thefrankhorton.com/event-info/" },
   { name: "TSIAA Week 5 (Frank Horton alternate)", arrival: "By 4:30 PM", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, raceHour: "17:50", parking: "Parking should be plentiful and is likely free (yet to be confirmed).", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", parkingMapImg: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", courseMapImg: "maps/voyles-classic.jpg", date: "2026-10-05", time: "All Boys and Girls HS (3.1 mi) 5:50 PM (for athletes that can't travel to Frank Horton in Memphis or don't meet the roster/time limits for that race)", link: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/info", results: "https://tn.milesplit.com/meets/741554-tsiaa-week-5-2026/results" },
   { name: "MSCCA Championships", arrival: "By 12:00 PM", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, parking: "$10.00 parking donation per car. Cash only.", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", parkingMapImg: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", courseMapImg: "maps/voyles-classic.jpg", date: "2026-10-17", time: "Boys Varsity 1:30 PM · Girls Varsity 2:10 PM · Combined JV 2:50 PM", raceHour: "13:30", lastRaceHour: "14:50", link: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/info", results: "https://tn.milesplit.com/meets/724604-mscca-championships-2026/results", alertBadge: ["2ND WEEKEND OF FALL BREAK", "NEW RACE TIMES!"] },
-  { name: "Regionals (TSSAA DI Class AA Section 4)", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, parking: "$10", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", parkingMapImg: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", courseMapImg: "maps/voyles-classic.jpg", date: "2026-10-27", time: "Varsity Girls 3:00 PM · Varsity Boys 3:50 PM · Combined JV 4:40 PM · Awards 5:30 PM", raceHour: "15:00", lastRaceHour: "16:40", link: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/info", results: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/results", alertBadge: "VENUE CHANGED — NOW AT THE HERMITAGE" },
+  { name: "Regionals (TSSAA DI Class AA Section 4)", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, parking: "$10", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", parkingMapImg: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", courseMapImg: "maps/voyles-classic.jpg", date: "2026-10-27", time: "Varsity Girls 3:00 PM · Varsity Boys 3:50 PM · Combined JV 4:40 PM · Awards 5:30 PM", raceHour: "15:00", lastRaceHour: "16:40", link: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/info", results: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/results", alertBadge: "VENUE CHANGED — NOW AT THE HERMITAGE", dinner: true },
   { name: "State Championship", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", mapsQuery: "35.145956,-89.834245", lat: 35.145956, lon: -89.834245, courseMapImg: "maps/frank-horton.jpg", date: "2026-11-06", time: "DI AA Boys 12:30 PM · DI AA Girls 1:20 PM · Awards 2:00 PM", raceHour: "12:30", lastRaceHour: "13:20", link: "https://tn.milesplit.com/meets/772358-tssaa-xc-di-class-aa-state-championship-meet-2026/info", results: "https://tn.milesplit.com/meets/772358-tssaa-xc-di-class-aa-state-championship-meet-2026/results" },
 ];
 
@@ -553,6 +553,7 @@ const MEETS = [
       ${next.alertBadge ? (Array.isArray(next.alertBadge) ? next.alertBadge : [next.alertBadge]).map(b => `<div class="alert-badge">${b}</div>`).join('') : ''}
       <h1>${meetNameHtml(next)}</h1>
       <div class="countdown-badge">${countdownText}</div>
+      ${next.dinner ? `<div><button type="button" class="dinner-btn" onclick="openDinner()">&#127835; Team Dinner &middot; Details &amp; RSVP</button></div>` : ''}
     `];
     const hasParkingMap = !!next.parkingMapImg;
     const hasCourseMap = !!next.courseMapImg;
@@ -584,6 +585,7 @@ const MEETS = [
         ${linkFact("Address", mapsUrl(next), next.address || "")}
         ${next.parking ? `<div><div class="label">Parking</div><div class="value">${next.parking}${(next.parkingAddress || next.parkingMap) ? `<br><a href="${next.parkingAddress ? universalMapsUrl(next.parkingAddress) : next.parkingMap}" target="_blank" rel="noopener" ${next.parkingMapTitle ? `title="${next.parkingMapTitle}"` : ''} style="color:var(--clay-soft); font-size:14px;">${next.parkingMapLabel || 'Link to Parking Map'}</a>` : ''}</div></div>` : ''}
         ${inForecastWindow(next) ? `<div id="heroWeatherFact"><div class="label">Weather</div><div class="value" id="heroWeatherValue">Loading forecast…</div></div>` : ''}
+        ${next.dinner ? `<div><div class="label">Team Dinner</div><div class="value"><a href="#" onclick="openDinner(); return false;">Tue 10/27, 6:30&ndash;7:00 PM &middot; Details &amp; RSVP &rarr;</a></div></div>` : ''}
         ${linkFact("Official Site", next.officialSite, "Meet Website →")}
         ${linkFact("Results", next.results, "Official Results →")}
         ${linkFact("Stream", next.stream, "Watch live →")}
@@ -690,6 +692,29 @@ if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js").catch(() => {});
   });
 }
+</script>
+
+<div class="dinner-modal" id="dinnerModal" role="dialog" aria-modal="true" aria-labelledby="dinnerTitle">
+  <div class="dinner-card">
+    <button class="dinner-x" type="button" aria-label="Close" onclick="closeDinner()">&times;</button>
+    <div class="dinner-kicker">After Regionals</div>
+    <h2 id="dinnerTitle">Team Dinner</h2>
+    <p class="dinner-lead">We&rsquo;ll head over after the Regionals awards and our own short gathering to recognize the MLK seniors.</p>
+    <dl class="dinner-list">
+      <div><dt>When</dt><dd>Tuesday, October 27 &mdash; plan to arrive between <strong>6:30 and 7:00 PM</strong></dd></div>
+      <div><dt>Where</dt><dd>The Lewis family&rsquo;s home in Nashville, about 20 minutes from The Hermitage. Full address is on the RSVP form.</dd></div>
+      <div><dt>Food</dt><dd>Catered by Baja Burrito</dd></div>
+      <div><dt>Bring</dt><dd>Your own lawn chairs, plus a folding table if you have one</dd></div>
+      <div><dt>Cost</dt><dd><strong>$15 per person</strong> (athlete included), <strong>$10</strong> for siblings 12 &amp; under. Pay by Venmo, PayPal, Cash App, or cash at dinner &mdash; details are on the RSVP form. Put the athlete&rsquo;s name in the payment note.</dd></div>
+      <div><dt>RSVP by</dt><dd><strong>Saturday, October 24 at 10:00 AM</strong> (end of practice) so the caterer gets a final headcount</dd></div>
+    </dl>
+    <a class="dinner-rsvp" href="https://forms.gle/zzspQfMpcwTeK3QJ8" target="_blank" rel="noopener">RSVP on the Google Form &rarr;</a>
+  </div>
+</div>
+<script>
+function openDinner(){ var m=document.getElementById('dinnerModal'); m.classList.add('open'); document.body.style.overflow='hidden'; m.querySelector('.dinner-x').focus(); }
+function closeDinner(){ document.getElementById('dinnerModal').classList.remove('open'); document.body.style.overflow=''; }
+(function(){ var m=document.getElementById('dinnerModal'); m.addEventListener('click',function(e){ if(e.target===m) closeDinner(); }); document.addEventListener('keydown',function(e){ if(e.key==='Escape' && m.classList.contains('open')) closeDinner(); }); })();
 </script>
 
 <div class="map-viewer" id="mapViewer" role="dialog" aria-modal="true" aria-label="Map viewer">
