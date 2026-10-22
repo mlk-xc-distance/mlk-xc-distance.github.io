@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Cross Country Senior Headshots</title>
+<style>
+:root{ --pine:#14225E; --clay:#2F4FE0; --soft:#B9C7FF; --bg:#f4f6fd; --ink:#1a2040; --line:#d8def2; }
+@media (prefers-color-scheme: dark){ :root{ --bg:#0c1230; --ink:#eef1ff; --line:#2a356b; } }
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--bg); color:var(--ink); font-family:'Source Sans 3',system-ui,-apple-system,Segoe UI,sans-serif; }
+header{ background:var(--pine); color:#fff; padding:28px 16px 24px; }
+.wrap{ max-width:980px; margin:0 auto; padding:0 16px; }
+header .wrap{ padding:0; }
+h1{ font-family:'Oswald',Impact,sans-serif; font-weight:700; font-size:clamp(28px,6vw,42px); line-height:1.1; margin:0 0 6px; letter-spacing:.01em; }
+header p{ margin:0; color:var(--soft); }
+.bar{ display:flex; flex-wrap:wrap; align-items:center; gap:12px 18px; padding:18px 0 6px; }
+.bar span{ color:inherit; opacity:.75; }
+.btn{ border:0; font:inherit; font-weight:700; cursor:pointer; display:inline-block; background:var(--clay); color:#fff; text-decoration:none; font-weight:700; padding:12px 18px; border-radius:8px; }
+.btn:hover{ background:var(--pine); }
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:18px; padding:14px 0 40px; }
+.card{ margin:0; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; color:#1a2040; }
+.card img{ display:block; width:100%; height:auto; }
+figcaption{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 14px; font-weight:700; }
+.dl{ color:var(--clay); text-decoration:none; font-weight:700; border:2px solid var(--clay); border-radius:6px; padding:6px 12px; }
+.dl:hover{ background:var(--clay); color:#fff; }
+.note{ font-size:14px; opacity:.75; padding-bottom:36px; }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Cross Country Senior Headshots</h1>
+  <p>MLK Cross Country &middot; 2026 &middot; full-resolution photos (2400 &times; 3000)</p>
+</div></header>
+<main class="wrap">
+  <div class="bar">
+    <button class="btn" id="dlAll" type="button">Download all (.zip, 56&nbsp;MB)</button>
+    <span>Or download each photo below. Tap a photo to view it full size.</span>
+  </div>
+  <div class="grid">
+    <figure class="card">
+      <a href="brent-ferrell.png" target="_blank" rel="noopener"><img src="thumbs/brent-ferrell.jpg" alt="Brent Ferrell headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Brent Ferrell</span><a class="dl" href="brent-ferrell.png" download="brent-ferrell.png">Download</a></figcaption>
+    </figure>
+    <figure class="card">
+      <a href="ivy-brame-blake.png" target="_blank" rel="noopener"><img src="thumbs/ivy-brame-blake.jpg" alt="Ivy Brame-Blake headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Ivy Brame-Blake</span><a class="dl" href="ivy-brame-blake.png" download="ivy-brame-blake.png">Download</a></figcaption>
+    </figure>
+    <figure class="card">
+      <a href="nevaeh-bowers.png" target="_blank" rel="noopener"><img src="thumbs/nevaeh-bowers.jpg" alt="Nevaeh Bowers headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Nevaeh Bowers</span><a class="dl" href="nevaeh-bowers.png" download="nevaeh-bowers.png">Download</a></figcaption>
+    </figure>
+    <figure class="card">
+      <a href="olivia-collins.png" target="_blank" rel="noopener"><img src="thumbs/olivia-collins.jpg" alt="Olivia Collins headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Olivia Collins</span><a class="dl" href="olivia-collins.png" download="olivia-collins.png">Download</a></figcaption>
+    </figure>
+    <figure class="card">
+      <a href="oscar-spitzer.png" target="_blank" rel="noopener"><img src="thumbs/oscar-spitzer.jpg" alt="Oscar Spitzer headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Oscar Spitzer</span><a class="dl" href="oscar-spitzer.png" download="oscar-spitzer.png">Download</a></figcaption>
+    </figure>
+    <figure class="card">
+      <a href="samuel-petrony.png" target="_blank" rel="noopener"><img src="thumbs/samuel-petrony.jpg" alt="Samuel Petrony headshot" loading="lazy" width="720" height="900"></a>
+      <figcaption><span>Samuel Petrony</span><a class="dl" href="samuel-petrony.png" download="samuel-petrony.png">Download</a></figcaption>
+    </figure>
+  </div>
+  <p class="note">On a phone, if a photo opens instead of downloading, press and hold it and choose Save to Photos / Download image.</p>
+</main>
+<script src="jszip.min.js"></script>
+<script>
+(function(){
+  var btn=document.getElementById('dlAll'), label=btn.innerHTML;
+  var files=[].map.call(document.querySelectorAll('a.dl'),function(a){ return a.getAttribute('href'); });
+  btn.addEventListener('click',async function(){
+    if(btn.disabled) return; btn.disabled=true;
+    try{
+      var zip=new JSZip(), n=0;
+      for(var i=0;i<files.length;i++){
+        btn.textContent='Preparing '+(i+1)+' of '+files.length+'\u2026';
+        var r=await fetch(files[i]); if(!r.ok) throw new Error(r.status);
+        zip.file(files[i], await r.blob()); n++;
+      }
+      btn.textContent='Building zip\u2026';
+      var blob=await zip.generateAsync({type:'blob',compression:'STORE'});
+      var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='MLK-XC-Senior-Headshots.zip';
+      document.body.appendChild(a); a.click(); a.remove(); setTimeout(function(){ URL.revokeObjectURL(a.href); },60000);
+      btn.textContent='Done \u2014 check your downloads';
+    }catch(e){ btn.textContent='Could not build the zip \u2014 please download each photo below'; }
+    setTimeout(function(){ btn.innerHTML=label; btn.disabled=false; },6000);
+  });
+})();
+</script>
+</body>
+</html>
