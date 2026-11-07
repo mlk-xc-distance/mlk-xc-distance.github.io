@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#14225E">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>MSCCA Awards Banquet — MLK Cross Country</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{ --pine:#14225E; --pine-soft:#1F3480; --stone:#F2F4FB; --chalk:#FFFFFF; --clay:#2F4FE0; --clay-soft:#B9C7FF; --slate:#5B6479; --line:#D9DFEF; }
+  *{box-sizing:border-box;}
+  body{margin:0; background:var(--stone); color:var(--pine); font-family:'Source Sans 3',sans-serif; font-size:17px; line-height:1.55;}
+  h1,h2{font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:0.01em; margin:0;}
+  a{color:var(--clay);}
+  .hero{background:var(--pine); color:#fff; padding:44px 20px 40px;}
+  .wrap{max-width:760px; margin:0 auto;}
+  .kicker{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.14em; font-size:14px; color:var(--clay-soft); margin-bottom:8px;}
+  .hero h1{font-size:clamp(30px,7vw,46px); line-height:1.1;}
+  .hero p{margin:10px 0 0; color:var(--clay-soft); font-size:18px;}
+  main{padding:28px 20px 56px;}
+  .card{background:var(--chalk); border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin-bottom:18px;}
+  .card h2{font-size:22px; margin-bottom:12px;}
+  .invited{display:flex; flex-wrap:wrap; gap:10px; margin:0; padding:0; list-style:none;}
+  .invited li{background:var(--pine); color:#fff; border-radius:999px; padding:8px 18px; font-weight:600;}
+  dl{margin:0; display:grid; grid-template-columns:130px 1fr; gap:16px 18px;}
+  dt{font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:0.08em; font-size:14px; color:var(--slate); padding-top:3px;}
+  dd{margin:0;}
+  dd ul{margin:6px 0 0 20px; padding:0;}
+  dd li{margin-bottom:4px;}
+  .note{color:var(--slate); font-size:15px;}
+  @media (max-width:560px){ dl{grid-template-columns:1fr; gap:4px;} dt{padding-top:12px;} dt:first-child{padding-top:0;} .card{padding:18px;} }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="kicker">MLK Cross Country</div>
+    <h1>MSCCA Awards Banquet</h1>
+    <p>Key details for honored athletes and their families</p>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <section class="card">
+      <h2>Who is invited?</h2>
+      <ul class="invited">
+        <li>Brent Ferrell</li>
+        <li>Miles Fowler</li>
+        <li>Dillon Fell</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Key details</h2>
+      <dl>
+        <dt>Location</dt>
+        <dd><strong>Brentwood Academy</strong><br>
+          <a id="dirLink" href="https://www.google.com/maps/search/?api=1&amp;query=Brentwood%20Academy%2C%20219%20Granny%20White%20Pike%2C%20Brentwood%2C%20TN" target="_blank" rel="noopener">219 Granny White Pike, Brentwood, TN</a><br>
+          <span class="note">Signs by the sidewalk will point you to the dining hall.</span></dd>
+
+        <dt>Time</dt>
+        <dd>Dinner starts at <strong>6:00 PM</strong>, with awards after.</dd>
+
+        <dt>Cost</dt>
+        <dd>
+          <ul>
+            <li><strong>Free</strong> for MSCCA coaches and the athletes being honored.</li>
+            <li><strong>$15 per person</strong> for all other guests (cash, Venmo, or check).</li>
+            <li>Schools covering their extra guests can make checks out to MSCCA.</li>
+          </ul>
+        </dd>
+
+        <dt>Guest limit</dt>
+        <dd>Space is tight, so please bring <strong>no more than 2 guests</strong> per runner if possible. A family that needs to bring more is OK, but there is no room for extended family or teammates who aren’t being honored.</dd>
+
+        <dt>Dress</dt>
+        <dd>“Sunday best” for athletes. It isn’t formal, but they should look nice and presentable.</dd>
+      </dl>
+    </section>
+  </div>
+</main>
+<script>
+  (function(){
+    var ua = navigator.userAgent;
+    if (/iPhone|iPad|iPod|Macintosh/.test(ua) && !/Windows/.test(ua)) {
+      var a = document.getElementById('dirLink');
+      if (a) a.href = 'https://maps.apple.com/?q=' + encodeURIComponent('Brentwood Academy, 219 Granny White Pike, Brentwood, TN');
+    }
+  })();
+</script>
+</body>
+</html>
