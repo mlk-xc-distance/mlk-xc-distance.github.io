@@ -1118,10 +1118,10 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     '2026|Shelby Farms Park, Memphis, TN':          { gain: 105, loss: 105, low: 331, high: 371, prof: [36,34,30,26,23,17,13,2,3,3,3,7,19,20,19,18,25,28,36,36,31,26,24,20,17,12,2,5,5,5,9,21,23,23,19,26,30,38,38,37] },
   };
   function elevFor(r){ return COURSE_ELEV[r.date.slice(0, 4) + '|' + r.location] || null; }
-  // Small elevation profile line (start to finish) from the same GPS recordings; every course uses the same 60 ft height scale.
+  // Small elevation profile line (start to finish) from the same GPS recordings; every course uses the same 150 ft height scale.
   function elevSpark(e){
     if (!e.prof) return '';
-    const W = 96, H = 28, pad = 2, RANGE = 60, n = e.prof.length;
+    const W = 96, H = 28, pad = 2, RANGE = 150, n = e.prof.length;
     const pts = e.prof.map((v, i) => [pad + (W - 2 * pad) * i / (n - 1), H - pad - (H - 2 * pad) * Math.min(v, RANGE) / RANGE]);
     const line = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
     const area = 'M' + pts[0][0].toFixed(1) + ',' + (H - pad) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[n - 1][0].toFixed(1) + ',' + (H - pad) + ' Z';
