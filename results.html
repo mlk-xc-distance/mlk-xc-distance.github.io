@@ -1113,9 +1113,9 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   // Course elevation from GPS watch recordings (barometric altimeter; approximate, rounded to 5 ft).
   // Keyed by venue and season, since courses can change from year to year.
   const COURSE_ELEV = {
-    '2026|The Hermitage, Hermitage, TN':            { gain: 145, loss: 150, low: 486, high: 545, prof: [39,41,31,10,7,5,12,16,23,36,42,44,39,30,35,35,30,10,5,2,7,13,20,23,18,24,32,33,34,43,50,54,54,59,53,46,40,34,31,34] },
-    '2026|John Hunt Running Park, Huntsville, AL':  { gain: 100, loss: 100, low: 610, high: 656, prof: [20,19,15,11,13,17,17,3,0,0,0,3,8,3,2,0,6,15,13,15,20,25,28,26,30,30,24,15,14,33,45,38,36,40,43,36,22,23,22,20] },
-    '2026|Shelby Farms Park, Memphis, TN':          { gain: 105, loss: 105, low: 331, high: 371, prof: [36,34,30,26,23,17,13,2,3,3,3,7,19,20,19,18,25,28,36,36,31,26,24,20,17,12,2,5,5,5,9,21,23,23,19,26,30,38,38,37] },
+    '2026|The Hermitage, Hermitage, TN':            { gain: 145, loss: 150, low: 486, high: 545, mi: 3.107, prof: [39,41,31,10,7,5,12,16,23,36,42,44,39,30,35,35,30,10,5,2,7,13,20,23,18,24,32,33,34,43,50,54,54,59,53,46,40,34,31,34] },
+    '2026|John Hunt Running Park, Huntsville, AL':  { gain: 100, loss: 100, low: 610, high: 656, mi: 3.107, prof: [20,19,15,11,13,17,17,3,0,0,0,3,8,3,2,0,6,15,13,15,20,25,28,26,30,30,24,15,14,33,45,38,36,40,43,36,22,23,22,20] },
+    '2026|Shelby Farms Park, Memphis, TN':          { gain: 105, loss: 105, low: 331, high: 371, mi: 3.107, prof: [36,34,30,26,23,17,13,2,3,3,3,7,19,20,19,18,25,28,36,36,31,26,24,20,17,12,2,5,5,5,9,21,23,23,19,26,30,38,38,37] },
   };
   function elevFor(r){ return COURSE_ELEV[r.date.slice(0, 4) + '|' + r.location] || null; }
   // Small elevation profile line (start to finish) from the same GPS recordings; every course uses the same 150 ft height scale.
@@ -1127,10 +1127,57 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const area = 'M' + pts[0][0].toFixed(1) + ',' + (H - pad) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[n - 1][0].toFixed(1) + ',' + (H - pad) + ' Z';
     return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Elevation profile from start to finish, low ${e.low} ft to high ${e.high} ft" style="flex:none;"><path d="${area}" fill="var(--clay-soft)" opacity="0.5"></path><polyline points="${line}" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></polyline></svg>`;
   }
+  // Tap or click an elevation line to open a larger graph: elevation (ft) up the side, distance (miles) along the bottom.
+  // The x axis runs 0 to the 5K finish (3.107 mi) for every course, so the end is labeled Finish, not a measured length.
+  // Same smoothed GPS profile as the small line; the big graph uses a fixed 150 ft window so courses stay comparable.
+  function elevChart(e){
+    const W = 460, H = 280, L = 54, R = 16, T = 16, B = 46, SPAN = 150, n = e.prof.length;
+    const ymin = Math.floor(e.low / 50) * 50, ymax = ymin + SPAN;
+    const X = m => L + (W - L - R) * m / e.mi, Y = f => T + (H - T - B) * (1 - (f - ymin) / SPAN);
+    let g = '';
+    for (let f = ymin; f <= ymax; f += 25) g += `<line x1="${L}" x2="${W - R}" y1="${Y(f).toFixed(1)}" y2="${Y(f).toFixed(1)}" stroke="var(--line)" stroke-width="1"></line><text x="${L - 8}" y="${(Y(f) + 4).toFixed(1)}" text-anchor="end" font-size="11" fill="var(--slate)">${f}</text>`;
+    for (let m = 0; m <= e.mi + 1e-9; m += 0.5) g += `<line x1="${X(m).toFixed(1)}" x2="${X(m).toFixed(1)}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-width="1" opacity="0.5"></line>` + (e.mi - m > 0.25 ? `<text x="${X(m).toFixed(1)}" y="${H - B + 16}" text-anchor="middle" font-size="11" fill="var(--slate)">${m.toFixed(1)}</text>` : '');
+    g += `<line x1="${X(e.mi).toFixed(1)}" x2="${X(e.mi).toFixed(1)}" y1="${T}" y2="${H - B}" stroke="var(--line)" stroke-width="1" opacity="0.5"></line><text x="${X(e.mi).toFixed(1)}" y="${H - B + 16}" text-anchor="middle" font-size="11" fill="var(--slate)">Finish</text>`;
+    const pts = e.prof.map((v, i) => [X(e.mi * i / (n - 1)), Y(e.low + v)]);
+    const line = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+    const area = 'M' + pts[0][0].toFixed(1) + ',' + (H - B) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[n - 1][0].toFixed(1) + ',' + (H - B) + ' Z';
+    return `<svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; display:block;" role="img" aria-label="Elevation by distance, ${e.low} ft to ${e.high} ft over a 5K course">${g}<path d="${area}" fill="var(--clay-soft)" opacity="0.5"></path><polyline points="${line}" fill="none" stroke="var(--clay)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></polyline><text x="${(L + (W - L - R) / 2).toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="12" fill="var(--slate)">Distance (miles)</text><text transform="translate(13 ${((T + H - B) / 2).toFixed(1)}) rotate(-90)" text-anchor="middle" font-size="12" fill="var(--slate)">Elevation (ft)</text></svg>`;
+  }
+  function elevClose(){
+    const m = document.getElementById('elev-modal');
+    if (!m) return;
+    const back = m._back;
+    m.remove();
+    document.removeEventListener('keydown', elevKey);
+    if (back && document.contains(back)) back.focus();
+  }
+  function elevKey(ev){ if (ev.key === 'Escape') elevClose(); }
+  function elevOpen(key, back){
+    const e = COURSE_ELEV[key];
+    if (!e || !e.prof || !e.mi) return;
+    elevClose();
+    const m = document.createElement('div');
+    m.id = 'elev-modal';
+    m._back = back;
+    m.setAttribute('role', 'dialog');
+    m.setAttribute('aria-modal', 'true');
+    m.setAttribute('aria-label', 'Course elevation graph');
+    m.style.cssText = 'position:fixed; inset:0; z-index:9999; background:rgba(10,20,60,0.55); display:flex; align-items:center; justify-content:center; padding:16px;';
+    m.innerHTML = `<div style="background:#fff; border-radius:10px; width:100%; max-width:520px; max-height:100%; overflow:auto; padding:16px 18px 14px; box-shadow:0 12px 40px rgba(0,0,0,0.35);"><div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;"><div><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate);">Course Elevation</div><div class="elev-title" style="font-size:17px; font-weight:700; color:var(--ink, #14225E);"></div></div><button type="button" class="elev-x" aria-label="Close graph" style="flex:none; border:0; background:none; font-size:26px; line-height:1; cursor:pointer; color:var(--slate); padding:0 4px;">&times;</button></div><div style="margin-top:8px;">${elevChart(e)}</div><div style="font-size:13px; color:var(--slate); margin-top:6px; line-height:1.4;">~${e.gain} ft gain · ~${e.loss} ft loss · start to finish, smoothed from a GPS watch recording; approximate.</div></div>`;
+    m.querySelector('.elev-title').textContent = key.slice(key.indexOf('|') + 1);
+    m.addEventListener('click', ev => { if (ev.target === m || ev.target.closest('.elev-x')) elevClose(); });
+    document.body.appendChild(m);
+    document.addEventListener('keydown', elevKey);
+    m.querySelector('.elev-x').focus();
+  }
+  document.addEventListener('click', ev => {
+    const b = ev.target.closest('.elev-open');
+    if (b) elevOpen(b.getAttribute('data-elev'), b);
+  });
   function elevBlock(r){
     const e = elevFor(r);
     if (!e) return '';
-    return `<div style="border-top:1px solid var(--line); padding-top:10px; margin-bottom:6px;"><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Course Elevation</div><div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;"><div title="From a GPS watch recording of the course; approximate." style="font-size:14px; color:var(--slate); line-height:1.4;">~${e.gain} ft gain · ~${e.loss} ft loss <span style="white-space:nowrap;">(low ${e.low} ft · high ${e.high} ft)</span></div>${elevSpark(e)}</div></div>`;
+    return `<div style="border-top:1px solid var(--line); padding-top:10px; margin-bottom:6px;"><div style="font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--slate); margin-bottom:3px;">Course Elevation</div><div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;"><div title="From a GPS watch recording of the course; approximate." style="font-size:14px; color:var(--slate); line-height:1.4;">~${e.gain} ft gain · ~${e.loss} ft loss <span style="white-space:nowrap;">(low ${e.low} ft · high ${e.high} ft)</span></div>${e.prof && e.mi ? `<button type="button" class="elev-open" data-elev="${r.date.slice(0, 4) + '|' + r.location}" title="Click or tap for a larger graph" aria-label="Open larger elevation graph" style="flex:none; border:0; background:none; padding:0; cursor:pointer; line-height:0;">${elevSpark(e)}</button>` : elevSpark(e)}</div></div>`;
   }
   function wxIdFor(r){
     return 'wx-' + r.date + '-' + r.meetName.replace(/[^a-z0-9]/gi, '');
