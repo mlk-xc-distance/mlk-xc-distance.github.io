@@ -1127,7 +1127,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const area = 'M' + pts[0][0].toFixed(1) + ',' + (H - pad) + ' L' + line.replace(/ /g, ' L') + ' L' + pts[n - 1][0].toFixed(1) + ',' + (H - pad) + ' Z';
     return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Elevation profile from start to finish, low ${e.low} ft to high ${e.high} ft" style="flex:none;"><path d="${area}" fill="var(--clay-soft)" opacity="0.5"></path><polyline points="${line}" fill="none" stroke="var(--clay)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></polyline></svg>`;
   }
-  // Tap or click an elevation line to open a larger graph: elevation (ft) up the side, distance (miles) along the bottom.
+  // Tap or click an elevation line (hint shown beneath it) to open a larger graph: elevation (ft) up the side, distance (miles) along the bottom.
   // The x axis runs 0 to the 5K finish (3.107 mi) for every course, so the end is labeled Finish, not a measured length.
   // Same smoothed GPS profile as the small line; the big graph uses a fixed 150 ft window so courses stay comparable.
   function elevChart(e){
