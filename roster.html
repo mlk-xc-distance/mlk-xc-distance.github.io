@@ -379,6 +379,9 @@ const MANUAL_RANK = {
   "Eleanor Bonino": 1, "Vicki Grammer": 2, "Ruby York": 3, "Ellianna Wicker": 4, "Olivia Collins": 5, "Margaret Ward": 6, "Emmy Kotras": 7,
 };
 
+// Full class names shown on the page (the short codes stay as internal keys for filtering and sorting).
+const GRADE_FULL = { Fr: "Freshman", So: "Sophomore", Jr: "Junior", Sr: "Senior" };
+
 const GRADE_SORT_ORDER = { Sr: 0, Jr: 1, So: 2, Fr: 3 };
 
 const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
@@ -452,7 +455,7 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
                onerror="this.style.display='none';">
         </a>
         <div class="name"><a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="roster-name-link">${a.first} ${a.last}</a></div>
-        <div class="meta">${a.grade}</div>
+        <div class="meta">${GRADE_FULL[a.grade] || a.grade}</div>
         <div class="meta" style="font-size:12px; font-variant-numeric:tabular-nums; margin-top:1px;">PR ${a.prTime || '—'} · SB ${a.sbTime || '—'}</div>
       </div>
     `;
@@ -467,7 +470,7 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
   }
 
   gradeBar.innerHTML = ['All', ...gradesPresent].map(g =>
-    `<button data-grade="${g}" class="${g === 'All' ? 'active' : ''}" aria-pressed="${g === 'All'}">${g}</button>`
+    `<button data-grade="${g}" class="${g === 'All' ? 'active' : ''}" aria-pressed="${g === 'All'}">${GRADE_FULL[g] || g}</button>`
   ).join('');
   gradeBar.addEventListener('click', (e) => {
     const btn = e.target.closest('button');
