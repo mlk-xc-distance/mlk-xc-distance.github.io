@@ -453,6 +453,7 @@ const ROSTER = ROSTER_RAW.map(([first, last, gender, classYear]) => {
         </a>
         <div class="name"><a href="results.html?athlete=${encodeURIComponent(a.first + ' ' + a.last)}" class="roster-name-link">${a.first} ${a.last}</a></div>
         <div class="meta">${a.grade}</div>
+        <div class="meta" style="font-size:12px; font-variant-numeric:tabular-nums; margin-top:1px;">PR ${a.prTime || '—'} · SB ${a.sbTime || '—'}</div>
       </div>
     `;
   }
