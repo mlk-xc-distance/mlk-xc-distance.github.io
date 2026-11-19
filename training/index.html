@@ -440,7 +440,7 @@
       const down=label==="Down week";
       const variants=[
         {kind:"hard",flex:true,w:1.1,ttl:"Progression run",det:"Start easy and get a little faster the whole way. Finish the last 20% strong.",eff:E.prog},
-        {kind:"hard",flex:true,w:1.1,ttl:"Fartlek",det:"A slightly longer run with 8–10 hard surges at 2-mile/5K race effort. Pick a light pole or mailbox, run hard to it, then settle back to easy.",eff:"Easy + surges"}
+        {kind:"hard",flex:true,w:1.1,ttl:"Fartlek (speed play)",det:"\"Fartlek\" is Swedish for \"speed play\": an easy run with fast bursts mixed in. Do 8–10 hard surges at 2-mile/5K race effort. Pick a light pole or mailbox, run hard to it, then settle back to easy until you've recovered.",eff:"Easy + surges"}
       ];
       if(S.tage==="adv"){ const len=[20,25,30][k%3]; variants.push({kind:"hard",fixed:len+25,ttl:"Tempo run",det:`${len} min at a comfortably hard effort. Run by feel and don't chase a pace.`+WUCD,eff:E.tempo}); }
       const tpl=[
