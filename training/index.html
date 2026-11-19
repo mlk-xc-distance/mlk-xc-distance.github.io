@@ -251,6 +251,7 @@
       </div>
       <p id="phaseBlurb" style="margin:10px 0 0;font-size:14px"></p>
       <p class="muted" id="flexHint" style="margin:8px 0 0"></p>
+      <p class="muted" style="margin:6px 0 0"><b>Copy week</b> copies this week's plan as text, so you can paste it into Notes, your calendar, or a text to a parent.</p>
       <div class="totals" id="totals"></div>
     </div>
 
@@ -687,6 +688,7 @@
     const w=curWeek(), x=w.cur[a], k=iso(addDays(w.m,a)), lg=LOGS[k]||{};
     const st=lg.status||"planned";
     openModal(`<h2>Log ${dayLabel(w.m,a)}</h2><p class="muted" style="margin:0">Planned: ${desc(x)}</p>
+      <p class="muted" style="margin:6px 0 0">${API_URL?"Your log goes to the team database, where your coaches can see it.":"Demo: logs stay on this device. In the real app, they go to the team database your coaches can see."}</p>
       <div class="row"><div><label for="lMin">Minutes run</label><input id="lMin" type="number" min="0" inputmode="numeric" value="${lg.actualMin!=null&&lg.actualMin!==""?lg.actualMin:((band(x)||[x.min||""])[0])}"></div>
       <div><label for="lMi">Miles (optional)</label><input id="lMi" type="number" min="0" step="0.1" inputmode="decimal" value="${lg.miles||""}"></div></div>
       <label for="lEff">Effort (1 = super easy, 10 = all-out)</label>
