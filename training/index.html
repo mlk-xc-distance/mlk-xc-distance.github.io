@@ -131,6 +131,11 @@
   .check input{width:18px;height:18px;accent-color:var(--hard-i)}
   textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;min-height:70px;resize:vertical}
   .stat.small b{font-size:20px;padding-top:6px}
+  .tips{margin-top:12px;background:var(--royal-l);border-left:4px solid var(--royal);border-radius:8px;padding:9px 12px;font-size:13px;line-height:1.45;color:var(--navy2)}
+  .tips p{margin:0}
+  .tips p + p{margin-top:6px}
+  .tips p:empty{display:none}
+  .tips b{color:var(--navy)}
   .btn{min-height:38px}
   .banner.show + .grid{margin-top:14px}
   .editinfo{display:none}
@@ -250,8 +255,10 @@
         </div>
       </div>
       <p id="phaseBlurb" style="margin:10px 0 0;font-size:14px"></p>
-      <p class="muted" id="flexHint" style="margin:8px 0 0"></p>
-      <p class="muted" style="margin:6px 0 0"><b>Copy week</b> copies this week's plan as text, so you can paste it into Notes, your calendar, or a text to a parent.</p>
+      <div class="tips">
+        <p id="flexHint"></p>
+        <p><b>Copy week</b> copies this week's plan as text, so you can paste it into Notes, your calendar, or wherever you want.</p>
+      </div>
       <div class="totals" id="totals"></div>
     </div>
 
