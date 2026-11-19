@@ -547,7 +547,7 @@
     $("phaseBlurb").textContent=info.blurb;
     const canFlex=ds.some((x,i)=>x&&!isLocked(x)&&addDays(m,i)>=today);
     $("flexHint").innerHTML = canFlex
-      ? `Busy day coming up? Use <b>Move</b> to trade days, or <b>Can't run</b> to swap with a day off. Hard days can never land back to back.${S.weeks[iso(m)]?` <a href="#" id="resetWk">Undo my changes this week</a>`:""}`
+      ? `Busy day coming up? Use <b>Move</b> to trade days (hard days can never land back to back). Can't run at all? Log it as <b>Skipped</b>. That's OK, and don't add the minutes to other days.${S.weeks[iso(m)]?` <a href="#" id="resetWk">Undo my changes this week</a>`:""}`
       : "";
     const rw=$("resetWk"); if(rw) rw.onclick=e=>{ e.preventDefault(); delete S.weeks[iso(m)]; update(); toast("Week reset"); };
     const logged=ds.reduce((a,x)=>{ const lg=x&&LOGS[iso(x.date)]; return a+((lg&&+lg.actualMin)||0); },0);
@@ -567,7 +567,7 @@
       const mm = (x.kind==="off") ? "OFF" : bandTxt(x);
       const lg=LOGS[iso(dt)];
       const acts=[];
-      if(dt>=today && !isLocked(x)){ acts.push(`<button data-act="move" data-i="${i}">Move</button>`); if(x.kind!=="off") acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`); }
+      if(dt>=today && !isLocked(x)){ acts.push(`<button data-act="move" data-i="${i}">Move</button>`); }
       if(dt<=today && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
       const isOver = lg && lg.status!=="skipped" && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
       const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${lg.status==="skipped"?"Skipped":`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
@@ -592,7 +592,7 @@
     if(ds.some(x=>x&&x.phase==="ease")){
       if(wInfo) why.push(wInfo.note);
       why.push("No hard days yet. After a few weeks off, jumping straight into workouts is how runners get hurt.");
-      why.push("You have two planned days off this week. If your schedule changes, use Can't run to swap one with a run.");
+      why.push("You have two planned days off this week. If your schedule changes, use Move to trade a day off with a run.");
     }
     if(ds.some(x=>x&&x.phase==="base")){
       if(wInfo) why.push(wInfo.note);
@@ -722,7 +722,8 @@
     entry.over = over; LOGS[k]=entry; saveLocal(); render();
     if(over && !v.hurts){ openModal(`<h2>Easy there 😊</h2><p>You ran <b>${v.actualMin} min</b> and the plan topped out at <b>${entry.plannedMin}</b>. We love the hustle, but running more than the plan doesn't make you faster. It just makes injuries more likely.</p><p>The plan builds you up on purpose, a little at a time. Trust it, and stick to the minutes from here.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
     else if(v.hurts) openModal(`<h2>Thanks for telling us</h2><p>Coach will see this. Please also tell Coach in person, and take it easy until you've talked. An easy day or a day off is always OK.</p><div class="mrow"><button class="btn primary" id="mClose">OK</button></div>`), $("mClose").onclick=closeModal;
-    else { closeModal(); toast(v.status==="skipped"?"Logged as skipped":"Run logged"); }
+    else if(v.status==="skipped"){ openModal(`<h2>Logged as skipped</h2><p><b>That's OK.</b> Missing one run won't hurt your fitness. Don't add the minutes to your other days. Just pick up the plan tomorrow.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
+    else { closeModal(); toast("Run logged"); }
     if(API_URL && SESS){ setSync("Saving…"); api({action:"log",name:SESS.name,pin:SESS.pin,log:entry}).then(r=>setSync(r.ok?"Saved to Coach's sheet ✓":"Couldn't save. Try again later.")).catch(()=>{ setSync("Offline. Your log is saved on this phone, so re-save it when you're back online."); }); }
   }
   $("days").addEventListener("click",e=>{
