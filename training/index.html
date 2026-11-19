@@ -547,7 +547,7 @@
     $("phaseBlurb").textContent=info.blurb;
     const canFlex=ds.some((x,i)=>x&&!isLocked(x)&&addDays(m,i)>=today);
     $("flexHint").innerHTML = canFlex
-      ? `Busy day coming up? Use <b>Move</b> to trade days (hard days can never land back to back). Can't run at all? Log it as <b>Skipped</b>. That's OK, and don't add the minutes to other days.${S.weeks[iso(m)]?` <a href="#" id="resetWk">Undo my changes this week</a>`:""}`
+      ? `Busy day coming up? Use <b>Move</b> to trade days (hard days can never land back to back). Can't run at all? Tap <b>Can't run</b> and tell Coach why. That's OK, and don't add the minutes to other days.${S.weeks[iso(m)]?` <a href="#" id="resetWk">Undo my changes this week</a>`:""}`
       : "";
     const rw=$("resetWk"); if(rw) rw.onclick=e=>{ e.preventDefault(); delete S.weeks[iso(m)]; update(); toast("Week reset"); };
     const logged=ds.reduce((a,x)=>{ const lg=x&&LOGS[iso(x.date)]; return a+((lg&&+lg.actualMin)||0); },0);
@@ -568,9 +568,10 @@
       const lg=LOGS[iso(dt)];
       const acts=[];
       if(dt>=today && !isLocked(x)){ acts.push(`<button data-act="move" data-i="${i}">Move</button>`); }
-      if(dt<=today && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
-      const isOver = lg && lg.status!=="skipped" && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
-      const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${lg.status==="skipped"?"Skipped":`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
+      if(dt>=today && x.kind!=="off" && !lg) acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`);
+      if((dt<=today || lg) && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
+      const isOver = lg && !isCant(lg.status) && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
+      const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${isCant(lg.status)?`Can't run${splitReason(lg.notes).reason?" · "+splitReason(lg.notes).reason:""}`:`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
       return `<div class="day ${kmap[x.kind]}${iso(dt)===iso(today)?" today":""}"><div class="top"><span class="dn">${DAYS[i]} <span class="dt">${short(dt)}${iso(dt)===iso(today)?" · today":""}</span></span><span class="min">${mm}</span></div>
         <div class="ttl">${x.ttl}${x.moved?`<span class="moved">MOVED</span>`:""}</div><div class="det">${x.det}</div>${x.ex?`<div class="ex">${x.ex}</div>`:""}<span class="chip">${x.eff}</span>${lgHtml}${acts.length?`<div class="acts">${acts.join("")}</div>`:""}</div>`;
     }).join("");
@@ -691,44 +692,66 @@
     }
     $("mClose").onclick=closeModal;
   }
-  function logModal(a){
+  const REASONS=["Sick","Hurt / sore","School or work","Weather","Family / travel","Other"];
+  const isCant = st => st==="can't run" || st==="skipped";
+  function splitReason(notes){ const m=String(notes||"").match(/^Reason: ([^.]*)\.\s*(.*)$/s); return m? {reason:m[1], rest:m[2]} : {reason:"", rest:String(notes||"")}; }
+  function logModal(a, preset){
     const w=curWeek(), x=w.cur[a], k=iso(addDays(w.m,a)), lg=LOGS[k]||{};
-    const st=lg.status||"planned";
-    openModal(`<h2>Log ${dayLabel(w.m,a)}</h2><p class="muted" style="margin:0">Planned: ${desc(x)}</p>
+    const st = preset || (isCant(lg.status) ? "can't run" : (lg.status||"planned"));
+    const sr = splitReason(lg.notes);
+    openModal(`<h2>${st==="can't run"?"Can't run":"Log"} ${dayLabel(w.m,a)}</h2><p class="muted" style="margin:0">Planned: ${desc(x)}</p>
       <p class="muted" style="margin:6px 0 0">${API_URL?"Your log goes to the team database, where your coaches can see it.":"Demo: logs stay on this device. In the real app, they go to the team database your coaches can see."}</p>
-      <div class="row"><div><label for="lMin">Minutes run</label><input id="lMin" type="number" min="0" inputmode="numeric" value="${lg.actualMin!=null&&lg.actualMin!==""?lg.actualMin:((band(x)||[x.min||""])[0])}"></div>
-      <div><label for="lMi">Miles (optional)</label><input id="lMi" type="number" min="0" step="0.1" inputmode="decimal" value="${lg.miles||""}"></div></div>
-      <label for="lEff">Effort (1 = super easy, 10 = all-out)</label>
-      <select id="lEff"><option value="">Pick one</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${String(lg.effort)===String(n)?"selected":""}>${n}</option>`).join("")}</select>
       <label for="lSt">How did it go?</label>
-      <select id="lSt"><option value="planned" ${st==="planned"?"selected":""}>Did it as planned</option><option value="changed" ${st==="changed"?"selected":""}>Changed it</option><option value="skipped" ${st==="skipped"?"selected":""}>Skipped it</option></select>
+      <select id="lSt"><option value="planned" ${st==="planned"?"selected":""}>Did it as planned</option><option value="changed" ${st==="changed"?"selected":""}>Changed it</option><option value="can't run" ${st==="can't run"?"selected":""}>Can't run</option></select>
+      <div id="ranBox">
+        <div class="row"><div><label for="lMin">Minutes run</label><input id="lMin" type="number" min="0" inputmode="numeric" value="${lg.actualMin!=null&&lg.actualMin!==""&&!isCant(lg.status)?lg.actualMin:((band(x)||[x.min||""])[0])}"></div>
+        <div><label for="lMi">Miles (optional)</label><input id="lMi" type="number" min="0" step="0.1" inputmode="decimal" value="${lg.miles||""}"></div></div>
+        <label for="lEff">Effort (1 = super easy, 10 = all-out)</label>
+        <select id="lEff"><option value="">Pick one</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${String(lg.effort)===String(n)?"selected":""}>${n}</option>`).join("")}</select>
+      </div>
+      <div id="cantBox">
+        <label for="lWhy">Reason</label>
+        <select id="lWhy"><option value="">Pick one</option>${REASONS.map(r=>`<option ${sr.reason===r?"selected":""}>${r}</option>`).join("")}</select>
+      </div>
       <label class="check"><input type="checkbox" id="lHurt" ${lg.hurts?"checked":""}> Something hurts</label>
-      <label for="lNotes">Notes (optional)</label><textarea id="lNotes" maxlength="500" placeholder="How you felt, what you changed…">${esc(lg.notes||"")}</textarea>
+      <label for="lNotes" id="lNotesLbl">Notes (optional)</label><textarea id="lNotes" maxlength="500" placeholder="How you felt, what you changed…">${esc(sr.rest)}</textarea>
       <div class="err" id="lErr"></div>
       <div class="mrow"><button class="btn" id="mClose">Cancel</button><button class="btn primary" id="lSave">Save</button></div>`);
-    $("lSt").onchange=()=>{ if($("lSt").value==="skipped") $("lMin").value=0; };
+    const sync=()=>{ const c=$("lSt").value==="can't run";
+      $("ranBox").style.display=c?"none":""; $("cantBox").style.display=c?"":"none";
+      $("lNotesLbl").textContent=c?"Details (optional)":"Notes (optional)";
+      $("lNotes").placeholder=c?"Anything Coach should know?":"How you felt, what you changed…"; };
+    $("lSt").onchange=sync; sync();
+    $("lWhy").onchange=()=>{ if($("lWhy").value==="Hurt / sore") $("lHurt").checked=true; };
     $("mClose").onclick=closeModal;
     $("lSave").onclick=()=>{
-      const status=$("lSt").value, mins=$("lMin").value;
-      if(status!=="skipped" && !(+mins>0)){ $("lErr").textContent="Enter how many minutes you ran (or choose Skipped)."; return; }
-      saveLog(a,{actualMin:status==="skipped"?0:+mins,miles:$("lMi").value,effort:$("lEff").value,status,hurts:$("lHurt").checked,notes:$("lNotes").value.trim()});
+      const status=$("lSt").value;
+      if(status==="can't run"){
+        const why=$("lWhy").value; if(!why){ $("lErr").textContent="Pick a reason, so Coach knows what happened."; return; }
+        const det=$("lNotes").value.trim();
+        saveLog(a,{actualMin:0,miles:"",effort:"",status,hurts:$("lHurt").checked||why==="Hurt / sore",notes:`Reason: ${why}.${det?" "+det:""}`});
+        return;
+      }
+      const mins=$("lMin").value;
+      if(!(+mins>0)){ $("lErr").textContent="Enter how many minutes you ran (or choose Can't run)."; return; }
+      saveLog(a,{actualMin:+mins,miles:$("lMi").value,effort:$("lEff").value,status,hurts:$("lHurt").checked,notes:$("lNotes").value.trim()});
     };
   }
   function saveLog(a,v){
     const w=curWeek(), x=w.cur[a], dd=addDays(w.m,a), k=iso(dd);
     const entry=Object.assign({date:k,weekOf:w.k,day:DAYS[a],planned:x?x.ttl:"",plannedMin:x?((band(x)||[0,x.min||0])[1]):0},v);
     LOGS[k]=entry; saveLocal(); render();
-    const over = v.status!=="skipped" && entry.plannedMin>0 && +v.actualMin > entry.plannedMin*1.15;
+    const over = !isCant(v.status) && entry.plannedMin>0 && +v.actualMin > entry.plannedMin*1.15;
     entry.over = over; LOGS[k]=entry; saveLocal(); render();
     if(over && !v.hurts){ openModal(`<h2>Easy there 😊</h2><p>You ran <b>${v.actualMin} min</b> and the plan topped out at <b>${entry.plannedMin}</b>. We love the hustle, but running more than the plan doesn't make you faster. It just makes injuries more likely.</p><p>The plan builds you up on purpose, a little at a time. Trust it, and stick to the minutes from here.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
     else if(v.hurts) openModal(`<h2>Thanks for telling us</h2><p>Coach will see this. Please also tell Coach in person, and take it easy until you've talked. An easy day or a day off is always OK.</p><div class="mrow"><button class="btn primary" id="mClose">OK</button></div>`), $("mClose").onclick=closeModal;
-    else if(v.status==="skipped"){ openModal(`<h2>Logged as skipped</h2><p><b>That's OK.</b> Missing one run won't hurt your fitness. Don't add the minutes to your other days. Just pick up the plan tomorrow.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
+    else if(isCant(v.status)){ openModal(`<h2>Got it</h2><p><b>That's OK.</b> Missing one run won't hurt your fitness. Don't add the minutes to your other days. Just pick up the plan tomorrow.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
     else { closeModal(); toast("Run logged"); }
     if(API_URL && SESS){ setSync("Saving…"); api({action:"log",name:SESS.name,pin:SESS.pin,log:entry}).then(r=>setSync(r.ok?"Saved to Coach's sheet ✓":"Couldn't save. Try again later.")).catch(()=>{ setSync("Offline. Your log is saved on this phone, so re-save it when you're back online."); }); }
   }
   $("days").addEventListener("click",e=>{
     const b=e.target.closest("button[data-act]"); if(!b) return;
-    const i=+b.dataset.i; ({move:moveModal,cant:cantModal,log:logModal})[b.dataset.act](i);
+    const i=+b.dataset.i; if(b.dataset.act==="cant") logModal(i,"can't run"); else ({move:moveModal,log:logModal})[b.dataset.act](i);
   });
 
   // ---------- sync with the team Sheet ----------
