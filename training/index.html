@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Royals Offseason Training Builder</title>
+<meta name="theme-color" content="#0b1f4b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Royals XC">
+<meta name="application-name" content="Royals XC">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#0b1f4b; --navy2:#13306e; --royal:#2457d6; --royal-l:#e8eefc;
+    --ink:#0f172a; --muted:#5b6478; --line:#dfe4ee; --bg:#f4f6fb; --card:#fff;
+    --easy:#e7f6ee; --easy-i:#1c7a47; --hard:#fdecec; --hard-i:#b42323;
+    --long:#fff4e0; --long-i:#9a5b00; --off:#eef0f4; --off-i:#5b6478;
+    --race:#ece8fd; --race-i:#5a3fc0; --act:#e6f4f7; --act-i:#17707f;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:var(--bg);line-height:1.45}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2) 60%,var(--royal));color:#fff;padding:22px 18px 26px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
+  header .wrap{padding:0}
+  h1{font-family:"Barlow Condensed",sans-serif;font-weight:800;letter-spacing:.5px;font-size:34px;margin:0;line-height:1}
+  h1 span{color:#9fbaff}
+  header p{margin:6px 0 0;opacity:.85;font-size:14px}
+  h2{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:22px;margin:0 0 10px;color:var(--navy);letter-spacing:.3px}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:18px;margin:-14px auto 30px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
+  .stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+  label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+  input,select{width:100%;padding:10px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;background:#fff;color:var(--ink)}
+  input:focus,select:focus{outline:2px solid var(--royal);outline-offset:1px;border-color:transparent}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .hint{font-size:12px;color:var(--muted);margin-top:4px}
+  .seg{display:flex;background:var(--off);border-radius:10px;padding:3px;gap:3px}
+  .seg button{flex:1;border:0;background:transparent;padding:6px 4px;border-radius:8px;font:inherit;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer}
+  .seg button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+  .race{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line)}
+  .race:last-child{border-bottom:0}
+  .race input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex:none;accent-color:var(--royal)}
+  .race .rn{font-weight:600;font-size:14px}
+  .race .rd{font-size:12px;color:var(--muted)}
+  .race select{margin-top:6px;padding:6px 8px;font-size:14px}
+  .race .x{margin-left:auto;border:0;background:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+  .addrow{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .addrow input,.addrow select{font-size:14px;padding:7px 8px}
+  .phase{display:flex;flex-wrap:wrap;align-items:center;gap:12px;justify-content:space-between}
+  .badge{display:inline-block;background:var(--royal);color:#fff;font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;padding:3px 12px;border-radius:999px;letter-spacing:.4px}
+  .phase .meta{font-size:13px;color:var(--muted);margin-top:4px}
+  .weeknav{display:flex;gap:6px;align-items:center}
+  .btn{border:1px solid var(--line);background:#fff;border-radius:9px;padding:7px 11px;font:inherit;font-size:13px;font-weight:600;color:var(--navy);cursor:pointer}
+  .btn:hover{border-color:var(--royal)}
+  .btn.primary{background:var(--royal);color:#fff;border-color:var(--royal)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .totals{display:flex;gap:18px;flex-wrap:wrap;margin-top:12px}
+  .stat b{display:block;font-family:"Barlow Condensed",sans-serif;font-size:28px;color:var(--navy);line-height:1}
+  .stat span{font-size:12px;color:var(--muted)}
+  .strip{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px}
+  .wk{flex:1 0 54px;border:2px solid transparent;border-radius:9px;padding:6px 4px;text-align:center;cursor:pointer;font:inherit;background:var(--off)}
+  .wk .d{font-size:11px;font-weight:600;color:var(--muted)}
+  .wk .l{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:14px;line-height:1.1;margin-top:2px}
+  .wk .m{font-size:11px;color:var(--muted)}
+  .wk.sel{border-color:var(--navy)}
+  .wk.p-race{background:var(--race)} .wk.p-race .l{color:var(--race-i)}
+  .wk.p-off{background:var(--off)} .wk.p-off .l{color:var(--off-i)}
+  .wk.p-active{background:var(--act)} .wk.p-active .l{color:var(--act-i)}
+  .wk.p-base{background:var(--easy)} .wk.p-base .l{color:var(--easy-i)}
+  .wk.p-ease{background:var(--act)} .wk.p-ease .l{color:var(--act-i)}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+  .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+  .day{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;border-left-width:5px}
+  .day.today{box-shadow:0 0 0 2px var(--royal)}
+  .day .top{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .day .dn{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:18px;color:var(--navy)}
+  .day .dt{font-size:12px;color:var(--muted);font-family:Inter,sans-serif;font-weight:500}
+  .day .min{font-family:"Barlow Condensed",sans-serif;font-weight:700;font-size:20px}
+  .day .ttl{font-weight:600;margin:4px 0 2px}
+  .day .det{font-size:13.5px;color:#334155}
+  .day .ex{font-size:13px;color:var(--royal);margin-top:4px}
+  .chip{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;margin-top:8px;letter-spacing:.3px}
+  .k-easy{border-left-color:var(--easy-i)} .k-easy .chip{background:var(--easy);color:var(--easy-i)}
+  .k-hard{border-left-color:var(--hard-i)} .k-hard .chip{background:var(--hard);color:var(--hard-i)}
+  .k-long{border-left-color:var(--long-i)} .k-long .chip{background:var(--long);color:var(--long-i)}
+  .k-off{border-left-color:#b8bfcc;background:#fafbfc} .k-off .chip{background:var(--off);color:var(--off-i)}
+  .k-act{border-left-color:var(--act-i)} .k-act .chip{background:var(--act);color:var(--act-i)}
+  .k-race{border-left-color:var(--race-i)} .k-race .chip{background:var(--race);color:var(--race-i)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:7px 6px;border-bottom:1px solid var(--line)}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+  td.n{font-variant-numeric:tabular-nums;font-weight:600}
+  ul{margin:0;padding-left:18px} li{margin:4px 0;font-size:14px}
+  .warn{background:#fff8e6;border:1px solid #f3d48a}
+  .warn h2{color:#7a4d00}
+  .muted{color:var(--muted);font-size:13px}
+  .info{background:var(--royal-l);border:1px solid #c9d6fa}
+  .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:9px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+  .toast.show{opacity:1}
+  .hdr{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+  .acct{font-size:13px;text-align:right}
+  .acct b{font-weight:600}
+  .acct button{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:8px;padding:4px 9px;font:inherit;font-size:12px;cursor:pointer;margin-left:6px}
+  .sync{display:block;font-size:11.5px;opacity:.8;margin-top:3px}
+  .acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+  .acts button{border:1px solid var(--line);background:#fff;border-radius:9px;padding:9px 13px;min-height:40px;font:inherit;font-size:14px;font-weight:600;color:var(--navy);cursor:pointer}
+  .acts button.log{background:var(--royal);border-color:var(--royal);color:#fff}
+  .logged{margin-top:8px;font-size:13px;font-weight:600;color:var(--easy-i);background:var(--easy);border-radius:8px;padding:5px 8px}
+  .logged.hurt{color:var(--hard-i);background:var(--hard)}
+  .moved{font-size:11px;font-weight:700;color:var(--royal);margin-left:6px}
+  .ov{position:fixed;inset:0;background:rgba(11,31,75,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .ov.show{display:flex}
+  .modal{background:#fff;border-radius:16px;max-width:430px;width:100%;padding:20px;max-height:90vh;overflow:auto;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+  .modal h2{margin-bottom:6px}
+  .opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;padding:10px 12px;margin-top:8px;font:inherit;font-size:14px;cursor:pointer}
+  .opt:hover{border-color:var(--royal)}
+  .opt[disabled]{opacity:.5;cursor:default}
+  .opt small{display:block;color:var(--muted);font-size:12px}
+  .err{color:var(--hard-i);font-size:13px;margin-top:8px;min-height:18px}
+  .mrow{display:flex;gap:8px;margin-top:16px}
+  .mrow .btn{flex:1;padding:10px}
+  .banner{background:#fff8e6;border-bottom:1px solid #f3d48a;color:#7a4d00;font-size:13px;text-align:center;padding:7px 12px;display:none}
+  .banner.show{display:block}
+  .check{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:14px;font-weight:600}
+  .check input{width:18px;height:18px;accent-color:var(--hard-i)}
+  textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:9px;font:inherit;font-size:16px;min-height:70px;resize:vertical}
+  .stat.small b{font-size:20px;padding-top:6px}
+  .btn{min-height:38px}
+  .banner.show + .grid{margin-top:14px}
+  .editinfo{display:none}
+  @media (max-width:860px){
+    header{padding:18px 16px 24px}
+    h1{font-size:28px}
+    header p{font-size:13px}
+    .grid.ready > .stack:last-child{order:-1}
+    .grid.ready .editinfo{display:inline-flex;align-items:center}
+    .weeknav{flex-wrap:wrap}
+    .modal{padding:18px;border-radius:14px}
+    .ov{align-items:flex-end;padding:0}
+    .modal{max-width:none;border-radius:16px 16px 0 0;max-height:88vh}
+  }
+  footer{text-align:center;font-size:12px;color:var(--muted);padding:0 16px 30px}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap hdr">
+    <div>
+      <h1>ROYALS <span>OFFSEASON TRAINING BUILDER</span></h1>
+      <p>MLK Cross Country · Offseason plan, Nov 30 – Feb 28 · Built from Coach Brandon's training philosophy</p>
+    </div>
+    <div class="acct" id="acct"></div>
+  </div>
+</header>
+<div class="banner" id="banner"></div>
+
+<div class="wrap grid">
+  <!-- LEFT -->
+  <div class="stack" id="infoCol">
+    <div class="card">
+      <h2>About you</h2>
+      <div class="row">
+        <div>
+          <label for="grade">Grade</label>
+          <select id="grade">
+            <option value="9">9th</option><option value="10">10th</option>
+            <option value="11">11th</option><option value="12">12th</option>
+          </select>
+        </div>
+        <div>
+          <label for="tage">Years training</label>
+          <select id="tage">
+            <option value="new">First season</option>
+            <option value="mid">1–2 years</option>
+            <option value="adv">3+ years</option>
+          </select>
+        </div>
+      </div>
+      <label>Recent race</label>
+      <div class="row">
+        <select id="event">
+          <option value="5000">5K</option>
+          <option value="2mi">2 mile</option>
+          <option value="3200">3200 m</option>
+          <option value="1600">1600 m</option>
+          <option value="mile">Mile</option>
+        </select>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:6px;align-items:center">
+          <input id="tMin" type="number" inputmode="numeric" min="0" max="99" placeholder="min" aria-label="Minutes">
+          <b style="color:var(--muted)">:</b>
+          <input id="tSec" type="number" inputmode="numeric" min="0" max="59" placeholder="sec" aria-label="Seconds">
+        </div>
+      </div>
+      <div class="hint">Minutes in the first box, seconds in the second. For 18:30, type 18 and 30.</div>
+      <label for="peak">Your biggest week this season</label>
+      <div style="display:grid;grid-template-columns:1fr 130px;gap:8px">
+        <input id="peak" type="number" min="0" step="any" placeholder="e.g. 300">
+        <div class="seg" id="unit"><button data-v="min">Minutes</button><button data-v="mi">Miles</button></div>
+      </div>
+      <div class="hint" id="peakHint">Your highest week this summer or fall, in total minutes or miles. Every run length in the plan is based on this.</div>
+    </div>
+
+    <div class="card">
+      <h2>Since state</h2>
+      <label for="since">How much have you run since the state meet?</label>
+      <select id="since">
+        <option value="rested">Mostly rested</option>
+        <option value="some">Some easy runs</option>
+        <option value="regular">Kept running regularly</option>
+      </select>
+      <div class="hint" id="sinceHint">This sets how gently your plan starts on Nov 30.</div>
+    </div>
+
+    <div class="card warn">
+      <h2>Tell Coach first if…</h2>
+      <ul>
+        <li>Your heels or knees hurt, or you've grown a lot lately</li>
+        <li>You feel unusually tired, weak, or dizzy</li>
+        <li>You're sick, or something just doesn't feel right</li>
+      </ul>
+      <p class="muted" style="margin:8px 0 0">Talk to Coach or a parent before any hard day. An easy day or a day off is always OK.</p>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="stack">
+    <div class="card">
+      <h2>Season at a glance</h2>
+      <div class="strip" id="strip"></div>
+    </div>
+
+    <div class="card">
+      <div class="phase">
+        <div>
+          <span class="badge" id="phaseName">—</span>
+          <div class="meta" id="phaseMeta"></div>
+        </div>
+        <div class="weeknav">
+          <button class="btn" id="prev" aria-label="Previous week">‹</button>
+          <button class="btn" id="thisWk">This week</button>
+          <button class="btn" id="next" aria-label="Next week">›</button>
+          <button class="btn primary" id="copy">Copy week</button>
+          <button class="btn editinfo" id="editInfo">My info</button>
+        </div>
+      </div>
+      <p id="phaseBlurb" style="margin:10px 0 0;font-size:14px"></p>
+      <p class="muted" id="flexHint" style="margin:8px 0 0"></p>
+      <div class="totals" id="totals"></div>
+    </div>
+
+    <div class="days" id="days"></div>
+
+    <div class="card info">
+      <h2>Why this week looks like this</h2>
+      <ul id="why"></ul>
+    </div>
+
+    <div class="card">
+      <h2>Your paces</h2>
+      <div id="paces"></div>
+    </div>
+
+    <div class="card">
+      <h2>Coach Brandon's ground rules</h2>
+      <ul>
+        <li><b>Easy days EASY.</b> Recovery runs at effort 2–3, never over 3.</li>
+        <li><b>Run by feel, not the watch.</b> Paces are a guide; effort matters more.</li>
+        <li><b>Time, not miles.</b> Your body knows minutes. Aerobic runs need at least 25 minutes to count.</li>
+        <li><b>Build slowly.</b> Raise weekly volume 10–15% at most, hold it 2–3 weeks, then take a down week.</li>
+        <li><b>Rest is training.</b> Overracing burns out young runners far more often than overtraining does.</li>
+        <li><b>Race the races, not the workouts.</b> No time trials in practice, and no extra reps.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<footer>Built from "Year-round training for youth distance runners" by Coach Brandon (Nashville Youth Athletics). Paces are estimates; your coach's plan always comes first.</footer>
+<div class="toast" id="toast"></div>
+<div class="ov" id="ov"><div class="modal" id="modal" role="dialog" aria-modal="true"></div></div>
+
+<script>
+(function(){
+  // Paste the Google Apps Script web app URL here. Leave empty to run without saving to the team Sheet.
+  const API_URL = "https://script.google.com/macros/s/AKfycbyN1mjMVPhzrtuq2PAAvXBDLstGLhq-Xjg35bJGu5bC55Ksp9wz_vgMCnXfyFlCyE2B/exec";
+  const $ = id => document.getElementById(id);
+  const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const DIST={"1600":1600,"mile":1609.34,"3200":3200,"2mi":3218.69,"5000":5000};
+  const D = (y,m,d) => new Date(y,m-1,d);
+  const START=D(2026,11,30), END=D(2027,2,28), STATE=D(2026,11,7);
+  const OFF_DAYS=10, ACTIVE_DAYS=14;
+  const RACES=[
+    {id:"rl",   name:"Running Lane XC Championships", date:"2026-12-05", dist:"5k"}
+  ];
+  const TURKEY_DAYS=[["2026-11-26","Thu, Nov 26 (Thanksgiving)"],["2026-11-27","Fri, Nov 27"],["2026-11-28","Sat, Nov 28"],["2026-11-29","Sun, Nov 29"]];
+
+  // ---------- state ----------
+  let S={grade:"10",tage:"mid",event:"5000",time:"",peak:"",unit:"min",races:{},turkey:false,turkeyDay:"2026-11-26",custom:[],weeks:{},since:"rested"};
+  const BLANK=JSON.parse(JSON.stringify(S));
+  try{ const s=JSON.parse(localStorage.getItem("royalsTB2")||"null"); if(s) S=Object.assign(S,s); }catch(e){}
+  let LOGS={}; try{ LOGS=JSON.parse(localStorage.getItem("royalsLogs")||"{}")||{}; }catch(e){}
+  let SESS=null; try{ SESS=JSON.parse(localStorage.getItem("royalsSess")||"null"); }catch(e){}
+  const saveLocal=()=>{ try{ localStorage.setItem("royalsTB2",JSON.stringify(S)); localStorage.setItem("royalsLogs",JSON.stringify(LOGS)); }catch(e){} };
+  let saveTimer=null;
+  const save=()=>{ saveLocal(); if(API_URL && SESS){ clearTimeout(saveTimer); setSync("Saving…"); saveTimer=setTimeout(pushSettings,1200); } };
+
+  // ---------- date helpers ----------
+  const parseISO=s=>{ const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
+  const iso=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+  const addDays=(d,n)=>{ const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+  const dayDiff=(a,b)=>Math.round((a-b)/864e5);
+  const mondayOf=d=>{ const x=new Date(d.getFullYear(),d.getMonth(),d.getDate()); x.setDate(x.getDate()-((x.getDay()+6)%7)); return x; };
+  const short=d=>d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+  const today=(()=>{ const n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); })();
+
+  // ---------- paces ----------
+  function parseTime(s){ if(!s) return null; s=String(s).trim(); if(!s) return null;
+    if(!s.includes(":")){ const m=s.match(/^(\d{1,2})[.,\s](\d{1,2})$/); if(m) s=m[1]+":"+m[2].padStart(2,"0"); }
+    const p=s.split(":").map(Number); if(p.some(isNaN)) return null; let t=0; for(const v of p) t=t*60+v; return t>0?t:null; }
+  function fmt(sec){ sec=Math.round(sec); const m=Math.floor(sec/60), s=sec%60; return m+":"+String(s).padStart(2,"0"); }
+  let P=null;
+  // Coach: show a 5–10 minute range instead of one number (5-min range under 60 min, 10-min range at 60+)
+  function band(x){ if(!x || !x.min || x.kind==="off" || x.kind==="race") return null;
+    const w = x.min>=60 ? 10 : 5; const lo=Math.max(25, Math.floor((x.min-w/2)/5)*5); return [lo, lo+w]; }
+  const bandTxt = x => { const b=band(x); return b ? `${b[0]}–${b[1]} min` : (x&&x.min? x.min+" min" : ""); };
+  function weekBand(ds){ let lo=0, hi=0; ds.forEach(x=>{ if(!x||!x.min) return; const b=band(x); if(b){ lo+=b[0]; hi+=b[1]; } else { lo+=x.min; hi+=x.min; } }); return [lo,hi]; }
+  // Tinman's Running Calculator (finalsurge.com/tinman-calculator), 5K input, every 30 s from 14:30 to 30:00.
+  // Columns: 5K sec, eq 800, eq mile, eq 3000, eq 2 mi, eq 5K, eq 10K, easy slow/fast, recovery slow/fast, CV slow/fast, tempo slow/fast (paces in sec per mile)
+  const TIN=[[870,116,256.2,506.8,545.9,870,1811.3,417.5,390.7,466.4,432.4,299.2,292.6,338.1,321.3],[900,120,265,524.2,564.8,900,1873.8,431.1,403.5,481.6,446.5,309,302.2,349.2,331.7],[930,124.1,273.9,541.7,583.6,930,1936.2,444.7,416.2,496.8,460.6,318.7,311.7,360.2,342.2],[960,128.1,282.7,559.2,602.4,960,1998.7,458.2,428.9,511.9,474.7,328.4,321.2,371.2,352.6],[990,132.1,291.5,576.7,621.2,990,2061.1,471.8,441.6,527.1,488.7,338.2,330.7,382.1,363.1],[1020,136.1,300.4,594.1,640.1,1020,2123.6,485.3,454.2,542.2,502.7,347.8,340.2,393.1,373.5],[1050,140.1,309.2,611.6,658.9,1050,2186.1,498.8,466.9,557.2,516.7,357.5,349.6,404,383.8],[1080,144.1,318,629.1,677.7,1080,2248.5,512.2,479.5,572.3,530.6,367.2,359.1,414.9,394.2],[1110,148.1,326.9,646.6,696.5,1110,2311,525.7,492.1,587.3,544.6,376.8,368.5,425.8,404.6],[1140,152.1,335.7,664,715.4,1140,2373.4,539.1,504.6,602.3,558.5,386.4,377.9,436.7,414.9],[1170,156.1,344.5,681.5,734.2,1170,2435.9,552.5,517.2,617.3,572.4,396,387.3,447.6,425.2],[1200,160.1,353.4,699,753,1200,2498.4,565.9,529.7,632.3,586.2,405.6,396.7,458.4,435.5],[1230,164.1,362.2,716.5,771.8,1230,2560.8,579.3,542.2,647.2,600.1,415.2,406.1,469.2,445.8],[1260,168.1,371,733.9,790.7,1260,2623.3,592.6,554.7,662.1,613.9,424.8,415.4,480,456.1],[1290,172.1,379.9,751.4,809.5,1290,2685.7,606,567.2,677,627.7,434.4,424.8,490.8,466.3],[1320,176.1,388.7,768.9,828.3,1320,2748.2,619.3,579.7,691.9,641.5,443.9,434.1,501.6,476.6],[1350,180.1,397.5,786.4,847.1,1350,2810.7,632.6,592.1,706.7,655.3,453.4,443.4,512.4,486.8],[1380,184.1,406.4,803.8,866,1380,2873.1,645.9,604.5,721.6,669.1,463,452.7,523.2,497.1],[1410,188.1,415.2,821.3,884.8,1410,2935.6,659.1,617,736.4,682.8,472.5,462,533.9,507.3],[1440,192.1,424,838.8,903.6,1440,2998,672.4,629.4,751.2,696.5,482,471.3,544.6,517.5],[1470,196.1,432.9,856.3,922.4,1470,3060.5,685.6,641.7,766,710.2,491.4,480.6,555.3,527.6],[1500,200.1,441.7,873.7,941.3,1500,3122.9,698.8,654.1,780.8,723.9,500.9,489.8,566.1,537.8],[1530,204.1,450.5,891.2,960.1,1530,3185.4,712,666.5,795.5,737.6,510.4,499.1,576.7,548],[1560,208.1,459.4,908.7,978.9,1560,3247.9,725.2,678.8,810.2,751.2,519.8,508.3,587.4,558.1],[1590,212.1,468.2,926.2,997.7,1590,3310.3,738.4,691.1,824.9,764.9,529.3,517.6,598.1,568.2],[1620,216.1,477,943.6,1016.6,1620,3372.8,751.5,703.5,839.6,778.5,538.7,526.8,608.7,578.4],[1650,220.1,485.9,961.1,1035.4,1650,3435.2,764.7,715.8,854.3,792.1,548.1,536,619.4,588.5],[1680,224.1,494.7,978.6,1054.2,1680,3497.7,777.8,728,869,805.7,557.5,545.2,630,598.6],[1710,228.1,503.5,996.1,1073.1,1710,3560.2,790.9,740.3,883.6,819.3,566.9,554.4,640.7,608.7],[1740,232.1,512.4,1013.5,1091.9,1740,3622,804,752.6,898.3,832.9,576.3,563.6,651.3,618.8],[1770,236.1,521.2,1031,1110.7,1770,3685,817.1,764.8,912.9,846.4,585.7,572.8,661.9,628.8],[1800,240.1,530,1048.5,1129.5,1800,3747,830.2,777.1,927.5,860,595.1,581.9,672.5,638.9]];
+  const AEROBIC_FLOOR=420; // Coach: no aerobic run faster than 7:00/mi
+  function tin(col,t5){ const R=TIN; let i=0; while(i<R.length-2 && R[i+1][0]<t5) i++;
+    const a=R[i], b=R[i+1], f=(t5-a[0])/(b[0]-a[0]); return a[col]+(b[col]-a[col])*f; }
+  // race time -> Tinman 5K equivalent (ratios from the same calculator)
+  const TO5K={"5000":1,"mile":0.29446,"1600":0.29252,"2mi":0.62749,"3200":0.62364};
+  function makePaces(){
+    const t=parseTime(S.time); if(!t) return null;
+    const t5=t/(TO5K[S.event]||1);
+    const race={"800":[1,800],"mile":[2,1609.34],"3k":[3,3000],"2mi":[4,3218.69],"5k":[5,5000],"10k":[6,10000]}; const o={};
+    for(const k in race){ const [c,d]=race[k]; o[k]={ppm:tin(c,t5)/d}; }
+    const cv=(tin(11,t5)+tin(12,t5))/2; o.cv={ppm:cv/1609.34};
+    // Aerobic band (option B, Coach-approved caution): fast end of Tinman easy -> fast end of Tinman recovery, never faster than 7:00
+    const eF=Math.max(AEROBIC_FLOOR,tin(8,t5)), eS=Math.max(eF+15,tin(10,t5));
+    o.easy=[eF,eS]; o.rec=[tin(10,t5),tin(9,t5)]; o.t5=t5;
+    o.easyMile=(eF+eS)/2; return o;
+  }
+  const paceRange=r=>`${fmt(r[0])}–${fmt(r[1])}/mi`;
+  const pz=k=>P?` (${fmt(P[k].ppm*1609.34)}/mi · ${fmt(P[k].ppm*400)} per 400)`:"";
+  const sp=(m,k)=>P?` (~${fmt(P[k].ppm*m)} each)`:"";
+  const RPNAME={"5k":"5K","2mi":"2-mile","mile":"mile"};
+  const AERDET=(base)=> (base||"Conversational pace.") + (P?` About ${paceRange(P.easy)}, or slower.`:"");
+  const RECDET=()=> "Very easy. Keep it short." + (P?` About ${paceRange(P.rec)}.`:"");
+
+  // ---------- workout pieces ----------
+  const E={rec:"Effort 2–3 (never over 3)",aer:"Effort 3–4",longProg:"Effort 4 → 7 by the last 10 min",tempo:"Effort 7–8",prog:"Effort 2–3 → 7–8",rp:"Race-pace work",cap:"98% — hard, not all-out",race:"Race day",off:"Rest",act:"Optional · effort 2–3"};
+  const HILLS="+ hill striders after: 6–8 × ~20 sec up a gentle (4–5%) hill at mile-race effort, walk/jog down";
+  const STRIDES=()=>"+ 6–10 striders: 70–100 m at mile race pace"+(P?` (~${fmt(P.mile.ppm*100)} per 100 m)`:"")+", full recovery";
+  const WUCD=" Warm up and cool down 10–15 min each.";
+
+  // ---------- races ----------
+  function chosenRaces(){
+    const list=[];
+    RACES.forEach(r=>{ if(S.races[r.id]) list.push({name:r.name,date:parseISO(r.date),dist:r.dist}); });
+    (S.custom||[]).forEach(c=>{ if(c.on!==false && c.date) list.push({name:c.name||"Race",date:parseISO(c.date),dist:c.dist||"5k"}); });
+    return list.filter(r=>r.date>=START && r.date<=END).sort((a,b)=>a.date-b.date);
+  }
+
+  // ---------- day rules ----------
+  const isHard = x => !!x && (x.kind==="hard" || x.kind==="long" || !!x.long || x.kind==="race");
+  const isLocked = x => !x || x.kind==="race" || x.ttl==="Shakeout" || x.phase==="off" || x.phase==="active" || /Thanksgiving/.test(x.ttl||"");
+
+  // ---------- plan engine ----------
+  const DEFAULT_EASY=8.5*60; // sec/mile if no race time
+  function peakMinutes(){
+    const v=+S.peak||0; if(S.unit!=="mi") return v;
+    const pace=P?P.easyMile:DEFAULT_EASY; return Math.round(v*pace/60/5)*5;
+  }
+  const isNewer = () => S.tage==="new" || String(S.grade)==="9";
+  const ceilPct = () => isNewer() ? 1.05 : 1.10;   // Coach: top out 5–10% above last season's max
+  function startLevel(){ const base={rested:0,some:1,regular:2}[S.since||"rested"]; let lv=Math.min(2, base + (S.tage==="adv"?1:0)); if(isNewer()) lv=Math.min(lv,1); return lv; }
+  function plan(){
+    P=makePaces();
+    const peak=peakMinutes();
+    const races=[], last=STATE, offEnd=STATE, activeEnd=STATE, turkey=null;
+    const baseStart=new Date(START);
+    const r5=x=>Math.round(x/5)*5;
+    const days={};
+
+    // pass 2: base weeks (Mon–Sun)
+    const inc = S.tage==="adv"?0.15:0.10;
+    const HOLD = 2;   // manual: hold a new level 2–3 weeks; 2 so everyone reaches the ceiling by Feb 28
+    const lv=startLevel();               // 0 = mostly rested, 1 = some easy runs, 2 = kept running
+    const startPct=[0.5,0.6,0.7][lv], easeWeeks = lv===2 ? 0 : 2;
+    let v=peak*startPct, L=peak, ph="ramp", hold=0, k=0, prevPlanned=0;
+    const weekInfo={};
+    for(let m=new Date(baseStart); m<=END; m=addDays(m,7), k++){
+      let T,label,note;
+      if(k<easeWeeks){
+        if(k>0) v=v*1.10; T=Math.round(v/5)*5; label=`Ease in ${k+1}/2`;
+        note = k===0 ? `Easing back in after the break: easy running only, 5 days this week, at about ${Math.round(startPct*100)}% of your biggest week.`
+                     : "Still easing in: a little more running, plus one day of relaxed strides. Workouts start next week.";
+        const ease=[
+          {kind:"easy",flex:true,w:1,ttl:"Easy run",det:AERDET("Relaxed and conversational."),eff:E.rec},
+          {kind:"easy",flex:true,w:1,ttl:"Easy run",det:AERDET("Relaxed and conversational."),eff:E.rec},
+          {kind:"off",fixed:0,ttl:"Day off",det:"Planned rest day. Swap it with a run if your schedule needs to.",eff:E.off},
+          {kind:"easy",flex:true,w:1,ttl:"Easy run",det:AERDET("Relaxed and conversational."),ex:k===1?STRIDES():"",eff:E.rec},
+          {kind:"easy",flex:true,w:1,ttl:"Easy run",det:AERDET("Relaxed and conversational."),eff:E.rec},
+          {kind:"easy",flex:true,w:1.3,ttl:"Longer easy run",det:AERDET("Your longest run of the week. Keep it easy the whole way."),eff:E.aer},
+          {kind:"off",fixed:0,ttl:"Day off",det:"Planned rest day.",eff:E.off}
+        ].map(o=>Object.assign({},o));
+        if(T>0){ const flex=ease.filter(o=>o.flex), sw=flex.reduce((a,o)=>a+o.w,0);
+          flex.forEach(o=>o.min=r5(Math.min(80,Math.max(25,T*o.w/sw)))); ease.forEach(o=>{ if(o.min==null) o.min=o.fixed||0; }); prevPlanned=ease.reduce((t,o)=>t+(o.min||0),0); }
+        ease.forEach((o,i)=>{ const dd=addDays(m,i); o.phase="ease"; o.date=dd; days[iso(dd)]=o; });
+        weekInfo[iso(m)]={T,label,note};
+        continue;
+      }
+      if(ph==="ramp"){ if(k>0) v=Math.min((k===easeWeeks&&prevPlanned?prevPlanned:v)*(1+inc),L); T=v; label="Build";
+        note= k===0 ? `First week back. You start at about ${Math.round(startPct*100)}% of your biggest week and build up from there.`
+            : k===easeWeeks ? `Base building starts: workouts, hills, and a long run, with volume up about ${Math.round(inc*100)}% from last week.`
+            : `Build week: up to ${Math.round(inc*100)}% more than last week.`;
+        if(v>=L-0.5){ ph="hold"; hold=1; label=`Hold steady 1/${HOLD}`; note=`You're back to your biggest week. Hold it here for ${HOLD} weeks.`; } }
+      else if(ph==="hold"){ hold++; T=L; label=`Hold steady ${hold}/${HOLD}`; note=`Same volume as last week, week ${hold} of ${HOLD} at this level.`; if(hold>=HOLD) ph="down"; }
+      else if(ph==="down"){ T=L*0.9; label="Down week"; note="Down week: about 10% less, and a full day off. Get ready for a new high."; ph="return"; }
+      else { T=L; const cap=peak*ceilPct(), next=Math.min(L*1.10,cap);
+        label="Back to level"; note = next>L+0.5 ? "Back up to your previous high. Next week sets a new personal best." : `Back up to your top level. You've reached your offseason ceiling (about ${Math.round((ceilPct()-1)*100)}% above your biggest XC week), so you'll hold here from now on.`;
+        L=next; ph="hold"; hold=0; }
+      T=Math.round(T/5)*5;
+      const down=label==="Down week";
+      const variants=[
+        {kind:"hard",flex:true,w:1.1,ttl:"Progression run",det:"Start easy and get a little faster the whole way. Finish the last 20% strong.",eff:E.prog},
+        {kind:"hard",flex:true,w:1.1,ttl:"Fartlek",det:"A slightly longer run with 8–10 hard surges at 2-mile/5K race effort. Pick a light pole or mailbox, run hard to it, then settle back to easy.",eff:"Easy + surges"}
+      ];
+      if(S.tage==="adv"){ const len=[20,25,30][k%3]; variants.push({kind:"hard",fixed:len+25,ttl:"Tempo run",det:`${len} min at a comfortably hard effort. Run by feel and don't chase a pace.`+WUCD,eff:E.tempo}); }
+      const tpl=[
+        {kind:"easy",flex:true,w:1,ttl:"Aerobic run",det:AERDET(),ex:STRIDES(),eff:E.aer},
+        {kind:"easy",flex:true,w:1,ttl:"Aerobic run",det:AERDET(),eff:E.aer},
+        variants[k%variants.length],
+        down?{kind:"off",fixed:0,ttl:"Day off",det:"Your planned day off. High schoolers take one about every 3–4 weeks.",eff:E.off}
+            :{kind:"easy",fixed:25,ttl:"Recovery run",det:RECDET(),eff:E.rec},
+        {kind:"easy",flex:true,w:1,ttl:"Aerobic run",det:AERDET("Conversational pace, the day before your long run."),ex:HILLS,eff:E.aer},
+        {kind:"long",long:true,ttl:"Long run",det:"Start relaxed and build to a steady effort."+(P?` Start around ${fmt(P.easy[1])}/mi.`:""),eff:E.longProg},
+        {kind:"easy",flex:true,w:1,ttl:"Aerobic run",det:AERDET(),eff:E.aer}
+      ].map(o=>Object.assign({},o));
+      // lower-volume weeks: fewer, full-length runs instead of many too-short ones
+      if(T>0 && T<200 && tpl[3].kind!=="off") tpl[3]={kind:"off",fixed:0,ttl:"Day off",det:"A planned day off, so the rest of your runs can be full length (25+ minutes).",eff:E.off};
+      if(T>0 && T<160) tpl[6]={kind:"off",fixed:0,ttl:"Day off",det:"A planned day off, so the rest of your runs can be full length (25+ minutes).",eff:E.off};
+      // holidays
+      tpl.forEach((o,i)=>{ const dd=addDays(m,i); if(iso(dd)==="2026-12-25"){ tpl[i]={kind:"off",fixed:0,ttl:"Merry Christmas",det:"Day off. Enjoy it.",eff:E.off}; } });
+      if(T>0){
+        const lr=tpl.find(o=>o.long); const lm=r5(Math.min(120,Math.max(25,T*0.2))); lr.min=lm; lr.det="About 20% of your week. "+lr.det;
+        const fixed=tpl.reduce((a,o)=>a+(o.fixed||0),0);
+        const flex=tpl.filter(o=>o.flex), sw=flex.reduce((a,o)=>a+o.w,0), rem=T-fixed-lm;
+        flex.forEach(o=>o.min=r5(Math.min(90,Math.max(25,rem*o.w/sw))));
+        tpl.forEach(o=>{ if(o.min==null) o.min=o.fixed||0; });
+      }
+      tpl.forEach((o,i)=>{ const dd=addDays(m,i); if(dd>END) return; o.phase="base"; o.date=dd; days[iso(dd)]=o; });
+      weekInfo[iso(m)]={T,label,note};
+    }
+    return {days,races,last,offEnd,activeEnd,baseStart,weekInfo,turkey};
+  }
+
+  // ---------- weeks ----------
+  const MONDAYS=[]; for(let m=mondayOf(START); m<=END; m=addDays(m,7)) MONDAYS.push(new Date(m));
+  let wi=Math.max(0,Math.min(MONDAYS.length-1, MONDAYS.findIndex(m=>dayDiff(today,m)>=0&&dayDiff(today,m)<7)));
+  if(wi<0) wi=0;
+
+  const PH={
+    race:{name:"Racing · Holding Your Peak",blurb:"You've done the work, so this stretch is about staying sharp. Volume stays at taper level. Hard days are short and high quality with lots of recovery. You can hold a peak for about 2–3 weeks."},
+    off:{name:"Complete Rest",blurb:"Take 7–10 days completely off. Your body and mind need it after a long season, and it's what keeps you improving year after year."},
+    active:{name:"Active Rest",blurb:"Stay active without formal training: other sports, light jogs, time with family. You're getting ready, mentally and physically, for the next build."},
+    ease:{name:"Easing Back In",blurb:"Welcome back. These first weeks are easy running only, so your legs and lungs can get used to running again before workouts start. Every run should feel easy."},
+    base:{name:"Base Building",blurb:"Build a bigger engine. This phase is about time on your feet, not pace. You'll work back to your biggest week, then set new personal bests. Leave the watch at home except to time the run."}
+  };
+
+  const ID=[0,1,2,3,4,5,6];
+  let BASE_DAYS={};   // plan before any athlete changes
+  function arrangeAll(R){
+    BASE_DAYS=Object.assign({},R.days);
+    R.reset=[];
+    MONDAYS.forEach(m=>{
+      const k=iso(m), perm=S.weeks&&S.weeks[k]; if(!perm) return;
+      if(!validPerm(R,m,perm)){ delete S.weeks[k]; R.reset.push(m); return; }
+      applyPerm(R,m,perm);
+    });
+  }
+  function origWeek(m){ return ID.map(i=>BASE_DAYS[iso(addDays(m,i))]||null); }
+  function applyPerm(R,m,perm){
+    const o=origWeek(m);
+    perm.forEach((j,i)=>{ const dd=addDays(m,i); if(o[j]) R.days[iso(dd)]=Object.assign({},o[j],{date:dd,moved:j!==i,from:j}); });
+  }
+  function validPerm(R,m,perm){
+    if(!Array.isArray(perm)||perm.length!==7||[...perm].sort().join()!=="0,1,2,3,4,5,6") return false;
+    const o=origWeek(m);
+    for(let i=0;i<7;i++) if(perm[i]!==i && (isLocked(o[i])||isLocked(o[perm[i]]))) return false;
+    const arr=perm.map(j=>o[j]);
+    const prev=R.days[iso(addDays(m,-1))], next=R.days[iso(addDays(m,7))];
+    const seq=[prev,...arr,next];
+    for(let i=1;i<seq.length;i++) if(isHard(seq[i-1])&&isHard(seq[i])) return false;
+    return true;
+  }
+  function weekDays(R,m){ return DAYS.map((_,i)=>R.days[iso(addDays(m,i))]||null); }
+  function weekPhase(ds){ const c={}; ds.forEach(x=>{ if(x) c[x.phase]=(c[x.phase]||0)+1; });
+    if(c.race) return "race"; let best=null; for(const k in c) if(!best||c[k]>c[best]) best=k; return best||"off"; }
+
+  let LASTR=null;
+  function setReady(){ const ready = !!(+S.peak && parseTime(S.time)); document.querySelector(".grid").classList.toggle("ready", ready); }
+  function render(){
+    setReady();
+    const R=plan(); arrangeAll(R); LASTR=R;
+    const pm=peakMinutes();
+    const lvl=startLevel();
+    $("sinceHint").textContent = ["You'll start with 2 easy weeks at about 50% of your biggest week, then base building on Dec 14.",
+      "You'll start with 2 easy weeks at about 60% of your biggest week, then base building on Dec 14.",
+      "You'll go straight into base building on Nov 30, at about 70% of your biggest week."][lvl]
+      + (S.tage==="adv" && lvl>({rested:0,some:1,regular:2}[S.since||"rested"]) ? " (One step up because you have 3+ years of training.)" : "")
+      + (isNewer() && ({rested:0,some:1,regular:2}[S.since||"rested"]+(S.tage==="adv"?1:0))>1 ? " Newer and younger runners always start with the ease-in weeks. It's how Coach Brandon builds runners who last." : "");
+    $("peakHint").textContent = (S.unit==="mi" && +S.peak)
+      ? `≈ ${pm} minutes, at an average of about ${fmt(P?P.easyMile:DEFAULT_EASY)} per mile${P?" (estimated from your race time)":" (add a race time for a better estimate)"}. If you know your real number of minutes, switch to Minutes.`
+      : "Your highest week this summer or fall, in total minutes or miles. Every run length in the plan is based on this.";
+    // strip
+    $("strip").innerHTML=MONDAYS.map((m,i)=>{
+      const ds=weekDays(R,m), ph=weekPhase(ds);
+      const wb=weekBand(ds), tot=wb[1];
+      const lbl=(R.weekInfo[iso(m)]||{}).label||({race:"Racing",off:"Rest",active:"Active",base:"Base",ease:"Ease in"})[ph];
+      return `<button class="wk p-${ph}${i===wi?" sel":""}" data-i="${i}"><div class="d">${short(m)}</div><div class="l">${lbl}</div><div class="m">${tot?wb[0]+"–"+wb[1]:"&nbsp;"}</div></button>`;
+    }).join("");
+    $("strip").querySelectorAll(".wk").forEach(b=>b.onclick=()=>{ wi=+b.dataset.i; render(); });
+    const sel=$("strip").querySelector(".sel"); if(sel){ const st=$("strip"); st.scrollLeft = Math.max(0, sel.offsetLeft - st.offsetLeft - (st.clientWidth - sel.offsetWidth)/2); }
+
+    const m=MONDAYS[wi], ds=weekDays(R,m), ph=weekPhase(ds), info=PH[ph];
+    const end=addDays(m,6);
+    $("phaseName").textContent=info.name;
+    const phs=[...new Set(ds.filter(Boolean).map(x=>x.phase))];
+    $("phaseMeta").textContent=`Week of ${short(m)} – ${short(end)}`+(phs.length>1?` · ${phs.map(p=>({race:"racing",off:"rest",active:"active rest",base:"base",ease:"easing in"})[p]).join(" → ")}`:"");
+    $("phaseBlurb").textContent=info.blurb;
+    const canFlex=ds.some((x,i)=>x&&!isLocked(x)&&addDays(m,i)>=today);
+    $("flexHint").innerHTML = canFlex
+      ? `Busy day coming up? Use <b>Move</b> to trade days, or <b>Can't run</b> to swap with a day off. Hard days can never land back to back.${S.weeks[iso(m)]?` <a href="#" id="resetWk">Undo my changes this week</a>`:""}`
+      : "";
+    const rw=$("resetWk"); if(rw) rw.onclick=e=>{ e.preventDefault(); delete S.weeks[iso(m)]; update(); toast("Week reset"); };
+    const logged=ds.reduce((a,x)=>{ const lg=x&&LOGS[iso(x.date)]; return a+((lg&&+lg.actualMin)||0); },0);
+    const wbw=weekBand(ds), tot=wbw[1];
+    const milesTxt=(P&&tot)?`${Math.round(wbw[0]*60/P.easyMile)}–${Math.round(wbw[1]*60/P.easyMile)}`:null;
+    const wInfo=R.weekInfo[iso(m)];
+    $("totals").innerHTML=(tot?`<div class="stat"><b>${wbw[0]}–${wbw[1]}</b><span>planned minutes</span></div>`:"")+
+      (milesTxt?`<div class="stat"><b>~${milesTxt}</b><span>miles (rough)</span></div>`:"")+
+      (logged?`<div class="stat"><b>${logged}</b><span>minutes logged</span></div>`:"")+
+      (wInfo?`<div class="stat small"><b>${wInfo.label}</b><span>build cycle</span></div>`:"");
+    $("prev").disabled=wi===0; $("next").disabled=wi===MONDAYS.length-1;
+
+    const kmap={easy:"k-easy",hard:"k-hard",long:"k-long",off:"k-off",race:"k-race",act:"k-act"};
+    $("days").innerHTML=ds.map((x,i)=>{
+      const dt=addDays(m,i);
+      if(!x) return `<div class="day k-off"><div class="top"><span class="dn">${DAYS[i]} <span class="dt">${short(dt)}</span></span></div><div class="det muted">Outside this plan.</div></div>`;
+      const mm = (x.kind==="off") ? "OFF" : bandTxt(x);
+      const lg=LOGS[iso(dt)];
+      const acts=[];
+      if(dt>=today && !isLocked(x)){ acts.push(`<button data-act="move" data-i="${i}">Move</button>`); if(x.kind!=="off") acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`); }
+      if(dt<=today && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
+      const isOver = lg && lg.status!=="skipped" && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
+      const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${lg.status==="skipped"?"Skipped":`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
+      return `<div class="day ${kmap[x.kind]}${iso(dt)===iso(today)?" today":""}"><div class="top"><span class="dn">${DAYS[i]} <span class="dt">${short(dt)}${iso(dt)===iso(today)?" · today":""}</span></span><span class="min">${mm}</span></div>
+        <div class="ttl">${x.ttl}${x.moved?`<span class="moved">MOVED</span>`:""}</div><div class="det">${x.det}</div>${x.ex?`<div class="ex">${x.ex}</div>`:""}<span class="chip">${x.eff}</span>${lgHtml}${acts.length?`<div class="acts">${acts.join("")}</div>`:""}</div>`;
+    }).join("");
+    window.__wk={m,ds,info,tot};
+
+    // why
+    const why=[];
+    const peak=peakMinutes();
+    if(today<START) why.push("Your plan starts Monday, Nov 30. You can look ahead, move days around, and get set up now.");
+    if(R.reset.some(r=>iso(r)===iso(m))) why.push("Your plan changed (a race was added or removed), so your day changes for this week were reset.");
+    if(ds.some(x=>x&&x.phase==="race")){
+      why.push(R.races.length?`Your last race is ${R.races[R.races.length-1].name} on ${short(R.last)}. Rest starts the day after.`:"");
+      why.push("To hold a peak between races, keep volume at taper level and keep doing short, high-quality aerobic and anaerobic capacity work. Quality over quantity.");
+      why.push("Any hard workout takes about 10 days to pay off (the \"10-day rule\"). That's why the last week before a race is light.");
+      if(ds.some(x=>x&&/Thanksgiving/.test(x.ttl))) why.push("Coach Brandon's manual steers young runners away from road racing, so the Thanksgiving 5K is planned as a steady effort or fun run, not an all-out race, unless Coach Brandon says otherwise.");
+    }
+    if(ds.some(x=>x&&x.phase==="off")) why.push(`Complete rest runs ${short(addDays(R.last,1))} – ${short(R.offEnd)}. The manual calls for 7–10 days off after the season.`);
+    if(ds.some(x=>x&&x.phase==="active")) why.push(`Active rest runs ${short(addDays(R.offEnd,1))} – ${short(addDays(R.baseStart,-1))}. Light jogs are optional, and other sports are encouraged.`);
+    if(ds.some(x=>x&&x.phase==="ease")){
+      if(wInfo) why.push(wInfo.note);
+      why.push("No hard days yet. After a few weeks off, jumping straight into workouts is how runners get hurt.");
+      why.push("You have two planned days off this week. If your schedule changes, use Can't run to swap one with a run.");
+    }
+    if(ds.some(x=>x&&x.phase==="base")){
+      if(wInfo) why.push(wInfo.note);
+      why.push("The week has one mid-week workout (Wed), a recovery day (Thu), strides (Mon), hill striders the day before the long run (Fri), and a long run (Sat, about 20% of the week).");
+      if(S.tage!=="adv") why.push("Tempo runs come in once you have 3+ years of training. Until then, progression runs and fartleks do the job.");
+      why.push(S.tage==="adv"?"With 3+ years of training you can build up to 15% a week. Everyone else stays at 10%.":"Volume goes up no more than 10% a week.");
+      why.push(m>=D(2027,2,15) ? "Track season: once track practice starts, follow Coach Brandon's track workouts. Use this plan on days Coach Brandon doesn't give you one, and keep logging your runs here." : "Coach Brandon will tell you when track workouts start. Until then, it's all about building the engine.");
+    }
+    if(!peak) why.push("Enter your biggest week (minutes or miles) to get run lengths.");
+    if(!P) why.push("Add a recent race time to see paces in your workouts.");
+    $("why").innerHTML=why.filter(Boolean).map(t=>`<li>${t}</li>`).join("");
+
+    // paces
+    if(!P) $("paces").innerHTML='<p class="muted" style="margin:0">Enter a recent race time to see your training paces.</p>';
+    else{
+      const rows=[["800","800 m race pace","Very fast reps"],["mile","Mile race pace","Strides, short reps"],["2mi","2-mile race pace","1000s, 3:00 reps"],["5k","5K race pace","400s, fartlek surges"],["cv","Critical velocity (CV)","CV reps"]];
+      $("paces").innerHTML=`<table><thead><tr><th>Pace</th><th>Per mile</th><th>Per 400</th><th>Used for</th></tr></thead><tbody>`+
+        rows.map(([k,n,u])=>`<tr><td>${n}</td><td class="n">${fmt(P[k].ppm*1609.34)}</td><td class="n">${fmt(P[k].ppm*400)}</td><td class="muted">${u}</td></tr>`).join("")+
+        `<tr><td>Aerobic runs</td><td class="n">${paceRange(P.easy)}</td><td class="n">—</td><td class="muted">Most runs. Slower is fine; never faster than 7:00.</td></tr>
+        <tr><td>Recovery runs</td><td class="n">${paceRange(P.rec)}</td><td class="n">—</td><td class="muted">Recovery day. Effort 2–3.</td></tr></tbody></table>
+        <p class="muted" style="margin:8px 0 0">From Tinman's calculator, based on your race time. Effort beats pace on any given day.</p>`;
+    }
+  }
+
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+
+  // ---------- inputs ----------
+  ["grade","tage","event","since"].forEach(k=>{ $(k).value=S[k]||$(k).value; $(k).onchange=()=>{ S[k]=$(k).value; update(); }; });
+  ["peak"].forEach(k=>{ $(k).value=S[k]; $(k).oninput=()=>{ S[k]=$(k).value; update(); }; });
+  function timeToBoxes(){ const t=parseTime(S.time); $("tMin").value = t? Math.floor(t/60) : ""; $("tSec").value = t? String(Math.round(t%60)).padStart(2,"0") : ""; }
+  function boxesToTime(){ const m=$("tMin").value.trim(), sc=$("tSec").value.trim();
+    if(m===""){ S.time=""; return; }
+    let secs=Math.min(59,Math.max(0,parseInt(sc||"0",10)||0)); S.time=(parseInt(m,10)||0)+":"+String(secs).padStart(2,"0"); }
+  ["tMin","tSec"].forEach(id=>$(id).oninput=()=>{ boxesToTime(); update(); });
+  $("tSec").onblur=()=>{ if($("tSec").value!=="") $("tSec").value=String(Math.min(59,parseInt($("tSec").value,10)||0)).padStart(2,"0"); };
+  timeToBoxes();
+  const syncUnit=()=>document.querySelectorAll("#unit button").forEach(b=>b.classList.toggle("on",b.dataset.v===S.unit));
+  document.querySelectorAll("#unit button").forEach(b=>b.onclick=()=>{ S.unit=b.dataset.v; syncUnit(); update(); });
+  syncUnit();
+  $("editInfo").onclick=()=>{ const el=$("infoCol"); try{ el.scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){ el.scrollIntoView(); } };
+  $("prev").onclick=()=>{ if(wi>0){ wi--; render(); } };
+  $("next").onclick=()=>{ if(wi<MONDAYS.length-1){ wi++; render(); } };
+  $("thisWk").onclick=()=>{ const i=MONDAYS.findIndex(m=>dayDiff(today,m)>=0&&dayDiff(today,m)<7); wi=i<0?0:i; render(); };
+
+  function toast(t){ const el=$("toast"); el.textContent=t; el.classList.add("show"); setTimeout(()=>el.classList.remove("show"),1800); }
+  $("copy").onclick=()=>{
+    const w=window.__wk; if(!w) return;
+    let txt=`ROYALS XC: ${w.info.name}\nWeek of ${short(w.m)}\n`;
+    w.ds.forEach((x,i)=>{ if(!x) return; txt+=`\n${DAYS[i]} ${short(x.date)}: ${x.ttl}${x.min?" ("+bandTxt(x)+")":""}\n  ${x.det}${x.ex?"\n  "+x.ex:""}\n`; });
+    if(w.tot){ const b=weekBand(w.ds); txt+=`\nPlanned: ${b[0]}–${b[1]} min`; }
+    const ok=()=>toast("Week copied");
+    try{ navigator.clipboard.writeText(txt).then(ok,()=>fallback(txt)); }catch(e){ fallback(txt); }
+  };
+  function fallback(t){ const ta=document.createElement("textarea"); ta.value=t; document.body.appendChild(ta); ta.select(); try{ document.execCommand("copy"); toast("Week copied"); }catch(e){ toast("Copy not available here"); } ta.remove(); }
+
+  // ---------- modal ----------
+  function openModal(html){ $("modal").innerHTML=html; $("ov").classList.add("show"); }
+  function closeModal(){ $("ov").classList.remove("show"); }
+  $("ov").addEventListener("click",e=>{ if(e.target===$("ov") && !$("ov").dataset.locked) closeModal(); });
+  const dayLabel=(m,i)=>`${DAYS[i]}, ${short(addDays(m,i))}`;
+  const desc=x=>x? `${x.ttl}${x.min?` (${bandTxt(x)})`:x.kind==="off"?" (off)":""}`:"";
+
+  function curWeek(){ const m=MONDAYS[wi]; return {m,k:iso(m),perm:(S.weeks[iso(m)]||ID).slice(),cur:weekDays(LASTR,m)}; }
+  function trySwap(a,b){
+    const w=curWeek(); const p=w.perm.slice(); [p[a],p[b]]=[p[b],p[a]];
+    const R={days:Object.assign({},LASTR.days)};
+    return validPerm(R,w.m,p) ? p : null;
+  }
+  function commitPerm(p){ const w=curWeek(); if(p.join()===ID.join()) delete S.weeks[w.k]; else S.weeks[w.k]=p; closeModal(); update(); toast("Week updated"); }
+
+  function moveModal(a){
+    const w=curWeek(), x=w.cur[a];
+    const opts=ID.filter(b=>b!==a && addDays(w.m,b)>=today && !isLocked(w.cur[b])).map(b=>{
+      const p=trySwap(a,b);
+      return `<button class="opt" data-b="${b}" ${p?"":"disabled"}><b>${dayLabel(w.m,b)}</b>: ${desc(w.cur[b])}<small>${p?`Trade: ${x.ttl} goes to ${DAYS[b]}, ${w.cur[b].ttl} comes to ${DAYS[a]}.`:"Not allowed: this would put two hard days back to back."}</small></button>`;
+    });
+    openModal(`<h2>Move ${DAYS[a]}'s run</h2><p class="muted" style="margin:0">${desc(x)}. Pick a day to trade with. You'll still get every run this week.</p>
+      ${opts.length?opts.join(""):`<p>No other open days left this week.</p>`}
+      <div class="mrow"><button class="btn" id="mClose">Cancel</button></div>`);
+    $("modal").querySelectorAll(".opt[data-b]").forEach(o=>o.onclick=()=>{ const p=trySwap(a,+o.dataset.b); if(p) commitPerm(p); });
+    $("mClose").onclick=closeModal;
+  }
+  function cantModal(a){
+    const w=curWeek(), x=w.cur[a], dt=addDays(w.m,a);
+    const offs=ID.filter(b=>b!==a && addDays(w.m,b)>=today && w.cur[b] && w.cur[b].kind==="off" && !isLocked(w.cur[b])).map(b=>({b,p:trySwap(a,b)})).filter(o=>o.p);
+    if(offs.length){
+      openModal(`<h2>Can't run ${DAYS[a]}?</h2><p class="muted" style="margin:0">Move ${desc(x)} to your day off and take ${DAYS[a]} off instead. You'll still get every run this week.</p>
+        ${offs.map(o=>`<button class="opt" data-b="${o.b}"><b>Run on ${dayLabel(w.m,o.b)}</b> instead<small>${DAYS[a]} becomes your day off.</small></button>`).join("")}
+        <div class="mrow"><button class="btn" id="mClose">Cancel</button></div>`);
+      $("modal").querySelectorAll(".opt[data-b]").forEach(o=>o.onclick=()=>{ const p=trySwap(a,+o.dataset.b); if(p) commitPerm(p); });
+    } else {
+      openModal(`<h2>Can't run ${DAYS[a]}?</h2><p>There's no open day left this week to move it to. <b>That's OK.</b> Missing one run won't hurt your fitness. Don't cram the minutes into your other days.</p>
+        <p class="muted">Want to trade with a different run instead? Use <b>Move</b>.</p>
+        <div class="mrow">${dt<=today?`<button class="btn primary" id="mSkip">Log it as skipped</button>`:""}<button class="btn" id="mClose">Got it</button></div>`);
+      const sk=$("mSkip"); if(sk) sk.onclick=()=>{ saveLog(a,{actualMin:0,miles:"",effort:"",status:"skipped",hurts:false,notes:"Couldn't run (schedule)"}); };
+    }
+    $("mClose").onclick=closeModal;
+  }
+  function logModal(a){
+    const w=curWeek(), x=w.cur[a], k=iso(addDays(w.m,a)), lg=LOGS[k]||{};
+    const st=lg.status||"planned";
+    openModal(`<h2>Log ${dayLabel(w.m,a)}</h2><p class="muted" style="margin:0">Planned: ${desc(x)}</p>
+      <div class="row"><div><label for="lMin">Minutes run</label><input id="lMin" type="number" min="0" inputmode="numeric" value="${lg.actualMin!=null&&lg.actualMin!==""?lg.actualMin:((band(x)||[x.min||""])[0])}"></div>
+      <div><label for="lMi">Miles (optional)</label><input id="lMi" type="number" min="0" step="0.1" inputmode="decimal" value="${lg.miles||""}"></div></div>
+      <label for="lEff">Effort (1 = super easy, 10 = all-out)</label>
+      <select id="lEff"><option value="">Pick one</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${String(lg.effort)===String(n)?"selected":""}>${n}</option>`).join("")}</select>
+      <label for="lSt">How did it go?</label>
+      <select id="lSt"><option value="planned" ${st==="planned"?"selected":""}>Did it as planned</option><option value="changed" ${st==="changed"?"selected":""}>Changed it</option><option value="skipped" ${st==="skipped"?"selected":""}>Skipped it</option></select>
+      <label class="check"><input type="checkbox" id="lHurt" ${lg.hurts?"checked":""}> Something hurts</label>
+      <label for="lNotes">Notes (optional)</label><textarea id="lNotes" maxlength="500" placeholder="How you felt, what you changed…">${esc(lg.notes||"")}</textarea>
+      <div class="err" id="lErr"></div>
+      <div class="mrow"><button class="btn" id="mClose">Cancel</button><button class="btn primary" id="lSave">Save</button></div>`);
+    $("lSt").onchange=()=>{ if($("lSt").value==="skipped") $("lMin").value=0; };
+    $("mClose").onclick=closeModal;
+    $("lSave").onclick=()=>{
+      const status=$("lSt").value, mins=$("lMin").value;
+      if(status!=="skipped" && !(+mins>0)){ $("lErr").textContent="Enter how many minutes you ran (or choose Skipped)."; return; }
+      saveLog(a,{actualMin:status==="skipped"?0:+mins,miles:$("lMi").value,effort:$("lEff").value,status,hurts:$("lHurt").checked,notes:$("lNotes").value.trim()});
+    };
+  }
+  function saveLog(a,v){
+    const w=curWeek(), x=w.cur[a], dd=addDays(w.m,a), k=iso(dd);
+    const entry=Object.assign({date:k,weekOf:w.k,day:DAYS[a],planned:x?x.ttl:"",plannedMin:x?((band(x)||[0,x.min||0])[1]):0},v);
+    LOGS[k]=entry; saveLocal(); render();
+    const over = v.status!=="skipped" && entry.plannedMin>0 && +v.actualMin > entry.plannedMin*1.15;
+    entry.over = over; LOGS[k]=entry; saveLocal(); render();
+    if(over && !v.hurts){ openModal(`<h2>Easy there 😊</h2><p>You ran <b>${v.actualMin} min</b> and the plan topped out at <b>${entry.plannedMin}</b>. We love the hustle, but running more than the plan doesn't make you faster. It just makes injuries more likely.</p><p>The plan builds you up on purpose, a little at a time. Trust it, and stick to the minutes from here.</p><div class="mrow"><button class="btn primary" id="mClose">Got it</button></div>`); $("mClose").onclick=closeModal; }
+    else if(v.hurts) openModal(`<h2>Thanks for telling us</h2><p>Coach will see this. Please also tell Coach in person, and take it easy until you've talked. An easy day or a day off is always OK.</p><div class="mrow"><button class="btn primary" id="mClose">OK</button></div>`), $("mClose").onclick=closeModal;
+    else { closeModal(); toast(v.status==="skipped"?"Logged as skipped":"Run logged"); }
+    if(API_URL && SESS){ setSync("Saving…"); api({action:"log",name:SESS.name,pin:SESS.pin,log:entry}).then(r=>setSync(r.ok?"Saved to Coach's sheet ✓":"Couldn't save. Try again later.")).catch(()=>{ setSync("Offline. Your log is saved on this phone, so re-save it when you're back online."); }); }
+  }
+  $("days").addEventListener("click",e=>{
+    const b=e.target.closest("button[data-act]"); if(!b) return;
+    const i=+b.dataset.i; ({move:moveModal,cant:cantModal,log:logModal})[b.dataset.act](i);
+  });
+
+  // ---------- sync with the team Sheet ----------
+  function api(req){ return fetch(API_URL,{method:"POST",body:JSON.stringify(req)}).then(r=>r.json()); }
+  function setSync(t){ const el=$("syncMsg"); if(el) el.textContent=t; }
+  function pushSettings(){ saveTimer=null; if(!SESS) return Promise.resolve(); return api({action:"save",name:SESS.name,pin:SESS.pin,settings:S}).then(r=>setSync(r.ok?"Saved ✓":"Couldn't save. Will retry on your next change.")).catch(()=>setSync("Offline. Saved on this phone for now.")); }
+  function renderAcct(){
+    $("acct").innerHTML = SESS ? `Signed in as <b>${esc(SESS.name)}</b><button id="signOut">Sign out</button><span class="sync" id="syncMsg"></span>` : "";
+    const so=$("signOut"); if(so) so.onclick=signOut;
+  }
+  function signOut(){
+    if(saveTimer && SESS){ clearTimeout(saveTimer); setSync("Saving…"); pushSettings().finally(signOut); return; }
+    SESS=null; S=JSON.parse(JSON.stringify(BLANK)); LOGS={};
+    try{ localStorage.removeItem("royalsSess"); localStorage.removeItem("royalsTB2"); localStorage.removeItem("royalsLogs"); }catch(e){}
+    syncForm(); renderAcct(); render(); loginModal();
+  }
+  function loadAccount(r,pin){
+    SESS={name:r.name,pin}; try{ localStorage.setItem("royalsSess",JSON.stringify(SESS)); }catch(e){}
+    const hasServer = r.settings && Object.keys(r.settings).length;
+    if(hasServer) S=Object.assign(JSON.parse(JSON.stringify(BLANK)),r.settings);
+    LOGS={}; (r.logs||[]).forEach(l=>{ LOGS[l.date]=l; });
+    saveLocal(); syncForm(); renderAcct(); render();
+    if(!hasServer) pushSettings();
+  }
+  const NAME_RE=/^[A-Za-z][A-Za-z'\-]+ [A-Za-z]\.?$/;
+  function loginModal(mode){
+    mode=mode||"in";
+    $("ov").dataset.locked="1";
+    openModal(`<h2>${mode==="in"?"Sign in":"New athlete"}</h2>
+      <p class="muted" style="margin:0">${mode==="in"?"Use the name and PIN you picked the first time.":"Pick a 4-digit PIN you'll remember. You'll use it on any phone or computer."}</p>
+      <label for="nName">First name + last initial</label><input id="nName" autocomplete="off" placeholder="Marcus T">
+      <label for="nPin">4-digit PIN</label><input id="nPin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">
+      ${mode==="up"?`<label for="nPin2">Type the PIN again</label><input id="nPin2" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="••••">`:""}
+      <div class="err" id="nErr"></div>
+      <div class="mrow"><button class="btn primary" id="nGo">${mode==="in"?"Sign in":"Create my account"}</button></div>
+      <p class="muted" style="text-align:center;margin:12px 0 0">${mode==="in"?`First time here? <a href="#" id="nSwap">Create an account</a>`:`Already have an account? <a href="#" id="nSwap">Sign in</a>`}</p>`);
+    $("nSwap").onclick=e=>{ e.preventDefault(); loginModal(mode==="in"?"up":"in"); };
+    $("nName").focus();
+    $("nGo").onclick=()=>{
+      const name=$("nName").value.trim().replace(/\s+/g," "), pin=$("nPin").value.trim(), err=$("nErr");
+      if(!NAME_RE.test(name)){ err.textContent="Use your first name and last initial, like Marcus T."; return; }
+      if(!/^\d{4}$/.test(pin)){ err.textContent="Your PIN needs to be 4 numbers."; return; }
+      if(mode==="up" && $("nPin2").value.trim()!==pin){ err.textContent="Those PINs don't match."; return; }
+      err.textContent="Checking…"; $("nGo").disabled=true;
+      api({action:mode==="in"?"login":"signup",name,pin,settings:mode==="up"?S:undefined}).then(r=>{
+        $("nGo").disabled=false;
+        if(r.ok){ delete $("ov").dataset.locked; closeModal(); loadAccount(r,pin); toast(mode==="in"?"Welcome back!":"Account created"); return; }
+        err.innerHTML = ({notfound:`We couldn't find that name. New here? <a href="#" id="nUp">Create an account</a>.`,
+          wrongpin:"That PIN doesn't match. Forgot it? Ask Coach to reset it.",
+          taken:"That name is already taken. If it's you, sign in instead. If not, check with Coach.",
+          name:"Use your first name and last initial, like Marcus T.",pin:"Your PIN needs to be 4 numbers."})[r.error]||"Something went wrong. Try again.";
+        const u=$("nUp"); if(u) u.onclick=e=>{ e.preventDefault(); loginModal("up"); };
+      }).catch(()=>{ $("nGo").disabled=false; err.textContent="Couldn't reach the team sheet. Check your internet and try again."; });
+    };
+  }
+  function syncForm(){
+    ["grade","tage","event","peak"].forEach(k=>$(k).value=S[k]||"");
+    timeToBoxes();
+    if(!S.since) S.since="rested"; $("since").value=S.since;
+    if(!S.grade){ S.grade="10"; $("grade").value="10"; } if(!S.tage){ S.tage="mid"; $("tage").value="mid"; } if(!S.event){ S.event="5000"; $("event").value="5000"; }
+    S.weeks=S.weeks||{}; S.races=S.races||{}; S.custom=S.custom||[];
+    syncUnit();
+  }
+
+  function update(){ save(); render(); }
+  syncForm(); renderAcct(); render();
+  if(!API_URL){ $("banner").textContent="Practice mode: your plan and logs are saved on this device only."; $("banner").classList.add("show"); }
+  else if(SESS){
+    setSync("Syncing…");
+    api({action:"login",name:SESS.name,pin:SESS.pin}).then(r=>{ if(r.ok){ loadAccount(r,SESS.pin); setSync("Up to date ✓"); } else { signOut(); } })
+      .catch(()=>setSync("Offline. Showing your last saved plan."));
+  } else loginModal();
+})();
+</script>
+</body>
+</html>
