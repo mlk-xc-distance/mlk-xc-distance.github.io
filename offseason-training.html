@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#14225E">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MLK XC">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<title>Offseason Training — MLK Cross Country, Martin Luther King High School</title>
+<meta name="description" content="Royals Offseason Training: your personal offseason plan and run log.">
+<meta property="og:title" content="MLK Cross Country — Royals">
+<meta property="og:description" content="Royals Offseason Training: your personal offseason plan and run log.">
+<meta property="og:image" content="https://mlk-xc-distance.github.io/share/og-image.png">
+<meta property="og:url" content="https://mlk-xc-distance.github.io/offseason-training.html">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MLK Cross Country — Royals">
+<meta name="twitter:image" content="https://mlk-xc-distance.github.io/share/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tr-hero{background:var(--pine);color:#fff;border-radius:14px;padding:26px 22px;margin-bottom:28px}
+  .tr-hero .eyebrow{font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--clay-soft)}
+  .tr-hero h1{font-size:32px;line-height:1.1;margin:6px 0 10px}
+  .tr-hero p{margin:0 0 18px;color:#dfe5fb;font-size:17px}
+  .tr-btn{display:inline-block;background:var(--clay);color:#fff;text-decoration:none;font-weight:700;font-size:18px;padding:14px 26px;border-radius:10px}
+  .tr-btn:hover{background:#2443c9}
+  .tr-hero .tr-btn{background:#fff;color:var(--pine)}
+  .tr-hero .tr-btn:hover{background:var(--clay-soft)}
+  .tr-steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  .tr-step{display:grid;grid-template-columns:180px 1fr;gap:22px;align-items:center;background:var(--chalk);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+  .tr-step img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);box-shadow:0 6px 18px rgba(20,34,94,.12);display:block}
+  .tr-step h3{font-size:21px;margin:0 0 6px}
+  .tr-step h3::before{counter-increment:s;content:counter(s);display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--clay);color:#fff;font-size:16px;margin-right:10px;vertical-align:2px}
+  .tr-step p{margin:0;color:var(--slate)}
+  .tr-step p + p{margin-top:8px}
+  .tr-tips{background:var(--chalk);border:1px solid var(--line);border-left:5px solid var(--clay);border-radius:12px;padding:16px 20px;margin:26px 0}
+  .tr-tips h3{font-size:19px;margin-bottom:8px}
+  .tr-tips ul{margin:0;padding-left:20px}
+  .tr-tips li{margin:6px 0}
+  .tr-cta{text-align:center;margin:30px 0 10px}
+  .tr-cta p{color:var(--slate);font-size:15px;margin:10px 0 0}
+  @media (max-width:640px){
+    .tr-step{grid-template-columns:1fr;gap:14px}
+    .tr-step img{max-width:210px;margin:0 auto;order:2}
+    .tr-step > div{order:1}
+    .tr-hero h1{font-size:28px}
+  }
+</style>
+</head>
+<body>
+<a href="#training" class="skip-link">Skip to main content</a>
+
+<header class="site">
+  <nav class="nav">
+    <a class="team-name" href="index.html">MLK <span>XC</span> <span class="year">2026</span></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="navlinks" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);">Menu</button>
+    <ul id="navlinks">
+      <li><a href="index.html#next-meet">Next Meet</a></li>
+      <li><a href="index.html#calendar">Calendar</a></li>
+      <li><a href="roster.html">Roster</a></li>
+      <li><a href="https://photos.app.goo.gl/stjjs3EQkY86BbVC6" target="_blank" rel="noopener">Photos</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="records.html">Records</a></li>
+      <li><a href="index.html#links">Links</a></li>
+    </ul>
+  </nav>
+  <div class="search-bar">
+    <div class="search-bar-inner">
+      <input type="text" id="siteSearchInput" placeholder="Search athletes (current & alumni)..." autocomplete="off"><button type="button" id="siteSearchClear" class="search-clear-btn" aria-label="Clear search">&times;</button>
+      <div class="search-results" id="siteSearchResults"></div>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+const SEARCH_INDEX = [
+  { name: "Simon Ally", type: "current", url: "results.html?athlete=" + encodeURIComponent("Simon Ally") },
+  { name: "Praveen Bhave", type: "current", url: "results.html?athlete=" + encodeURIComponent("Praveen Bhave") },
+  { name: "Sachin Bhave", type: "current", url: "results.html?athlete=" + encodeURIComponent("Sachin Bhave") },
+  { name: "Will Blocher", type: "current", url: "results.html?athlete=" + encodeURIComponent("Will Blocher") },
+  { name: "Eleanor Bonino", type: "current", url: "results.html?athlete=" + encodeURIComponent("Eleanor Bonino") },
+  { name: "Nevaeh Bowers", type: "current", url: "results.html?athlete=" + encodeURIComponent("Nevaeh Bowers") },
+  { name: "Ivy Brame-Blake", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ivy Brame-Blake") },
+  { name: "Harper Bush", type: "current", url: "results.html?athlete=" + encodeURIComponent("Harper Bush") },
+  { name: "Olivia Collins", type: "current", url: "results.html?athlete=" + encodeURIComponent("Olivia Collins") },
+  { name: "Liam Durham", type: "current", url: "results.html?athlete=" + encodeURIComponent("Liam Durham") },
+  { name: "Jack Edmonson", type: "current", url: "results.html?athlete=" + encodeURIComponent("Jack Edmonson") },
+  { name: "Dillon Fell", type: "current", url: "results.html?athlete=" + encodeURIComponent("Dillon Fell") },
+  { name: "Brent Ferrell", type: "current", url: "results.html?athlete=" + encodeURIComponent("Brent Ferrell") },
+  { name: "Miles Fowler", type: "current", url: "results.html?athlete=" + encodeURIComponent("Miles Fowler") },
+  { name: "Campbell Gnetz", type: "current", url: "results.html?athlete=" + encodeURIComponent("Campbell Gnetz") },
+  { name: "Vicki Grammer", type: "current", url: "results.html?athlete=" + encodeURIComponent("Vicki Grammer") },
+  { name: "Leah Hatt", type: "current", url: "results.html?athlete=" + encodeURIComponent("Leah Hatt") },
+  { name: "Cooper Hubbard", type: "current", url: "results.html?athlete=" + encodeURIComponent("Cooper Hubbard") },
+  { name: "Brandon Johnson", type: "current", url: "results.html?athlete=" + encodeURIComponent("Brandon Johnson") },
+  { name: "Tanner Jones", type: "current", url: "results.html?athlete=" + encodeURIComponent("Tanner Jones") },
+  { name: "Emmy Kotras", type: "current", url: "results.html?athlete=" + encodeURIComponent("Emmy Kotras") },
+  { name: "Joseph Lambert", type: "current", url: "results.html?athlete=" + encodeURIComponent("Joseph Lambert") },
+  { name: "Ben Lewis", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ben Lewis") },
+  { name: "Will Lindstrom", type: "current", url: "results.html?athlete=" + encodeURIComponent("Will Lindstrom") },
+  { name: "Rolando Muniz-Huerta", type: "current", url: "results.html?athlete=" + encodeURIComponent("Rolando Muniz-Huerta") },
+  { name: "Ethan Newberry", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ethan Newberry") },
+  { name: "Samuel Petrony", type: "current", url: "results.html?athlete=" + encodeURIComponent("Samuel Petrony") },
+  { name: "Ava Sanderfur", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ava Sanderfur") },
+  { name: "Oscar Spitzer", type: "current", url: "results.html?athlete=" + encodeURIComponent("Oscar Spitzer") },
+  { name: "Damien Tellez", type: "current", url: "results.html?athlete=" + encodeURIComponent("Damien Tellez") },
+  { name: "Winston Walker", type: "current", url: "results.html?athlete=" + encodeURIComponent("Winston Walker") },
+  { name: "Cooper Wallace", type: "current", url: "results.html?athlete=" + encodeURIComponent("Cooper Wallace") },
+  { name: "Margaret Ward", type: "current", url: "results.html?athlete=" + encodeURIComponent("Margaret Ward") },
+  { name: "Ellianna Wicker", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ellianna Wicker") },
+  { name: "Kenzie Wilcox", type: "current", url: "results.html?athlete=" + encodeURIComponent("Kenzie Wilcox") },
+  { name: "Aidan Withers", type: "current", url: "results.html?athlete=" + encodeURIComponent("Aidan Withers") },
+  { name: "Ruby York", type: "current", url: "results.html?athlete=" + encodeURIComponent("Ruby York") },
+  { name: "Claude Yriart", type: "current", url: "results.html?athlete=" + encodeURIComponent("Claude Yriart") },
+  { name: "Colin Dinh", type: "current", url: "results.html?athlete=" + encodeURIComponent("Colin Dinh") },
+  { name: "Wyatt Boling", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Wyatt Boling") },
+  { name: "Colter Lewis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Colter Lewis") },
+  { name: "Korben Lewis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Korben Lewis") },
+  { name: "Miles Ally", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Miles Ally") },
+  { name: "Sam Klockenkemper", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sam Klockenkemper") },
+  { name: "Ryan Bailey", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Ryan Bailey") },
+  { name: "Jared Clark", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jared Clark") },
+  { name: "Micah Wasserman", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Micah Wasserman") },
+  { name: "London Craddock", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("London Craddock") },
+  { name: "Christopher Hornsby", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Christopher Hornsby") },
+  { name: "Ryan Graves", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Ryan Graves") },
+  { name: "David Gilmore", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("David Gilmore") },
+  { name: "Jack Forte", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jack Forte") },
+  { name: "Stephen Wathen", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Stephen Wathen") },
+  { name: "Noah Daniel", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Noah Daniel") },
+  { name: "Berket Mesele", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Berket Mesele") },
+  { name: "Sam Brobeck", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sam Brobeck") },
+  { name: "John Gilpin", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("John Gilpin") },
+  { name: "Tyler Masters", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Tyler Masters") },
+  { name: "Nick Winn", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Nick Winn") },
+  { name: "Willie Clark", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Willie Clark") },
+  { name: "Jonathan Gilbreath", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Jonathan Gilbreath") },
+  { name: "Coyle Fowler", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Coyle Fowler") },
+  { name: "Diana Warrick", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Diana Warrick") },
+  { name: "Sybil Levine", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sybil Levine") },
+  { name: "Kara Reed", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Kara Reed") },
+  { name: "Carrie Higgins", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Carrie Higgins") },
+  { name: "Alexa Romersa", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Alexa Romersa") },
+  { name: "Christina Curtis", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Christina Curtis") },
+  { name: "Hayden Maclachlan", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Hayden Maclachlan") },
+  { name: "Victoria Gross", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Victoria Gross") },
+  { name: "Eliza Deshon", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Eliza Deshon") },
+  { name: "Sophia Hardin", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sophia Hardin") },
+  { name: "Annika Dichtl", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Annika Dichtl") },
+  { name: "Naila Kailani", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Naila Kailani") },
+  { name: "Uma Plambeck", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Uma Plambeck") },
+  { name: "Leslie Veliz", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Leslie Veliz") },
+  { name: "Youli Yao", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Youli Yao") },
+  { name: "Natey Kinzounza", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Natey Kinzounza") },
+  { name: "Nicole Rammer", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Nicole Rammer") },
+  { name: "Gabby Havron", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Gabby Havron") },
+  { name: "Sophia Brame-Goldthwaite", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Sophia Brame-Goldthwaite") },
+  { name: "Amber Moore", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Amber Moore") },
+  { name: "Anna Reside", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Anna Reside") },
+  { name: "Kya Lambert", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Kya Lambert") },
+  { name: "Anna Claire Raines", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Anna Claire Raines") },
+  { name: "Meg Tennant", type: "alumni", url: "records.html?alumni=" + encodeURIComponent("Meg Tennant") },
+];
+
+    const input = document.getElementById('siteSearchInput');
+    const resultsEl = document.getElementById('siteSearchResults');
+    const clearBtn = document.getElementById('siteSearchClear');
+    if (!input) return;
+    let currentMatches = [];
+    let highlightedIndex = -1;
+    function updateClearBtn(){
+      clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+    }
+    function renderResults(){
+      if (currentMatches.length === 0){
+        resultsEl.innerHTML = '<div class="search-empty">No matches found.</div>';
+      } else {
+        resultsEl.innerHTML = currentMatches.map((m, i) => `<a class="search-result${i === highlightedIndex ? ' highlighted' : ''}" href="${m.url}"><span>${m.name}</span><span class="search-result-tag">${m.type === 'current' ? 'Current' : 'Alumni'}</span></a>`).join('');
+      }
+    }
+    input.addEventListener('input', () => {
+      updateClearBtn();
+      highlightedIndex = -1;
+      const q = input.value.trim().toLowerCase();
+      if (q.length < 2){ resultsEl.style.display = 'none'; resultsEl.innerHTML = ''; currentMatches = []; return; }
+      currentMatches = SEARCH_INDEX.filter(a => a.name.toLowerCase().includes(q)).slice(0, 8);
+      renderResults();
+      resultsEl.style.display = 'block';
+    });
+    input.addEventListener('keydown', (e) => {
+      if (resultsEl.style.display !== 'block' || currentMatches.length === 0) return;
+      if (e.key === 'ArrowDown'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex + 1) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'ArrowUp'){
+        e.preventDefault();
+        highlightedIndex = (highlightedIndex - 1 + currentMatches.length) % currentMatches.length;
+        renderResults();
+        const activeEl = resultsEl.children[highlightedIndex];
+        if (activeEl && activeEl.scrollIntoView) activeEl.scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Enter'){
+        if (highlightedIndex >= 0 && currentMatches[highlightedIndex]){
+          e.preventDefault();
+          window.location.href = currentMatches[highlightedIndex].url;
+        }
+      } else if (e.key === 'Escape'){
+        resultsEl.style.display = 'none';
+        input.blur();
+      }
+    });
+    if (clearBtn){
+      clearBtn.addEventListener('click', () => {
+        input.value = '';
+        resultsEl.style.display = 'none';
+        resultsEl.innerHTML = '';
+        currentMatches = [];
+        highlightedIndex = -1;
+        updateClearBtn();
+        input.focus();
+      });
+    }
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.search-bar')) resultsEl.style.display = 'none';
+    });
+  })();
+  </script>
+
+</header>
+
+<section id="training" style="padding-top:40px;">
+  <div class="wrap">
+    <div class="tr-hero">
+      <div class="eyebrow">Royals Offseason Training</div>
+      <h1>Your plan for Nov 30 – Feb 28</h1>
+      <p>A personal training plan built from Coach Brandon's training philosophy. It sets each day's run and pace based on your experience and a recent race, and lets you log your runs for the coaches to see.</p>
+      <a class="tr-btn" href="training/">Open the training app</a>
+    </div>
+
+    <div class="section-head">
+      <div>
+        <h2>How to use it</h2>
+        <p>Five steps. Takes about two minutes to set up.</p>
+      </div>
+    </div>
+
+    <ol class="tr-steps">
+      <li class="tr-step">
+        <img src="training/screens/1-create-account.jpg" alt="Create account screen with a first name, last initial and a 4-digit PIN" loading="lazy" width="540" height="1052">
+        <div>
+          <h3>Create your account</h3>
+          <p>Open the app and tap <b>Create an account</b>. Use your first name and last initial (like <i>Jordan R</i>) and pick a 4-digit PIN.</p>
+          <p>You'll use your name and PIN to sign in on any phone or computer.</p>
+        </div>
+      </li>
+      <li class="tr-step">
+        <img src="training/screens/2-your-info.jpg" alt="The About you and Since state sections filled in" loading="lazy" width="540" height="1052">
+        <div>
+          <h3>Fill in your info</h3>
+          <p>Enter your grade, years running, a recent race time, your biggest week this season (in minutes or miles), and how much you've run since state.</p>
+          <p>The app builds your plan from that. Tap any week at the top to see it.</p>
+        </div>
+      </li>
+      <li class="tr-step">
+        <img src="training/screens/3-daily-runs.jpg" alt="Daily run cards with time ranges, pace guides and buttons" loading="lazy" width="540" height="1052">
+        <div>
+          <h3>Follow your plan</h3>
+          <p>Each day shows a time range, an easy-pace guide, and how hard it should feel. <b>Easy days should feel easy.</b></p>
+          <p>Busy day? Tap <b>Move</b> to trade days. The app never puts two hard days back to back.</p>
+        </div>
+      </li>
+      <li class="tr-step">
+        <img src="training/screens/4-log-a-run.jpg" alt="Log a run form with minutes, miles, effort and notes" loading="lazy" width="540" height="1052">
+        <div>
+          <h3>Log every run</h3>
+          <p>After you run, tap <b>Log it</b> and enter your minutes, effort, and how it went. Your logs go to a team database your coaches can see.</p>
+          <p>If something hurts, check the box <b>and</b> tell a coach in person.</p>
+        </div>
+      </li>
+      <li class="tr-step">
+        <img src="training/screens/5-cant-run.jpg" alt="Can't run form with a reason picked" loading="lazy" width="540" height="1052">
+        <div>
+          <h3>Can't run? That's OK.</h3>
+          <p>Tap <b>Can't run</b> and pick a reason so Coach knows what happened.</p>
+          <p>Missing one run won't hurt your fitness. Don't add the minutes to other days. Just pick up the plan the next day.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="tr-tips">
+      <h3>Tips</h3>
+      <ul>
+        <li><b>Add it to your home screen.</b> iPhone: open the app in Safari, tap Share → Add to Home Screen. Android: menu → Add to Home screen.</li>
+        <li><b>Copy week</b> copies the week's plan as text, so you can paste it into Notes, your calendar, or wherever you want.</li>
+        <li><b>Stick to the plan.</b> Running more than it says won't make you faster, and it raises your chance of getting hurt.</li>
+        <li><b>Forgot your PIN?</b> Ask a coach to reset it.</li>
+      </ul>
+    </div>
+
+    <div class="tr-cta">
+      <a class="tr-btn" href="training/">Open the training app</a>
+      <p>Logging opens on Nov 30, when your plan starts.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div id="dailyQuote" class="quote-line"></div>
+    <div class="footer-bottom">
+      <div>Martin Luther King High School Cross Country · Season 2026</div>
+      <div>Questions? <a href="mailto:mlk.xc.distance@gmail.com">mlk.xc.distance@gmail.com</a></div>
+    </div>
+  </div>
+</footer>
+<script src="quotes.js"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>
