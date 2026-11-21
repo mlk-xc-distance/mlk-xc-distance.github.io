@@ -37,7 +37,7 @@
   .card p{margin:8px 0;}
   .note{color:var(--slate); font-size:15px;}
 
-  .form-frame{width:100%; height:1400px; border:0; margin-top:12px; border-radius:8px; background:var(--stone);}
+  .form-frame{width:100%; height:1560px; border:0; margin-top:12px; border-radius:8px; background:var(--stone);}
   .placeholder{margin-top:14px; border:2px dashed var(--line); border-radius:10px; padding:28px 20px; text-align:center; color:var(--slate);}
 
   .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0;}
@@ -57,7 +57,7 @@
   ul.tips li{margin-bottom:4px;}
   footer{padding:0 20px 40px; text-align:center; color:var(--slate); font-size:15px;}
 
-  @media (max-width:560px){ .shots{grid-template-columns:1fr;} .card{padding:18px;} .form-frame{height:1600px;} }
+  @media (max-width:560px){ .shots{grid-template-columns:1fr;} .card{padding:18px;} }
 </style>
 </head>
 <body>
@@ -130,6 +130,19 @@
     f.title = 'Tribute form';
     f.loading = 'lazy';
     slot.appendChild(f);
+    // Google doesn't let the page read the form's height, so size the frame to fit it
+    // based on its width (measured: 712px wide ≈ 1520px tall, 360 ≈ 1810, 300 ≈ 1890).
+    // If questions are added or reworded in the form, re-measure and update these numbers.
+    const fitForm = () => {
+      const w = f.clientWidth, pts = [[300,1890],[360,1810],[712,1520]];
+      let h;
+      if (w <= pts[0][0]) h = pts[0][1] + (pts[0][0] - w) * 2;
+      else if (w >= pts[2][0]) h = pts[2][1];
+      else { const [a,b] = w <= pts[1][0] ? [pts[0],pts[1]] : [pts[1],pts[2]]; h = a[1] + (w - a[0]) * (b[1] - a[1]) / (b[0] - a[0]); }
+      f.style.height = Math.round(h + 40) + 'px';
+    };
+    fitForm();
+    window.addEventListener('resize', fitForm);
   } else {
     slot.innerHTML = '<div class="placeholder">The tribute form is coming soon.</div>';
   }
