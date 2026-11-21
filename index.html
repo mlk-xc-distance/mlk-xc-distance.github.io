@@ -385,6 +385,7 @@ const MEETS = [
   { name: "Regionals (TSSAA DI Class AA Section 4)", location: "The Hermitage, Hermitage, TN", address: "4580 Rachels Lane, Hermitage, TN 37076", lat: 36.2150, lon: -86.6130, parking: "$10", parkingMap: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", parkingMapImg: "https://assets.sp.milesplit.com/meets/724605/files/img_3699_1_74da9ca9.jpg", courseMapImg: "maps/voyles-classic.jpg", date: "2026-10-27", time: "Varsity Girls 3:00 PM · Varsity Boys 3:50 PM · Combined JV 4:40 PM · Awards 5:30 PM", raceHour: "15:00", lastRaceHour: "16:40", link: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/info", results: "https://tn.milesplit.com/meets/780550-tssaa-di-class-aa-xc-section-4-meet-2026/results", alertBadge: "VENUE CHANGED — NOW AT THE HERMITAGE" },
   { name: "TSSAA XC DI Class AA State Championship Meet 2026", location: "Shelby Farms Park, Memphis, TN", address: "6903 Great View Dr, Memphis, TN 38120", mapsQuery: "35.145956,-89.834245", lat: 35.145956, lon: -89.834245, courseMapImg: "maps/frank-horton.jpg", parkingMapImg: "maps/frank-horton-parking.jpg", parking: "Free", admission: "$14.65/person online in advance (including fees)", admissionDay: "$15/person CASH on race day", ticketLink: "https://gofan.co/app/school/TSSAA", ticketLabel: "Buy Tickets Online ($14.65) →", arrival: "11:00 AM (all athletes)", date: "2026-11-06", time: "DI AA Boys 12:30 PM · DI AA Girls 1:20 PM · Awards 2:00 PM", raceHour: "12:30", lastRaceHour: "13:20", link: "https://tn.milesplit.com/meets/772359-tssaa-xc-state-championship-meet-2026/info", results: "https://tn.milesplit.com/meets/772359-tssaa-xc-state-championship-meet-2026/results" },
   { name: "MSCCA Awards Banquet (Invited Athletes Only)", alertBadge: "INVITATION ONLY — BRENT, MILES, DILLON & VICKI", isEvent: true, link: "MSCCA_banquet.html", location: "Brentwood Academy, Brentwood, TN", address: "219 Granny White Pike, Brentwood, TN", date: "2026-11-09", time: "Dinner 6:00 PM · Awards to follow", timeLabel: "Time", hideArrival: true, admission: "Free for MSCCA coaches and honored athletes", admissionDay: "$15/person for other guests (cash, Venmo, or check)", topFacts: [["Invited", "<strong>Brent Ferrell, Miles Fowler, Dillon Fell, Vicki Grammer</strong> only"]], extraFacts: [["Guest limit", "Other teammates are not invited. Please bring no more than 2 guests per runner, if possible — there’s no room for extended family."], ["Dress", "“Sunday best” — not formal, but nice and presentable."]] },
+  { name: "NXR Southeast Regional (Nike Cross Regionals)", location: "WakeMed Soccer Park, Cary, NC", address: "201 Soccer Park Dr, Cary, NC 27511", lat: 35.7860, lon: -78.7511, tz: "America/New_York", raceHour: "09:50", lastRaceHour: "12:30", courseMapImg: "maps/nxr-southeast.jpg", arrival: "On your own", parking: "Free", admission: "Free", date: "2026-11-22", time: "Boys Invitational (Section 1) <strong>9:50 AM</strong> · Boys Championship <strong>12:30 PM</strong>", topFacts: [["Our runners", "<strong>Invitational, Section 1:</strong> Miles Fowler &amp; Dillon Fell · <strong>Championship:</strong> Brent Ferrell"]], officialSite: "https://nxrse.runnerspace.com/eprofile.php?do=title&title_id=217&event_id=303" },
 ];
 
 (function render(){
@@ -438,6 +439,18 @@ const MEETS = [
     return universalMapsUrl(m.mapsQuery || m.address);
   }
 
+  // ---- Time zones: the site's home time is Central (Nashville). Add tz: "America/New_York" (etc.) to a meet and its
+  // times get labeled automatically, and the weather forecast uses that meet's local clock. ----
+  const TZ_NAMES = { "America/New_York": "Eastern time", "America/Chicago": "Central time", "America/Denver": "Mountain time", "America/Los_Angeles": "Pacific time" };
+  function tzNote(m){
+    if (!m.tz || m.tz === "America/Chicago") return '';
+    const hourIn = z => parseInt(new Intl.DateTimeFormat('en-US', { timeZone: z, hour: 'numeric', hour12: false }).format(new Date(m.date + 'T18:00:00Z')), 10) % 24;
+    let diff = hourIn(m.tz) - hourIn("America/Chicago");
+    if (diff > 12) diff -= 24; if (diff < -12) diff += 24;
+    const rel = diff === 0 ? '' : ` — ${Math.abs(diff)} hour${Math.abs(diff) === 1 ? '' : 's'} ${diff > 0 ? 'ahead of' : 'behind'} Nashville`;
+    return ` <span style="white-space:nowrap;"><strong>(${TZ_NAMES[m.tz] || m.tz}${rel})</strong></span>`;
+  }
+
   // ---- Weather: only meaningful within ~7 days out (forecast accuracy drops off after that) ----
   const WEATHER_CODES = {
     0: "Clear", 1: "Mostly clear", 2: "Partly cloudy", 3: "Overcast",
@@ -459,7 +472,7 @@ const MEETS = [
   }
   function fetchWeather(m){
     if (m.raceHour){
-      const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=${encodeURIComponent(m.tz || "America/Chicago")}&start_date=${m.date}&end_date=${m.date}`;
       return fetch(url)
         .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
         .then(data => {
@@ -481,7 +494,7 @@ const MEETS = [
           return `${desc}, ${temp}°F · ${rain}% chance of rain${extra} (at ${hourLabel} start)`;
         });
     }
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=America%2FChicago&start_date=${m.date}&end_date=${m.date}`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&timezone=${encodeURIComponent(m.tz || "America/Chicago")}&start_date=${m.date}&end_date=${m.date}`;
     return fetch(url)
       .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
       .then(data => {
@@ -514,7 +527,7 @@ const MEETS = [
     return String(nh).padStart(2,'0') + ":" + String(nm).padStart(2,'0');
   }
   function fetchHistoricalWeather(m){
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=America%2FChicago`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${m.lat}&longitude=${m.lon}&start_date=${m.date}&end_date=${m.date}&hourly=temperature_2m,precipitation_probability,weathercode,relative_humidity_2m,dew_point_2m&temperature_unit=fahrenheit&timezone=${encodeURIComponent(m.tz || "America/Chicago")}`;
     return fetch(url)
       .then(res => { if (!res.ok) throw new Error("weather unavailable"); return res.json(); })
       .then(data => {
@@ -605,7 +618,7 @@ const MEETS = [
         <div><div class="label">Date</div><div class="value">${fmtDate(next.date)}</div></div>
         ${(next.topFacts || []).map(([l, v]) => `<div><div class="label">${l}</div><div class="value">${v}</div></div>`).join('')}
         <div><div class="label">Location</div><div class="value">${next.location}</div></div>
-        <div><div class="label">${next.timeLabel || 'Race times'}</div><div class="value">${next.time}</div></div>
+        <div><div class="label">${next.timeLabel || 'Race times'}</div><div class="value">${next.time}${tzNote(next)}</div></div>
         ${next.hideArrival ? '' : `<div><div class="label">Arrival</div><div class="value">${next.arrival || "75–90 min before your race time"}</div></div>`}
         ${linkFact("Address", mapsUrl(next), next.address || "")}
         ${next.parking ? `<div><div class="label">Parking</div><div class="value">${next.parking}${(next.parkingAddress || next.parkingMap) ? `<br><a href="${next.parkingAddress ? universalMapsUrl(next.parkingAddress) : next.parkingMap}" target="_blank" rel="noopener" ${next.parkingMapTitle ? `title="${next.parkingMapTitle}"` : ''} style="color:var(--clay-soft); font-size:14px;">${next.parkingMapLabel || 'Link to Parking Map'}</a>` : ''}</div></div>` : ''}
@@ -677,7 +690,7 @@ const MEETS = [
           ${weatherHtml}
           ${resultsLinkHtml}
         </div>
-        <div class="meet-when"><span class="d">${fmtDate(m.date)}</span>${m.time}</div>
+        <div class="meet-when"><span class="d">${fmtDate(m.date)}</span>${m.time}${tzNote(m)}</div>
       </li>
     `;
   }).join('');
