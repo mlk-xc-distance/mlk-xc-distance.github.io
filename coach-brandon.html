@@ -37,8 +37,29 @@
   .card p{margin:8px 0;}
   .note{color:var(--slate); font-size:15px;}
 
-  .form-frame{width:100%; height:1560px; border:0; margin-top:12px; border-radius:8px; background:var(--stone);}
-  .placeholder{margin-top:14px; border:2px dashed var(--line); border-radius:10px; padding:28px 20px; text-align:center; color:var(--slate);}
+  form.tribute{display:flex; flex-direction:column; gap:22px; margin-top:18px;}
+  .field{display:flex; flex-direction:column; gap:6px; border:0; margin:0; padding:0; min-width:0;}
+  .field > label, .field legend{font-weight:700; font-size:17px; padding:0;}
+  .req{color:#B3261E; margin-left:2px;}
+  .hint{color:var(--slate); font-size:15px; font-weight:400;}
+  .field input[type=text], .field input[type=email], .field textarea{width:100%; font:inherit; color:var(--pine); background:var(--stone); border:1px solid var(--line); border-radius:10px; padding:12px 14px;}
+  .field textarea{resize:vertical; line-height:1.55;}
+  .field textarea.big{min-height:15em;}
+  .field input:focus, .field textarea:focus{outline:3px solid var(--clay-soft); outline-offset:0; border-color:var(--clay); background:#fff;}
+  .choices{display:flex; flex-wrap:wrap; gap:10px; margin-top:4px;}
+  .choice{display:flex; align-items:center; gap:10px; min-height:48px; padding:10px 16px; border:1px solid var(--line); border-radius:10px; background:var(--stone); cursor:pointer; font-weight:600;}
+  .choice input{width:20px; height:20px; margin:0; accent-color:var(--clay);}
+  .choice:has(input:checked){border-color:var(--clay); background:#E6EBFF;}
+  .field.invalid input, .field.invalid textarea, .field.invalid .choice{border-color:#B3261E;}
+  .err{color:#B3261E; font-size:15px; font-weight:600; display:none;}
+  .field.invalid .err{display:block;}
+  .two{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  button.btn{border:0; cursor:pointer; font-family:inherit; align-self:flex-start;}
+  button.btn[disabled]{opacity:0.6; cursor:wait;}
+  .form-status{font-weight:600;}
+  .thanks{margin-top:18px; background:#E6EBFF; border-radius:12px; padding:22px 24px;}
+  .thanks h3{font-size:24px; margin-bottom:6px;}
+  .thanks p{margin:6px 0;}
 
   .shots{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0;}
   .shot{background:var(--stone); border-radius:10px; padding:16px;}
@@ -57,7 +78,7 @@
   ul.tips li{margin-bottom:4px;}
   footer{padding:0 20px 40px; text-align:center; color:var(--slate); font-size:15px;}
 
-  @media (max-width:560px){ .shots{grid-template-columns:1fr;} .card{padding:18px;} }
+  @media (max-width:560px){ .shots{grid-template-columns:1fr;} .card{padding:18px;} .two{grid-template-columns:1fr;} }
 </style>
 </head>
 <body>
@@ -79,7 +100,65 @@
       <div class="step">Step 1</div>
       <h2 id="words">Share your words</h2>
       <p>A favorite memory, a lesson that stuck with you, or simply a thank-you. A few sentences or a full page, whatever feels right.</p>
-      <div id="form-slot"></div>
+      <form class="tribute" id="tribute-form" novalidate>
+        <div class="two">
+          <div class="field" data-req>
+            <label for="f-name">Your name<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-name" name="entry.1775829606" autocomplete="name" required>
+            <span class="err">Please add your name.</span>
+          </div>
+          <div class="field" data-req>
+            <label for="f-email">Your email<span class="req" aria-hidden="true">*</span> <span class="hint">in case we have a question</span></label>
+            <input type="email" id="f-email" name="entry.894797859" autocomplete="email" required>
+            <span class="err">Please add a valid email address.</span>
+          </div>
+        </div>
+
+        <fieldset class="field" data-req data-group="entry.66900770">
+          <legend>Where did you run with Coach Brandon?<span class="req" aria-hidden="true">*</span> <span class="hint">Pick one or both</span></legend>
+          <div class="choices">
+            <label class="choice"><input type="checkbox" name="entry.66900770" value="NYA"> NYA</label>
+            <label class="choice"><input type="checkbox" name="entry.66900770" value="MLK"> MLK</label>
+          </div>
+          <span class="err">Please choose at least one.</span>
+        </fieldset>
+
+        <div class="two">
+          <div class="field" data-req>
+            <label for="f-years">Years you ran with him<span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-years" name="entry.1013121174" placeholder="e.g., 2015–2019" required>
+            <span class="err">Please add the years you ran.</span>
+          </div>
+          <fieldset class="field" data-req data-group="entry.304433493">
+            <legend>I'm a…<span class="req" aria-hidden="true">*</span></legend>
+            <div class="choices">
+              <label class="choice"><input type="radio" name="entry.304433493" value="Former athlete"> Former athlete</label>
+              <label class="choice"><input type="radio" name="entry.304433493" value="Parent of a former athlete"> Parent of a former athlete</label>
+            </div>
+            <span class="err">Please choose one.</span>
+          </fieldset>
+        </div>
+
+        <div class="field" data-req>
+          <label for="f-tribute">Your tribute<span class="req" aria-hidden="true">*</span> <span class="hint">A memory, a lesson, or a thank-you. A few sentences to a page, whatever feels right.</span></label>
+          <textarea id="f-tribute" class="big" name="entry.1696260736" rows="10" required></textarea>
+          <span class="err">Please write your tribute.</span>
+        </div>
+
+        <div class="field">
+          <label for="f-photos">Sending photos? <span class="hint">Tell us who's in them and the year or race, if you know.</span></label>
+          <textarea id="f-photos" name="entry.2048949227" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn" id="f-submit">Send my tribute</button>
+        <p class="form-status note" id="f-status" role="status" aria-live="polite"></p>
+      </form>
+
+      <div class="thanks" id="f-thanks" hidden tabindex="-1">
+        <h3>Thank you!</h3>
+        <p>Your tribute is in. Coach Brandon is going to love it.</p>
+        <p>Have photos? <a id="thanks-upload" href="https://www.dropbox.com/request/mnuedkss24uvvn6yttxo" target="_blank" rel="noopener">Upload them here</a>. And if you think of more to say later, you're welcome to send another.</p>
+      </div>
       <p class="note">Rather write it in an email? Send it to <a href="mailto:mlk.xc.distance@gmail.com?subject=Tribute%20to%20Coach%20Brandon">mlk.xc.distance@gmail.com</a> and include your name, school (NYA or MLK) and the years you ran.</p>
     </section>
 
@@ -116,40 +195,79 @@
 <footer><a href="index.html">MLK Cross Country</a></footer>
 
 <script>
-  // Paste the two links here once they exist.
-  // FORM_URL: Google Form > Send > the < > (embed) tab > copy the src="..." link only.
-  // UPLOAD_URL: Dropbox > File requests > your request > Copy link.
-  const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc4tU1FtPt-MOys-YPBEbEYksBGTqYoCdcinsvith3ACKtqxw/viewform?embedded=true";
+  // Answers are sent to the Google Form "Tribute to Coach Brandon" (mlk.xc.distance account)
+  // and show up in its Responses tab. The entry.* names on the fields above are that form's
+  // question IDs. If you add, remove or retype questions in the Google Form, this page needs
+  // to be updated to match, or those answers won't come through.
+  const FORM_POST_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc4tU1FtPt-MOys-YPBEbEYksBGTqYoCdcinsvith3ACKtqxw/formResponse";
   const UPLOAD_URL = "https://www.dropbox.com/request/mnuedkss24uvvn6yttxo";
 
-  const slot = document.getElementById('form-slot');
-  if (FORM_URL){
-    const f = document.createElement('iframe');
-    f.className = 'form-frame';
-    f.src = FORM_URL;
-    f.title = 'Tribute form';
-    f.loading = 'lazy';
-    slot.appendChild(f);
-    // Google doesn't let the page read the form's height, so size the frame to fit it
-    // based on its width (measured: 712px wide ≈ 1520px tall, 360 ≈ 1810, 300 ≈ 1890).
-    // If questions are added or reworded in the form, re-measure and update these numbers.
-    const fitForm = () => {
-      const w = f.clientWidth, pts = [[300,1890],[360,1810],[712,1520]];
-      let h;
-      if (w <= pts[0][0]) h = pts[0][1] + (pts[0][0] - w) * 2;
-      else if (w >= pts[2][0]) h = pts[2][1];
-      else { const [a,b] = w <= pts[1][0] ? [pts[0],pts[1]] : [pts[1],pts[2]]; h = a[1] + (w - a[0]) * (b[1] - a[1]) / (b[0] - a[0]); }
-      f.style.height = Math.round(h + 40) + 'px';
-    };
-    fitForm();
-    window.addEventListener('resize', fitForm);
-  } else {
-    slot.innerHTML = '<div class="placeholder">The tribute form is coming soon.</div>';
-  }
+  document.getElementById('upload-btn').href = UPLOAD_URL;
 
-  const up = document.getElementById('upload-btn');
-  if (UPLOAD_URL){ up.href = UPLOAD_URL; }
-  else { up.removeAttribute('href'); up.removeAttribute('target'); up.setAttribute('aria-disabled','true'); up.style.opacity = '0.55'; up.textContent = 'Upload link coming soon'; }
+  const form = document.getElementById('tribute-form');
+  const statusEl = document.getElementById('f-status');
+  const submitBtn = document.getElementById('f-submit');
+  const DRAFT_KEY = 'coach-brandon-tribute-draft';
+
+  // Keep a draft in this browser so a long tribute isn't lost if the page is closed by accident.
+  const saveDraft = () => {
+    try {
+      const d = {};
+      form.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => d[el.id] = el.value);
+      d.checks = [...form.querySelectorAll('input[type=checkbox]:checked, input[type=radio]:checked')].map(el => el.name + '|' + el.value);
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+    } catch (e) {}
+  };
+  try {
+    const d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null');
+    if (d) {
+      form.querySelectorAll('input[type=text], input[type=email], textarea').forEach(el => { if (d[el.id]) el.value = d[el.id]; });
+      (d.checks || []).forEach(k => { const [n, v] = k.split('|'); const el = [...form.querySelectorAll('input')].find(i => i.name === n && i.value === v); if (el) el.checked = true; });
+    }
+  } catch (e) {}
+  form.addEventListener('input', saveDraft);
+  form.addEventListener('change', saveDraft);
+
+  const fieldOk = (field) => {
+    const group = field.dataset.group;
+    if (group) return !!form.querySelector(`input[name="${group}"]:checked`);
+    const el = field.querySelector('input, textarea');
+    if (el.type === 'email') return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+    return el.value.trim() !== '';
+  };
+  form.querySelectorAll('[data-req]').forEach(field => {
+    field.addEventListener('change', () => { if (field.classList.contains('invalid') && fieldOk(field)) field.classList.remove('invalid'); });
+    field.addEventListener('input', () => { if (field.classList.contains('invalid') && fieldOk(field)) field.classList.remove('invalid'); });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let firstBad = null;
+    form.querySelectorAll('[data-req]').forEach(field => {
+      const ok = fieldOk(field);
+      field.classList.toggle('invalid', !ok);
+      if (!ok && !firstBad) firstBad = field;
+    });
+    if (firstBad) {
+      statusEl.textContent = 'Please fill in the highlighted questions.';
+      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const el = firstBad.querySelector('input, textarea'); if (el) el.focus({ preventScroll: true });
+      return;
+    }
+    const body = new URLSearchParams();
+    new FormData(form).forEach((v, k) => body.append(k, typeof v === 'string' ? v.trim() : v));
+    submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; statusEl.textContent = '';
+    try {
+      // Google doesn't send back a readable reply to other sites, so a finished request counts as sent.
+      await fetch(FORM_POST_URL, { method: 'POST', mode: 'no-cors', body });
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+      form.hidden = true;
+      const t = document.getElementById('f-thanks'); t.hidden = false; t.focus();
+    } catch (err) {
+      submitBtn.disabled = false; submitBtn.textContent = 'Send my tribute';
+      statusEl.textContent = "That didn't go through. Please check your connection and try again, or email your tribute to mlk.xc.distance@gmail.com.";
+    }
+  });
 </script>
 </body>
 </html>
