@@ -79,9 +79,41 @@
   footer{padding:0 20px 40px; text-align:center; color:var(--slate); font-size:15px;}
 
   @media (max-width:560px){ .shots{grid-template-columns:1fr;} .card{padding:18px;} .two{grid-template-columns:1fr;} }
+  /* Site banner, matching the rest of mlk-xc-distance.github.io */
+  header.site{position:sticky; top:0; z-index:50; background:var(--pine); border-bottom:3px solid var(--clay);}
+  .nav{position:relative; display:flex; align-items:center; justify-content:space-between; max-width:900px; margin:0 auto; padding:14px 20px;}
+  .nav .team-name{font-family:'Oswald',sans-serif; font-size:25px; font-weight:700; color:var(--chalk); letter-spacing:0.02em; text-decoration:none;}
+  .nav .team-name span{color:var(--clay-soft);}
+  .nav .team-name .year{font-size:0.62em; font-weight:500; opacity:0.8; letter-spacing:0.03em;}
+  .nav ul{list-style:none; display:flex; gap:22px; margin:0; padding:0;}
+  .nav a{color:var(--stone); text-decoration:none; font-size:15px; font-weight:500; border-bottom:2px solid transparent; padding-bottom:2px;}
+  .nav a:hover, .nav a:focus-visible{border-bottom-color:var(--clay-soft);}
+  .nav-toggle{display:none;}
+  @media (max-width:620px){
+    .nav ul{display:none; position:absolute; top:100%; left:0; right:0; background:var(--pine); flex-direction:column; gap:0; border-bottom:3px solid var(--clay);}
+    .nav ul.open{display:flex;}
+    .nav ul li{border-top:1px solid var(--pine-soft);}
+    .nav ul li a{display:block; padding:14px 20px;}
+    .nav-toggle{display:block; background:none; border:1px solid var(--stone); color:var(--stone); font-size:14px; padding:6px 12px; border-radius:3px; font-family:'Source Sans 3',sans-serif; cursor:pointer;}
+  }
 </style>
 </head>
 <body>
+<header class="site">
+  <nav class="nav">
+    <a class="team-name" href="index.html">MLK <span>XC</span> <span class="year">2026</span></a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="navlinks" onclick="const el=document.getElementById('navlinks'); const open=el.classList.toggle('open'); this.setAttribute('aria-expanded', open);">Menu</button>
+    <ul id="navlinks">
+      <li><a href="index.html#next-meet">Next Meet</a></li>
+      <li><a href="index.html#calendar">Calendar</a></li>
+      <li><a href="roster.html">Roster</a></li>
+      <li><a href="https://photos.app.goo.gl/stjjs3EQkY86BbVC6" target="_blank" rel="noopener">Photos</a></li>
+      <li><a href="results.html">Results</a></li>
+      <li><a href="records.html">Records</a></li>
+      <li><a href="index.html#links">Links</a></li>
+    </ul>
+  </nav>
+</header>
 <header class="hero">
   <img class="hero-photo" src="photos/coach-brandon-huddle.jpg" alt="Coach Brandon talking with his runners in a team huddle">
   <div class="wrap hero-text">
