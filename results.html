@@ -531,6 +531,14 @@ const RESULTS = [
       { place: 160, name: "Olivia Collins", time: "27:45.79" },
     ],
   },
+  {
+    meetName: "Toad Two Mile (3200m)",
+    date: "2026-11-14",
+    location: "Father Ryan High School, Nashville, TN",
+    topBoys: [
+      { place: 3, name: "Miles Fowler", time: "10:06.74" },
+    ],
+  },
 ];
 
 const RESULTS_HISTORY = [
@@ -1372,8 +1380,10 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       return;
     }
     const races = racesFor(selected);
-    const avg3 = avgTimeStr(races, 3);
-    const avg5 = races.length > 3 ? avgTimeStr(races, 5) : null;
+    // Averages are 5K-only, so a 3200m or other non-5K race never pulls them down
+    const races5K = races.filter(r => isFiveK(r.meetName));
+    const avg3 = avgTimeStr(races5K, 3);
+    const avg5 = races5K.length > 3 ? avgTimeStr(races5K, 5) : null;
 
     const eligibleRaces = races.filter(r => isFiveK(r.meetName));
     const prSeconds = eligibleRaces.length ? Math.min(...eligibleRaces.map(r => timeToSeconds(r.time))) : null;
@@ -1629,7 +1639,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
   }
   // Current athletes first; falls back to alumni career data.
   function chartRacesFor(name){
-    const cur = racesFor(name);
+    const cur = racesFor(name).filter(r => isFiveK(r.meetName)); // charts are 5K-only
     return cur.length ? cur : alumniRaces(name);
   }
 
@@ -1665,7 +1675,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       seasons = seasons.map(s => ({ ...s, grade: gradeNum(s.grade) }));
     } else {
       const by = {};
-      racesFor(name).forEach(x => { (by[x.date.slice(0,4)] = by[x.date.slice(0,4)] || []).push(x); });
+      racesFor(name).filter(r => isFiveK(r.meetName)).forEach(x => { (by[x.date.slice(0,4)] = by[x.date.slice(0,4)] || []).push(x); });
       seasons = Object.keys(by).sort().map(y => ({ year: y, grade: null, races: by[y].sort((p, q) => p.date.localeCompare(q.date)) }));
     }
     if (!seasons.length) return [];
@@ -1916,7 +1926,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
       return;
     }
     const withSeconds = names.map(name => {
-      const races = racesFor(name);
+      const races = racesFor(name).filter(r => isFiveK(r.meetName)); // PR ranking is 5K-only
       const best = races.length ? Math.min(...races.map(r => timeToSeconds(r.time))) : Infinity;
       return { name, best, gender: athleteGender(name) };
     }).sort((a, b) => a.best - b.best);
