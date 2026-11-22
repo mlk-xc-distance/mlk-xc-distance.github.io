@@ -1320,7 +1320,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           <div style="background:var(--pine); color:#fff; padding:16px 18px 14px;">
             <div style="font-family:'Oswald', sans-serif; font-weight:600; font-size:24px; line-height:1.2; letter-spacing:0.01em; color:#fff;">${r.meetName}</div>
             <div style="font-size:14px; color:var(--clay-soft); margin-top:4px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}${distChip(r)}</div>
-          ${r.note ? `<div style="font-size:13px; font-style:italic; color:var(--slate); margin-top:4px;">${r.note}</div>` : ''}
+          ${r.note ? `<div style="font-size:13px; font-style:italic; color:#fff; opacity:0.9; margin-top:4px;">${r.note}</div>` : ''}
           </div>
           <div style="padding:16px 18px 18px;">
           ${(r.boysPlace || r.girlsPlace) ? `
