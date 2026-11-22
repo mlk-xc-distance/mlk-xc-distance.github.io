@@ -543,6 +543,8 @@ const RESULTS = [
     meetName: "Nike Cross Nationals Southeast Regional",
     date: "2026-11-22",
     location: "WakeMed Soccer Park, Cary, NC",
+    lat: 35.7860, lon: -78.7511, raceHour: "09:50", lastRaceHour: "12:30",
+    note: "Rainy and muddy conditions.",
     topBoys: [
       { place: 32, name: "Miles Fowler", time: "16:53.6" },
       { place: 121, name: "Dillon Fell", time: "18:07.2" },
@@ -1318,6 +1320,7 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
           <div style="background:var(--pine); color:#fff; padding:16px 18px 14px;">
             <div style="font-family:'Oswald', sans-serif; font-weight:600; font-size:24px; line-height:1.2; letter-spacing:0.01em; color:#fff;">${r.meetName}</div>
             <div style="font-size:14px; color:var(--clay-soft); margin-top:4px;">${fmtDate(r.date)}${r.location ? ` · ${r.location}` : ''}${distChip(r)}</div>
+          ${r.note ? `<div style="font-size:13px; font-style:italic; color:var(--slate); margin-top:4px;">${r.note}</div>` : ''}
           </div>
           <div style="padding:16px 18px 18px;">
           ${(r.boysPlace || r.girlsPlace) ? `
