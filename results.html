@@ -545,6 +545,7 @@ const RESULTS = [
     location: "WakeMed Soccer Park, Cary, NC",
     lat: 35.7860, lon: -78.7511, raceHour: "09:50", lastRaceHour: "12:30",
     note: "Rainy and muddy conditions.",
+    condBadges: ["Rain", "Mud"],
     topBoys: [
       { place: 33, name: "Brent Ferrell", time: "15:37.8", race: "Championship" },
       { place: 32, name: "Miles Fowler", time: "16:53.6", race: "Invitational" },
@@ -1278,7 +1279,15 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     [Infinity, 'Brutal','6%+',        7],
   ];
   const WX_SHADES = ['#E4EAFF','#D2DCFF','#BFCDFF','#A0B5FF','#6F8CF0','#2F4FE0','#1F3480','#14225E'];
-  function wxScoreBadge(w){
+  // Optional per-meet badges for conditions the temp/dew score can't see (set condBadges: ["Rain", "Mud"] on a meet)
+  const COND_BADGE_STYLES = {
+    Rain: 'background:#CFE3F5; color:#14416B;',
+    Mud:  'background:#E6D5BF; color:#5A3E22;',
+  };
+  function extraCondBadges(r){
+    return ((r && r.condBadges) || []).map(b => `<span style="display:inline-block; margin-left:6px; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; ${COND_BADGE_STYLES[b] || 'background:#E4EAFF; color:var(--pine);'}">${b}</span>`).join('');
+  }
+  function wxScoreBadge(w, r){
     if (w.temp == null) return '';
     let label, slow = '', lvl;
     if (w.temp < 40 || w.dew == null){
@@ -1292,14 +1301,14 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     const dark = lvl >= 5;
     const note = slow ? ` · ~${slow} slower than ideal` : '';
     const tip = 'Temp + dew point estimate; sun, wind and footing not included.';
-    return `<div style="margin-top:6px;"><span role="button" tabindex="0" title="${tip}" onclick="var n=this.parentNode.querySelector('.wx-tip'); n.style.display = n.style.display==='none' ? 'block' : 'none';" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" style="display:inline-block; cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; background:${WX_SHADES[lvl]}; color:${dark ? '#fff' : 'var(--pine)'};">Conditions: ${label}${note}</span><div class="wx-tip" style="display:none; font-size:12px; color:var(--slate); margin-top:4px;">${tip}</div></div>`;
+    return `<div style="margin-top:6px;"><span role="button" tabindex="0" title="${tip}" onclick="var n=this.parentNode.querySelector('.wx-tip'); n.style.display = n.style.display==='none' ? 'block' : 'none';" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();this.click();}" style="display:inline-block; cursor:pointer; padding:3px 10px; border-radius:999px; font-size:0.85rem; font-weight:600; background:${WX_SHADES[lvl]}; color:${dark ? '#fff' : 'var(--pine)'};">Conditions: ${label}${note}</span>${extraCondBadges(r)}<div class="wx-tip" style="display:none; font-size:12px; color:var(--slate); margin-top:4px;">${tip}</div></div>`;
   }
   function loadMeetWeather(r){
     const id = wxIdFor(r);
     const valueEl = document.getElementById(id);
     if (!valueEl) return;
     fetchRaceWeather(r)
-      .then(w => { valueEl.textContent = w.text; valueEl.insertAdjacentHTML('beforeend', wxScoreBadge(w)); })
+      .then(w => { valueEl.textContent = w.text; valueEl.insertAdjacentHTML('beforeend', wxScoreBadge(w, r)); })
       .catch(() => { const w = document.getElementById(id + '-wrap'); if (w) w.remove(); });
   }
 
