@@ -546,8 +546,9 @@ const RESULTS = [
     lat: 35.7860, lon: -78.7511, raceHour: "09:50", lastRaceHour: "12:30",
     note: "Rainy and muddy conditions.",
     topBoys: [
-      { place: 32, name: "Miles Fowler", time: "16:53.6" },
-      { place: 121, name: "Dillon Fell", time: "18:07.2" },
+      { place: 33, name: "Brent Ferrell", time: "15:37.8", race: "Championship" },
+      { place: 32, name: "Miles Fowler", time: "16:53.6", race: "Invitational" },
+      { place: 121, name: "Dillon Fell", time: "18:07.2", race: "Invitational" },
     ],
   },
 ];
@@ -1083,10 +1084,13 @@ const ALL_RESULTS = [...RESULTS, ...RESULTS_HISTORY];
     return null;
   }
 
-  // When a meet's rows carry race: "JV", show Varsity and JV as separate tables
+  // When a meet's rows carry a race label (JV, Championship, Invitational...), show each race as its own table
   function raceTables(list, season, meetName){
     if (!list || !list.some(f => f.race)) return finisherTable(list, season, meetName);
-    return ['Varsity', 'JV'].map(label => {
+    const present = [...new Set(list.map(f => f.race || 'Varsity'))];
+    const order = ['Varsity', 'Championship', 'Invitational', 'JV'];
+    const labels = [...order.filter(l => present.includes(l)), ...present.filter(l => !order.includes(l))];
+    return labels.map(label => {
       const rows = list.filter(f => (f.race || 'Varsity') === label);
       return rows.length ? `<div style="font-size:12px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--slate); margin:12px 0 6px;">${label}</div>${finisherTable(rows, season, meetName)}` : '';
     }).join('');
