@@ -73,6 +73,7 @@
   .wk.p-active{background:var(--act)} .wk.p-active .l{color:var(--act-i)}
   .wk.p-base{background:var(--easy)} .wk.p-base .l{color:var(--easy-i)}
   .wk.p-ease{background:var(--act)} .wk.p-ease .l{color:var(--act-i)}
+  .wk.p-log{background:#f1f3f8} .wk.p-log .l{color:var(--muted)}
   .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
   .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
   .days{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
@@ -158,7 +159,7 @@
   <div class="wrap hdr">
     <div>
       <h1>ROYALS <span>OFFSEASON TRAINING BUILDER</span></h1>
-      <p>MLK Cross Country · Offseason plan, Nov 30 – Feb 28 · Built from Coach Brandon's training philosophy</p>
+      <p>MLK Cross Country · Offseason plan, Nov 30 – Feb 28 (log only after that) · Built from Coach Brandon's training philosophy</p>
     </div>
     <div class="acct" id="acct"></div>
   </div>
@@ -301,7 +302,7 @@
   const DAYS=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const DIST={"1600":1600,"mile":1609.34,"3200":3200,"2mi":3218.69,"5000":5000};
   const D = (y,m,d) => new Date(y,m-1,d);
-  const START=D(2026,11,30), END=D(2027,2,28), STATE=D(2026,11,7);
+  const START=D(2026,11,30), END=D(2027,2,28), LOG_END=D(2027,5,31), STATE=D(2026,11,7);   // plan ends at END; days after END (through LOG_END) are log-only
   const OFF_DAYS=10, ACTIVE_DAYS=14;
   const RACES=[
     {id:"rl",   name:"Running Lane XC Championships", date:"2026-12-05", dist:"5k"}
@@ -380,7 +381,7 @@
 
   // ---------- day rules ----------
   const isHard = x => !!x && (x.kind==="hard" || x.kind==="long" || !!x.long || x.kind==="race");
-  const isLocked = x => !x || x.kind==="race" || x.ttl==="Shakeout" || x.phase==="off" || x.phase==="active" || /Thanksgiving/.test(x.ttl||"");
+  const isLocked = x => !x || x.kind==="race" || x.ttl==="Shakeout" || x.phase==="off" || x.phase==="active" || x.phase==="log" || /Thanksgiving/.test(x.ttl||"");
 
   // ---------- plan engine ----------
   const DEFAULT_EASY=8.5*60; // sec/mile if no race time
@@ -473,15 +474,17 @@
   }
 
   // ---------- weeks ----------
-  const MONDAYS=[]; for(let m=mondayOf(START); m<=END; m=addDays(m,7)) MONDAYS.push(new Date(m));
+  const MONDAYS=[]; for(let m=mondayOf(START); m<=LOG_END; m=addDays(m,7)) MONDAYS.push(new Date(m));
   let wi=Math.max(0,Math.min(MONDAYS.length-1, MONDAYS.findIndex(m=>dayDiff(today,m)>=0&&dayDiff(today,m)<7)));
   if(wi<0) wi=0;
+  if(today>addDays(LOG_END,6)) wi=MONDAYS.length-1;
 
   const PH={
     race:{name:"Racing · Holding Your Peak",blurb:"You've done the work, so this stretch is about staying sharp. Volume stays at taper level. Hard days are short and high quality with lots of recovery. You can hold a peak for about 2–3 weeks."},
     off:{name:"Complete Rest",blurb:"Take 7–10 days completely off. Your body and mind need it after a long season, and it's what keeps you improving year after year."},
     active:{name:"Active Rest",blurb:"Stay active without formal training: other sports, light jogs, time with family. You're getting ready, mentally and physically, for the next build."},
     ease:{name:"Easing Back In",blurb:"Welcome back. These first weeks are easy running only, so your legs and lungs can get used to running again before workouts start. Every run should feel easy."},
+    log:{name:"Log Only",blurb:"There are no planned runs after Feb 28. Follow your track workouts, and log what you run so your coaches can see it."},
     base:{name:"Base Building",blurb:"Build a bigger engine. This phase is about time on your feet, not pace. You'll work back to your biggest week, then set new personal bests. Leave the watch at home except to time the run."}
   };
 
@@ -511,7 +514,8 @@
     for(let i=1;i<seq.length;i++) if(isHard(seq[i-1])&&isHard(seq[i])) return false;
     return true;
   }
-  function weekDays(R,m){ return DAYS.map((_,i)=>R.days[iso(addDays(m,i))]||null); }
+  function logOnlyDay(d){ return {kind:"log",phase:"log",ttl:"Log a run",det:"No planned run. Follow your track workouts and log what you ran.",eff:"Any",min:0,date:d}; }
+  function weekDays(R,m){ return DAYS.map((_,i)=>{ const d=addDays(m,i); return R.days[iso(d)] || (d>END && d<=addDays(LOG_END,6) ? logOnlyDay(d) : null); }); }
   function weekPhase(ds){ const c={}; ds.forEach(x=>{ if(x) c[x.phase]=(c[x.phase]||0)+1; });
     if(c.race) return "race"; let best=null; for(const k in c) if(!best||c[k]>c[best]) best=k; return best||"off"; }
 
@@ -534,7 +538,7 @@
     $("strip").innerHTML=MONDAYS.map((m,i)=>{
       const ds=weekDays(R,m), ph=weekPhase(ds);
       const wb=weekBand(ds), tot=wb[1];
-      const lbl=(R.weekInfo[iso(m)]||{}).label||({race:"Racing",off:"Rest",active:"Active",base:"Base",ease:"Ease in"})[ph];
+      const lbl=(R.weekInfo[iso(m)]||{}).label||({race:"Racing",off:"Rest",active:"Active",base:"Base",ease:"Ease in",log:"Log only"})[ph];
       return `<button class="wk p-${ph}${i===wi?" sel":""}" data-i="${i}"><div class="d">${short(m)}</div><div class="l">${lbl}</div><div class="m">${tot?wb[0]+"–"+wb[1]:"&nbsp;"}</div></button>`;
     }).join("");
     $("strip").querySelectorAll(".wk").forEach(b=>b.onclick=()=>{ wi=+b.dataset.i; render(); });
@@ -544,7 +548,7 @@
     const end=addDays(m,6);
     $("phaseName").textContent=info.name;
     const phs=[...new Set(ds.filter(Boolean).map(x=>x.phase))];
-    $("phaseMeta").textContent=`Week of ${short(m)} – ${short(end)}`+(phs.length>1?` · ${phs.map(p=>({race:"racing",off:"rest",active:"active rest",base:"base",ease:"easing in"})[p]).join(" → ")}`:"");
+    $("phaseMeta").textContent=`Week of ${short(m)} – ${short(end)}`+(phs.length>1?` · ${phs.map(p=>({race:"racing",off:"rest",active:"active rest",base:"base",ease:"easing in",log:"log only"})[p]).join(" → ")}`:"");
     $("phaseBlurb").textContent=info.blurb;
     const canFlex=ds.some((x,i)=>x&&!isLocked(x)&&addDays(m,i)>=today);
     $("flexHint").innerHTML = canFlex
@@ -569,7 +573,7 @@
       const lg=LOGS[iso(dt)];
       const acts=[];
       if(dt>=today && !isLocked(x)){ acts.push(`<button data-act="move" data-i="${i}">Move</button>`); }
-      if(dt>=today && x.kind!=="off" && !lg) acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`);
+      if(dt>=today && x.kind!=="off" && x.kind!=="log" && !lg) acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`);
       if((dt<=today || lg) && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
       const isOver = lg && !isCant(lg.status) && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
       const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${isCant(lg.status)?`Can't run${splitReason(lg.notes).reason?" · "+splitReason(lg.notes).reason:""}`:`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
@@ -603,6 +607,7 @@
       why.push(S.tage==="adv"?"With 3+ years of training you can build up to 15% a week. Everyone else stays at 10%.":"Volume goes up no more than 10% a week.");
       why.push(m>=D(2027,2,15) ? "Track season: once track practice starts, follow Coach Brandon's track workouts. Use this plan on days Coach Brandon doesn't give you one, and keep logging your runs here." : "Coach Brandon will tell you when track workouts start. Until then, it's all about building the engine.");
     }
+    if(ds.some(x=>x&&x.phase==="log")) why.push("This part of the season is log only. There's no planned run, so follow your track workouts and log what you run here.");
     if(!peak) why.push("Enter your biggest week (minutes or miles) to get run lengths.");
     if(!P) why.push("Add a recent race time to see paces in your workouts.");
     $("why").innerHTML=why.filter(Boolean).map(t=>`<li>${t}</li>`).join("");
@@ -655,7 +660,7 @@
   function closeModal(){ $("ov").classList.remove("show"); }
   $("ov").addEventListener("click",e=>{ if(e.target===$("ov") && !$("ov").dataset.locked) closeModal(); });
   const dayLabel=(m,i)=>`${DAYS[i]}, ${short(addDays(m,i))}`;
-  const desc=x=>x? `${x.ttl}${x.min?` (${bandTxt(x)})`:x.kind==="off"?" (off)":""}`:"";
+  const desc=x=>x&&x.kind==="log"? "no planned run (log only)" : x? `${x.ttl}${x.min?` (${bandTxt(x)})`:x.kind==="off"?" (off)":""}`:"";
 
   function curWeek(){ const m=MONDAYS[wi]; return {m,k:iso(m),perm:(S.weeks[iso(m)]||ID).slice(),cur:weekDays(LASTR,m)}; }
   function trySwap(a,b){
