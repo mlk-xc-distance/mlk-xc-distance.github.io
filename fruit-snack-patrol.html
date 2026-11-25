@@ -1499,13 +1499,13 @@ a.tr-btn{display:inline-block;text-decoration:none}
     const r = cv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
     if (boss){ aimShield(x, y); shieldDrag = true; try { cv.setPointerCapture(e.pointerId); } catch(err){} return; }
     if (busy()){
-      if (performance.now() - nagAt > 600){ nagAt = performance.now(); addFloat(x, y, ad ? 'Still talking…' : 'Still unlocking…', '#fffaf1'); sfx('miss'); }
+      if (performance.now() - nagAt > 600){ nagAt = performance.now(); addFloat(x, y, ad ? 'Still talking…' : 'Still helping…', '#fffaf1'); sfx('miss'); }
       return;
     }
     ripples.push({ x, y, t: 0 });
     if (doorEv && doorEv.phase === 'knock'){
-      const d = L.door;
-      if (x > d.x - 14 && x < d.x + d.w + 14 && y < L.wallH + L.r * 1.2){ startUnlock(); return; }
+      const ip = needIconPos();
+      if (Math.hypot(x - ip.x, y - ip.y) < 34){ startUnlock(); return; }
     }
     let bestK = null, bestD = Infinity;
     for (const k of kids){
@@ -1590,9 +1590,9 @@ a.tr-btn{display:inline-block;text-decoration:none}
   // ---------- "new this wave" explainers ----------
   const INTRO_CARDS = {
     door: {
-      title: 'Locked out',
-      body: 'Kids walking along the building want back into the gym. Tap the door to let them in.',
-      tip: 'While you unlock it, you can\'t guard the box.'
+      title: 'Kids need you',
+      body: 'Kids walking along the building need something: a cross-training day, an ice pack, or a signature. Tap them to help.',
+      tip: 'While you help, you can\'t guard the box.'
     },
     ad: {
       title: 'Mr. Churchwell',
@@ -1864,10 +1864,22 @@ a.tr-btn{display:inline-block;text-decoration:none}
     introCb = cb; paused = true; show('introScreen', true);
   }
 
-  // ---------- locked gym door ----------
-  const KEY_LINES = ['Finding the right key…', 'Wrong key. Trying another…', 'Jiggling the lock…', 'This lock always sticks…'];
+  // ---------- kids who need something from you (uniforms, ice packs, permission slips) ----------
+  const NEEDS = {
+    cross: { title: 'Cross training', role: 'Asking', ask: 'Kids want to cross train today. Tap them to talk it over.',
+      call: ['Coach, I think I need to cross train today.'], busy: ['Talking it over…', 'Where does it hurt?', 'Okay, 30 minutes on the bike.', 'Bike or core work?'], done: 'Cross training!' },
+    ice: { title: 'Ice packs', role: 'Sore legs', ask: 'Some runners need ice. Tap them to hand out ice packs.',
+      call: ['Ow, my calf!', 'Got any ice?', 'My shin hurts!'], busy: ['Grabbing ice packs…', 'Ice on that calf…', 'Ten minutes on, okay?', 'Wrapping an ankle…'], done: 'Feels better!' },
+    slip: { title: 'Permission slips', role: 'Signatures', ask: 'Kids need forms signed for the next meet. Tap them to sign.',
+      call: ['Can you sign this?', 'Need a signature!', 'It\'s due tomorrow!'], busy: ['Signing…', 'Where\'s my pen?', 'Initial here…', 'Checking the date…'], done: 'Signed!' }
+  };
+  function needIconPos(){
+    const ws = doorEv.waiters.filter(k => !k.gone && k.state === 'wait');
+    const list = ws.length ? ws : doorEv.waiters;
+    return { x: list.reduce((a, k) => a + k.x, 0) / list.length, y: L.wallH + L.r * 1.5 + L.r * 3.2 };
+  }
   function startDoorEvent(){
-    const n = 2 + (Math.random() < .5 ? 1 : 0), side = Math.random() < .5 ? 'left' : 'right', waiters = [];
+    const n = 1 + Math.floor(Math.random() * 3), side = Math.random() < .5 ? 'left' : 'right', waiters = [];   // 1 to 3 kids
     for (let i = 0; i < n; i++){
       const dir = side === 'left' ? -1 : 1, wy = L.wallH + L.r * 1.5;
       const p = { x: side === 'left' ? -L.r * 3 - i * L.r * 3.5 : W + L.r * 3 + i * L.r * 3.5, y: wy };
@@ -1879,27 +1891,28 @@ a.tr-btn{display:inline-block;text-decoration:none}
       };
       kids.push(k); waiters.push(k);
     }
-    doorEv = { phase: 'gather', t: 0, waiters, patience: Math.max(4.5, 8.5 - wave * .4), knockT: 0 };
+    doorEv = { phase: 'gather', t: 0, waiters, patience: Math.max(4.5, 8.5 - wave * .4), knockT: 0, need: pick(['cross', 'ice', 'slip']) };
   }
   function startUnlock(){
     if (!doorEv || doorEv.phase !== 'knock') return;
     doorEv.phase = 'unlock'; doorEv.t = 0; doorEv.dur = 1.5 + Math.min(1.2, wave * .12);
     sfx('unlock');
-    showTalk('Gym door', 'Unlocking', pick(KEY_LINES), true, true);
+    const N = NEEDS[doorEv.need];
+    showTalk(N.title, 'Helping', pick(N.busy), true, true);
   }
   function updateDoor(dt){
     const e = doorEv; e.t += dt;
     const alive = e.waiters.filter(k => !k.gone && (k.state === 'toDoor' || k.state === 'wait'));
     if (e.phase === 'gather'){
-      if (alive.filter(k => k.state === 'wait').length >= 2){
+      if (alive.length && alive.every(k => k.state === 'wait')){
         e.phase = 'knock'; e.t = 0; e.knockT = 0;
-        showTalk('Gym door', 'Locked', 'Kids want back inside. Tap the door to unlock it.', true, false);
+        const N = NEEDS[e.need]; showTalk(N.title, N.role, N.ask, true, false);
       }
     } else if (e.phase === 'knock'){
       $('talkBar').style.transform = 'scaleX(' + Math.max(0, 1 - e.t / e.patience) + ')';
       e.knockT -= dt;
       const w = alive.find(k => k.state === 'wait');
-      if (e.knockT <= 0 && w){ e.knockT = 1.3; sfx('knock'); addFloat(w.x, w.y - L.r * 1.8, 'Knock knock', '#fffaf1'); }
+      if (e.knockT <= 0 && w){ e.knockT = 1.5; sfx('knock'); addFloat(w.x, w.y - L.r * 1.8, pick(NEEDS[e.need].call), '#fffaf1'); }
       if (e.t >= e.patience){
         alive.forEach(k => { k.state = 'in'; k.speed *= .95; });
         if (alive[0]) addFloat(alive[0].x, alive[0].y - L.r * 2, 'Fine. Snacks.', '#ff8a80');
@@ -1908,9 +1921,10 @@ a.tr-btn{display:inline-block;text-decoration:none}
     } else {
       $('talkBar').style.transform = 'scaleX(' + Math.max(0, 1 - e.t / e.dur) + ')';
       if (e.t >= e.dur){
-        doorOpenT = 1.6; sfx('save');
-        alive.forEach(k => { k.state = 'enter'; });
-        if (alive.length){ score += 15 * alive.length; addFloat(W/2, L.wallH + L.r * 2.5, 'Thanks! +' + 15 * alive.length, '#f4b73b'); }
+        sfx('save');
+        const ip = needIconPos();
+        alive.forEach(k => { k.state = 'treat'; k.ex = k.x < W / 2 ? -L.r * 3 : W + L.r * 3; k.ey = k.y; });   // head back the way they came
+        if (alive.length){ score += 15 * alive.length; addFloat(ip.x, ip.y, NEEDS[e.need].done + ' +' + 15 * alive.length, '#f4b73b'); }
         doorEv = null; hideTalk(); hud();
       }
     }
@@ -2191,18 +2205,31 @@ a.tr-btn{display:inline-block;text-decoration:none}
     const list = kids.slice().sort((a, b) => a.y - b.y);
     const above = list.filter(k => k.y < L.box.y), below = list.filter(k => k.y >= L.box.y);
     if (doorEv && doorEv.phase !== 'gather'){
-      const d = L.door, cy = L.wallH - 6 - d.h * .45;
+      const ip = needIconPos();
       const frac = doorEv.phase === 'knock' ? Math.max(0, 1 - doorEv.t / doorEv.patience) : Math.max(0, 1 - doorEv.t / doorEv.dur);
       const pulse = doorEv.phase === 'knock' && !reduceMotion ? 1 + Math.sin(doorEv.t * 8) * .08 : 1;
-      ctx.save(); ctx.translate(W/2, cy); ctx.scale(pulse, pulse);
+      ctx.save(); ctx.translate(ip.x, ip.y); ctx.scale(pulse, pulse);
       ctx.fillStyle = 'rgba(28,22,34,.7)'; ctx.beginPath(); ctx.arc(0, 0, 20, 0, 7); ctx.fill();
       ctx.lineWidth = 4; ctx.lineCap = 'round';
       ctx.strokeStyle = doorEv.phase === 'unlock' ? '#7fd17a' : (frac < .35 ? '#ff6b5e' : '#f4b73b');
       ctx.beginPath(); ctx.arc(0, 0, 17, -Math.PI/2, -Math.PI/2 + Math.PI * 2 * frac); ctx.stroke();
-      ctx.lineWidth = 3; ctx.strokeStyle = '#e9ecef';
-      ctx.beginPath(); ctx.arc(0, -3, 5.5, Math.PI, 0); ctx.stroke();
-      ctx.fillStyle = '#f4b73b'; rr(-8, -3, 16, 12, 3); ctx.fill();
-      ctx.fillStyle = '#221b29'; ctx.fillRect(-1.5, 1, 3, 5);
+      if (doorEv.need === 'cross'){
+        // bike, for cross training
+        ctx.strokeStyle = '#9cc3ff'; ctx.lineWidth = 2.2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        ctx.beginPath(); ctx.arc(-7, 4, 5, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(7, 4, 5, 0, 7); ctx.stroke();
+        ctx.strokeStyle = '#ffffff';
+        ctx.beginPath(); ctx.moveTo(-7, 4); ctx.lineTo(-2, -5); ctx.lineTo(5, -5); ctx.lineTo(7, 4); ctx.moveTo(-2, -5); ctx.lineTo(1, 4); ctx.lineTo(5, -5); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-4, -8); ctx.lineTo(0, -8); ctx.moveTo(5, -5); ctx.lineTo(6, -9); ctx.stroke();
+      } else if (doorEv.need === 'ice'){
+        ctx.fillStyle = '#9ad8ff'; rr(-10, -8, 20, 16, 5); ctx.fill();
+        ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 1.8;
+        for (let i = 0; i < 3; i++){ const a = i * Math.PI / 3; ctx.beginPath(); ctx.moveTo(Math.cos(a) * -6, Math.sin(a) * -6); ctx.lineTo(Math.cos(a) * 6, Math.sin(a) * 6); ctx.stroke(); }
+      } else {
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(-8, -10, 14, 19);
+        ctx.strokeStyle = '#9aa7c7'; ctx.lineWidth = 1.2;
+        for (let i = 0; i < 4; i++){ ctx.beginPath(); ctx.moveTo(-5, -6 + i * 4); ctx.lineTo(3, -6 + i * 4); ctx.stroke(); }
+        ctx.strokeStyle = '#1a47c2'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(4, 8); ctx.lineTo(11, -3); ctx.stroke();
+      }
       ctx.restore();
     }
 
@@ -2242,8 +2269,10 @@ a.tr-btn{display:inline-block;text-decoration:none}
     for (const f of floats){
       ctx.globalAlpha = 1 - f.t; ctx.font = '18px "Lilita One", system-ui, sans-serif';
       const y = f.y - f.t * 34;
-      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(34,27,41,.8)'; ctx.strokeText(f.text, f.x, y);
-      ctx.fillStyle = f.color; ctx.fillText(f.text, f.x, y);
+      if (ctx.measureText(f.text).width > W - 24) ctx.font = '14px "Lilita One", system-ui, sans-serif';
+      const hw = ctx.measureText(f.text).width / 2 + 8, fx = Math.max(hw, Math.min(W - hw, f.x));   // keep text on screen
+      ctx.lineWidth = 4; ctx.strokeStyle = 'rgba(34,27,41,.8)'; ctx.strokeText(f.text, fx, y);
+      ctx.fillStyle = f.color; ctx.fillText(f.text, fx, y);
     }
     ctx.globalAlpha = 1;
   }
