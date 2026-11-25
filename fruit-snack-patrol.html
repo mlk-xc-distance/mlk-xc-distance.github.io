@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="description" content="Fruit Snack Patrol: guard the box of fruit snacks. A game for the 2026 MLK Cross Country season.">
 <style>
 :root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -30,6 +30,10 @@ html{box-sizing:border-box;height:100%;background:var(--grass-deep)}
 body{height:100%;margin:0;overflow:hidden;background:var(--grass-deep);color:var(--ink);font-family:var(--body);-webkit-user-select:none;user-select:none}
 #stage{position:relative;height:100%;max-width:520px;margin:0 auto;overflow:hidden;background:var(--grass)}
 #game{display:block;width:100%;height:100%;touch-action:none;cursor:crosshair}
+/* no zooming: pinch and double-tap are blocked everywhere; the scrolling screens can still scroll up and down */
+html,body,#stage,#stage *{touch-action:none}
+#stage .card,#stage .tribute,#stage .win-screen,#stage .card *,#stage .tribute *,#stage .win-screen *{touch-action:pan-y}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 .hud{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:flex-start;gap:8px;
   padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));pointer-events:none}
@@ -258,9 +262,7 @@ a.tr-btn{display:inline-block;text-decoration:none}
 .card .tip{background:#e6eefc;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.4}
 </style>
 
-</head>
-<body>
-<div id="stage">
+</head><body><div id="stage">
   <canvas id="game" aria-label="Game field: the gym stairs and the fruit snack box"></canvas>
 
   <div class="hud">
@@ -472,6 +474,16 @@ a.tr-btn{display:inline-block;text-decoration:none}
     } catch(e){}
   }
   document.addEventListener('pointerdown', unlockAudio, true);
+  // block pinch zoom (iOS Safari gesture events, plus any two-finger move) and double-tap zoom
+  ['gesturestart', 'gesturechange', 'gestureend'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+  document.addEventListener('touchmove', e => { if (e.touches.length > 1 || (e.scale !== undefined && e.scale !== 1)) e.preventDefault(); }, { passive: false });
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', e => {
+    const now = Date.now();
+    if (now - lastTouchEnd < 350 && !e.target.closest('button, a')) e.preventDefault();
+    lastTouchEnd = now;
+  }, { passive: false });
+  document.addEventListener('dblclick', e => e.preventDefault(), { passive: false });
   function sfx(kind){
     if (muted) return;
     try {
@@ -2369,6 +2381,4 @@ a.tr-btn{display:inline-block;text-decoration:none}
   requestAnimationFrame(frame);
 })();
 </script>
-
-</body>
-</html>
+</body></html>
