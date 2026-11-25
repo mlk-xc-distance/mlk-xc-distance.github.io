@@ -29,6 +29,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<style>
+  [hidden]{display:none !important;}
+  .mode-switch{position:relative; max-width:900px; margin:0 auto 14px; padding:0 20px; display:flex; justify-content:flex-end;}
+  .mode-switch .seg{display:inline-flex; border:1.5px solid rgba(255,255,255,.45); border-radius:999px; overflow:hidden;}
+  .mode-switch button{font:inherit; font-size:14px; font-weight:600; padding:6px 16px; border:0; background:transparent; color:var(--chalk); cursor:pointer;}
+  .mode-switch button[aria-pressed="true"]{background:var(--chalk); color:var(--pine);}
+  .mode-switch button:focus-visible{outline:3px solid var(--clay-soft); outline-offset:-3px;}
+  .off-actions{display:flex; flex-wrap:wrap; gap:12px; margin:18px 0 0;}
+  .off-btn{display:inline-block; text-decoration:none; font-weight:700; font-size:17px; padding:12px 22px; border-radius:10px; background:var(--chalk); color:var(--pine);}
+  .off-btn.alt{background:transparent; color:var(--chalk); border:2px solid rgba(255,255,255,.55);}
+  .hero .off-note{margin:14px 0 0; max-width:60ch; color:#dfe5fb; font-size:15px;}
+  .hero .off-p{margin:10px 0 0; max-width:60ch; color:#dfe5fb; font-size:17px;}
+</style>
 </head>
 <body>
 <a href="#next-meet" class="skip-link">Skip to main content</a>
@@ -214,8 +227,21 @@ const SEARCH_INDEX = [
 </header>
 
 <section class="hero" id="next-meet">
+  <div class="mode-switch" id="modeSwitch"><div class="seg" role="group" aria-label="Site view"><button type="button" id="modeSeason" aria-pressed="true">Season</button><button type="button" id="modeOff" aria-pressed="false">Offseason</button></div></div>
+  <div class="hero-inner" id="offHero" hidden></div>
   <div class="hero-inner" id="heroContent">
     <!-- filled by script from the meets list, based on today's date -->
+  </div>
+</section>
+
+<section id="offseasonTraining" hidden>
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <h2>Offseason training</h2>
+        <p>Plans and exercises for building through the offseason.</p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -346,8 +372,17 @@ const SEARCH_INDEX = [
       </a>
     </div>
 
+    <div id="trainGroup">
     <h3 class="link-group-head">Training Resources</h3>
     <div class="link-grid">
+      <a class="link-card" href="training/">
+        <div class="t">Royals Offseason Training Builder</div>
+        <div class="d">Your personal plan, Nov 30 – Feb 28, and a place to log your runs</div>
+      </a>
+      <a class="link-card" href="offseason-training.html">
+        <div class="t">How the Training Builder works</div>
+        <div class="d">Five quick steps to set up your plan</div>
+      </a>
       <div class="link-card" style="cursor:default;">
         <div class="t"><a href="resources/hip-glute-strength-beginner.html" style="color:var(--pine); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;">Hip/Glute Strength Routine (Beginner)</a></div>
         <div class="d">Injury-prevention exercises — complete all reps on one side before switching. <a href="resources/hip-glute-strength-beginner.pdf" target="_blank" rel="noopener" style="color:var(--clay); font-weight:600;">Printable PDF →</a></div>
@@ -356,6 +391,7 @@ const SEARCH_INDEX = [
         <div class="t"><a href="resources/tabata-core.html" style="color:var(--pine); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;">Tabata Core</a></div>
         <div class="d">Quick high-intensity core workout, 20s work / 10s rest supersets. <a href="resources/tabata-core.pdf" target="_blank" rel="noopener" style="color:var(--clay); font-weight:600;">Printable PDF →</a></div>
       </div>
+    </div>
     </div>
   </div>
 </section>
@@ -666,6 +702,54 @@ const MEETS = [
       <h1>No meets remaining on the schedule</h1>
     `;
   }
+
+  // ---- Season / Offseason view ----
+  // Season view = next-meet hero + season calendar. Offseason view = training hero + training links first.
+  // Default: Season while meets remain, Offseason once the last meet has passed. Visitors can switch at any time;
+  // a manual choice is remembered on that device until the automatic default changes.
+  (function(){
+    const OFF = { start: "2026-11-30", end: "2027-02-28" };   // training plan dates (see /training/)
+    const auto = upcoming.length ? 'season' : 'offseason';
+    const els = {
+      season: document.getElementById('heroContent'), off: document.getElementById('offHero'),
+      cal: document.getElementById('calendar'), offSec: document.getElementById('offseasonTraining'),
+      train: document.getElementById('trainGroup'),
+      bSeason: document.getElementById('modeSeason'), bOff: document.getElementById('modeOff')
+    };
+    const trainHome = els.train.parentNode;
+    const fmtD = s => new Date(s + "T12:00:00").toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    const dToStart = daysOut(OFF.start), dToEnd = daysOut(OFF.end);
+    const status = dToStart > 0
+      ? `Your plan starts ${fmtD(OFF.start)} (${dToStart === 1 ? 'tomorrow' : dToStart + ' days away'}).`
+      : dToEnd >= 0 ? `The plan runs through ${fmtD(OFF.end).replace(/^[A-Za-z]+, /, '')}.`
+      : `The plan ran ${fmtD(OFF.start).replace(/^[A-Za-z]+, /, '')} – ${fmtD(OFF.end).replace(/^[A-Za-z]+, /, '')}. Keep logging your runs in the app.`;
+    els.off.innerHTML = `
+      <div class="kicker">Offseason</div>
+      <h1>Royals Offseason Training</h1>
+      <p class="off-p">${status} It builds each day's run from your experience and a recent race, and lets you log your runs for the coaches to see.</p>
+      <div class="off-actions">
+        <a class="off-btn" href="training/">Open the training app</a>
+        <a class="off-btn alt" href="offseason-training.html">How it works</a>
+      </div>
+      <p class="off-note">Track practice will likely start before Feb 28, in mid-to-late February. Once it does, follow your track workouts. You can still use the app then to log your runs.</p>`;
+    function saved(){ try { const s = JSON.parse(localStorage.getItem('mlkView') || 'null'); return s && s.auto === auto ? s.mode : null; } catch(e){ return null; } }
+    function remember(mode){ try { localStorage.setItem('mlkView', JSON.stringify({ mode, auto })); } catch(e){} }
+    function apply(mode){
+      const off = mode === 'offseason';
+      els.season.hidden = off; els.off.hidden = !off;
+      els.cal.hidden = off; els.offSec.hidden = !off;
+      if (off) els.offSec.querySelector('.wrap').appendChild(els.train); else trainHome.appendChild(els.train);
+      els.bSeason.setAttribute('aria-pressed', String(!off)); els.bOff.setAttribute('aria-pressed', String(off));
+      document.documentElement.dataset.view = mode;
+    }
+    const q = new URLSearchParams(location.search).get('view');
+    apply(q === 'season' || q === 'offseason' ? q : (saved() || auto));
+    els.bSeason.onclick = () => { apply('season'); remember('season'); };
+    els.bOff.onclick = () => { apply('offseason'); remember('offseason'); };
+    // The "Calendar" nav link lives in the season view, so switch to it when clicked from the offseason view.
+    const calLink = document.querySelector('#navlinks a[href="#calendar"]');
+    if (calLink) calLink.addEventListener('click', () => { if (els.cal.hidden){ apply('season'); remember('season'); } });
+  })();
 
   // ---- Full calendar, past meets greyed out ----
   const meetList = document.getElementById('meetList');
