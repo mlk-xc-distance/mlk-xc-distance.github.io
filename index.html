@@ -39,6 +39,10 @@
   .off-actions{display:flex; flex-wrap:wrap; gap:12px; margin:18px 0 0;}
   .off-btn{display:inline-block; text-decoration:none; font-weight:700; font-size:17px; padding:12px 22px; border-radius:10px; background:var(--chalk); color:var(--pine);}
   .off-btn.alt{background:transparent; color:var(--chalk); border:2px solid rgba(255,255,255,.55);}
+  .off-game{display:block; margin:18px 0 0; max-width:520px; padding:12px 16px; border-radius:12px; background:rgba(255,255,255,.12); border:1.5px dashed rgba(255,255,255,.5); color:var(--chalk); text-decoration:none;}
+  .off-game b{display:block; font-size:17px;}
+  .off-game span{display:block; font-size:14px; color:#dfe5fb; margin-top:2px;}
+  .off-game:hover{background:rgba(255,255,255,.2);}
   .hero .off-note{margin:14px 0 0; max-width:60ch; color:#dfe5fb; font-size:15px;}
   .hero .off-p{margin:10px 0 0; max-width:60ch; color:#dfe5fb; font-size:17px;}
 </style>
@@ -382,6 +386,10 @@ const SEARCH_INDEX = [
       <a class="link-card" href="offseason-training.html">
         <div class="t">How the Training Builder works</div>
         <div class="d">Five quick steps to set up your plan</div>
+      </a>
+      <a class="link-card" href="fruit-snack-patrol.html">
+        <div class="t">Fruit Snack Patrol (game)</div>
+        <div class="d">A quick game for the team. Take a break and guard the snack box.</div>
       </a>
       <div class="link-card" style="cursor:default;">
         <div class="t"><a href="resources/hip-glute-strength-beginner.html" style="color:var(--pine); text-decoration:underline; text-decoration-color:var(--clay-soft); text-underline-offset:2px;">Hip/Glute Strength Routine (Beginner)</a></div>
@@ -731,6 +739,7 @@ const MEETS = [
         <a class="off-btn" href="training/">Open the training app</a>
         <a class="off-btn alt" href="offseason-training.html">How it works</a>
       </div>
+      <a class="off-game" href="fruit-snack-patrol.html"><b>Take a break: Fruit Snack Patrol</b><span>Guard the snack box from sneaky kids. A quick game for the team.</span></a>
       <p class="off-note">Track practice will likely start before Feb 28, in mid-to-late February. Once it does, follow your track workouts. You can still use the app then to log your runs.</p>`;
     function saved(){ try { const s = JSON.parse(localStorage.getItem('mlkView') || 'null'); return s && s.auto === auto ? s.mode : null; } catch(e){ return null; } }
     function remember(mode){ try { localStorage.setItem('mlkView', JSON.stringify({ mode, auto })); } catch(e){} }
