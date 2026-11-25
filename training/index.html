@@ -580,7 +580,7 @@
       if(dt>=today && x.kind!=="off" && x.kind!=="log" && !lg) acts.push(`<button data-act="cant" data-i="${i}">Can't run</button>`);
       if((dt<=today || lg) && x.kind!=="off") acts.push(`<button class="log" data-act="log" data-i="${i}">${lg?"Edit log":"Log it"}</button>`);
       const isOver = lg && !isCant(lg.status) && +lg.plannedMin>0 && +lg.actualMin > +lg.plannedMin*1.15;
-      const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${isCant(lg.status)?`Can't run${splitReason(lg.notes).reason?" · "+splitReason(lg.notes).reason:""}`:`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
+      const lgHtml = lg ? `<div class="logged${lg.hurts?" hurt":""}">✓ ${isCant(lg.status)?`Can't run${splitReason(lg.notes).reason?" · "+splitReason(lg.notes).reason:""}`:`Logged ${lg.actualMin||0} min${lg.miles?` · ${lg.miles} mi`:""}${lg.effort?` · effort ${lg.effort}`:""}${lg.strava?` · <a href="${esc(lg.strava)}" target="_blank" rel="noopener">Strava ↗</a>`:""}`}${lg.hurts?" · something hurts":""}${isOver?" · over plan":""}</div>` : "";
       return `<div class="day ${kmap[x.kind]}${iso(dt)===iso(today)?" today":""}"><div class="top"><span class="dn">${DAYS[i]} <span class="dt">${short(dt)}${iso(dt)===iso(today)?" · today":""}</span></span><span class="min">${mm}</span></div>
         <div class="ttl">${x.ttl}${x.moved?`<span class="moved">MOVED</span>`:""}</div><div class="det">${x.det}</div>${x.ex?`<div class="ex">${x.ex}</div>`:""}<span class="chip">${x.eff}</span>${lgHtml}${acts.length?`<div class="acts">${acts.join("")}</div>`:""}</div>`;
     }).join("");
@@ -704,6 +704,8 @@
   }
   const REASONS=["Sick","Hurt / sore","School or work","Weather","Family / travel","Other"];
   const isCant = st => st==="can't run" || st==="skipped";
+  // pulls a Strava link out of whatever was pasted (Strava's share text includes words around the link); only strava.com / strava.app.link are accepted
+  function stravaUrl(t){ const m=String(t||"").match(/https?:\/\/(?:[a-z0-9-]+\.)*(?:strava\.com|strava\.app\.link)(?:\/[^\s<>"']*)?/i); return m?m[0]:""; }
   function splitReason(notes){ const m=String(notes||"").match(/^Reason: ([^.]*)\.\s*(.*)$/s); return m? {reason:m[1], rest:m[2]} : {reason:"", rest:String(notes||"")}; }
   function logModal(a, preset){
     const w=curWeek(), x=w.cur[a], k=iso(addDays(w.m,a)), lg=LOGS[k]||{};
@@ -718,6 +720,8 @@
         <div><label for="lMi">Miles (optional)</label><input id="lMi" type="number" min="0" step="0.1" inputmode="decimal" value="${lg.miles||""}"></div></div>
         <label for="lEff">Effort (1 = super easy, 10 = all-out)</label>
         <select id="lEff"><option value="">Pick one</option>${[1,2,3,4,5,6,7,8,9,10].map(n=>`<option ${String(lg.effort)===String(n)?"selected":""}>${n}</option>`).join("")}</select>
+        <label for="lStrava">Strava link (optional)</label>
+        <input id="lStrava" type="url" inputmode="url" autocomplete="off" maxlength="300" placeholder="Paste from Strava: Share → Copy link" value="${esc(lg.strava||"")}">
       </div>
       <div id="cantBox">
         <label for="lWhy">Reason</label>
@@ -744,7 +748,9 @@
       }
       const mins=$("lMin").value;
       if(!(+mins>0)){ $("lErr").textContent="Enter how many minutes you ran (or choose Can't run)."; return; }
-      saveLog(a,{actualMin:+mins,miles:$("lMi").value,effort:$("lEff").value,status,hurts:$("lHurt").checked,notes:$("lNotes").value.trim()});
+      const sv=$("lStrava").value.trim(), strava=stravaUrl(sv);
+      if(sv && !strava){ $("lErr").textContent="That doesn't look like a Strava link. In Strava, open your run, tap Share, then Copy link, and paste it here. Or leave this box empty."; return; }
+      saveLog(a,{actualMin:+mins,miles:$("lMi").value,effort:$("lEff").value,status,hurts:$("lHurt").checked,notes:$("lNotes").value.trim(),strava});
     };
   }
   function saveLog(a,v){
