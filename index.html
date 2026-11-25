@@ -27,7 +27,7 @@
 <meta name="twitter:image" content="https://mlk-xc-distance.github.io/share/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Lilita+One&family=Nunito:wght@800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
   [hidden]{display:none !important;}
@@ -39,10 +39,15 @@
   .off-actions{display:flex; flex-wrap:wrap; gap:12px; margin:18px 0 0;}
   .off-btn{display:inline-block; text-decoration:none; font-weight:700; font-size:17px; padding:12px 22px; border-radius:10px; background:var(--chalk); color:var(--pine);}
   .off-btn.alt{background:transparent; color:var(--chalk); border:2px solid rgba(255,255,255,.55);}
-  .off-game{display:block; margin:18px 0 0; max-width:520px; padding:12px 16px; border-radius:12px; background:rgba(255,255,255,.12); border:1.5px dashed rgba(255,255,255,.5); color:var(--chalk); text-decoration:none;}
-  .off-game b{display:block; font-size:17px;}
-  .off-game span{display:block; font-size:14px; color:#dfe5fb; margin-top:2px;}
-  .off-game:hover{background:rgba(255,255,255,.2);}
+  .off-game{display:flex; align-items:center; gap:14px; margin:20px 0 0; max-width:480px; padding:12px; border-radius:18px; background:#1a47c2; border:3px solid #fffaf1; box-shadow:0 5px 0 #0b2470; color:#fff; text-decoration:none; font-family:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif; transition:transform .12s;}
+  .off-game:hover{transform:translateY(-2px);}
+  .off-game:active{transform:translateY(2px); box-shadow:0 2px 0 #0b2470;}
+  .off-game:focus-visible{outline:3px solid var(--clay-soft); outline-offset:3px;}
+  .off-game .fsp-art{flex:0 0 138px; background:#fffaf1; border-radius:14px; padding:8px 8px 6px; transform:rotate(-2.5deg);}
+  .off-game .fsp-logo{display:block; width:100%; height:auto; overflow:visible;}
+  .off-game .fsp-copy{display:flex; flex-direction:column; align-items:flex-start; gap:8px; min-width:0;}
+  .off-game .fsp-line{font-family:"Nunito","Source Sans 3",system-ui,sans-serif; font-weight:800; font-size:15px; line-height:1.25; color:#fff;}
+  .off-game .fsp-go{display:inline-block; font-size:20px; padding:6px 20px; border-radius:12px; background:#fff; color:#1a47c2; box-shadow:0 3px 0 #0b2470;}
   .hero .off-note{margin:14px 0 0; max-width:60ch; color:#dfe5fb; font-size:15px;}
   .hero .off-p{margin:10px 0 0; max-width:60ch; color:#dfe5fb; font-size:17px;}
 </style>
@@ -739,7 +744,19 @@ const MEETS = [
         <a class="off-btn" href="training/">Open the training app</a>
         <a class="off-btn alt" href="offseason-training.html">How it works</a>
       </div>
-      <a class="off-game" href="fruit-snack-patrol.html"><b>Take a break: Fruit Snack Patrol</b><span>Guard the snack box from sneaky kids. A quick game for the team.</span></a>
+      <a class="off-game" href="fruit-snack-patrol.html" aria-label="Play Fruit Snack Patrol, a quick game for the team">
+        <span class="fsp-art"><svg class="fsp-logo" viewBox="0 0 300 232" role="img" aria-label="Fruit Snack Patrol">
+        <g font-family="'Lilita One','Arial Rounded MT Bold','Trebuchet MS',sans-serif" font-size="76">
+          <text x="4" y="68" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#0b2470" opacity=".35">FRUIT</text>
+          <text x="2" y="64" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#13307a">FRUIT</text>
+          <text x="4" y="144" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#0b2470" opacity=".35" stroke="#0b2470" stroke-width="5" stroke-linejoin="round">SNACK</text>
+          <text x="2" y="140" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#3fa9f5" stroke="#0f2f8c" stroke-width="5" stroke-linejoin="round" paint-order="stroke fill">SNACK</text>
+          <text x="4" y="220" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#0b2470" opacity=".35">PATROL</text>
+          <text x="2" y="216" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#13307a">PATROL</text>
+        </g>
+      </svg></span>
+        <span class="fsp-copy"><span class="fsp-line">Take a break! Guard the snack box from sneaky kids.</span><span class="fsp-go">PLAY</span></span>
+      </a>
       <p class="off-note">Track practice will likely start before Feb 28, in mid-to-late February. Once it does, follow your track workouts. You can still use the app then to log your runs.</p>`;
     function saved(){ try { const s = JSON.parse(localStorage.getItem('mlkView') || 'null'); return s && s.auto === auto ? s.mode : null; } catch(e){ return null; } }
     function remember(mode){ try { localStorage.setItem('mlkView', JSON.stringify({ mode, auto })); } catch(e){} }
