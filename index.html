@@ -36,8 +36,8 @@
   .mode-switch button{font:inherit; font-size:14px; font-weight:600; padding:6px 16px; border:0; background:transparent; color:var(--chalk); cursor:pointer;}
   .mode-switch button[aria-pressed="true"]{background:var(--chalk); color:var(--pine);}
   .mode-switch button:focus-visible{outline:3px solid var(--clay-soft); outline-offset:-3px;}
-  .off-actions{display:flex; flex-wrap:wrap; gap:12px; margin:18px 0 0;}
-  .off-btn{display:inline-block; text-decoration:none; font-weight:700; font-size:17px; padding:12px 22px; border-radius:10px; background:var(--chalk); color:var(--pine);}
+  .off-actions{display:flex; flex-wrap:nowrap; gap:12px; margin:18px 0 0; max-width:480px;}   /* same width as the game card below */
+  .off-btn{flex:1 1 0; min-width:0; box-sizing:border-box; display:flex; align-items:center; justify-content:center; text-align:center; line-height:1.2; text-decoration:none; font-weight:700; font-size:17px; padding:12px 14px; border-radius:10px; background:var(--chalk); color:var(--pine);}
   .off-btn.alt{background:transparent; color:var(--chalk); border:2px solid rgba(255,255,255,.55);}
   .off-game{display:flex; align-items:center; gap:14px; margin:20px 0 0; max-width:480px; padding:12px; border-radius:18px; background:#1a47c2; border:3px solid #fffaf1; box-shadow:0 5px 0 #0b2470; color:#fff; text-decoration:none; font-family:"Lilita One","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif; transition:transform .12s;}
   .off-game:hover{transform:translateY(-2px);}
