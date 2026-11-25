@@ -46,7 +46,9 @@
   .off-game .fsp-art{flex:0 0 138px; background:#fffaf1; border-radius:14px; padding:8px 8px 6px; transform:rotate(-2.5deg);}
   .off-game .fsp-logo{display:block; width:100%; height:auto; overflow:visible;}
   .off-game .fsp-copy{display:flex; flex-direction:column; align-items:flex-start; gap:8px; min-width:0;}
-  .off-game .fsp-line{font-family:"Nunito","Source Sans 3",system-ui,sans-serif; font-weight:800; font-size:15px; line-height:1.25; color:#fff;}
+  .off-game .fsp-line{font-family:"Nunito","Source Sans 3",system-ui,sans-serif; font-weight:800; font-size:14px; line-height:1.3; color:#fff;}
+  .off-game .fsp-line b{font-family:"Lilita One","Arial Rounded MT Bold",system-ui,sans-serif; font-weight:400; font-size:17px; color:#ffe14a;}
+  #offHero h1{max-width:none; white-space:nowrap;}
   .off-game .fsp-go{display:inline-block; font-size:20px; padding:6px 20px; border-radius:12px; background:#fff; color:#1a47c2; box-shadow:0 3px 0 #0b2470;}
   .hero .off-note{margin:14px 0 0; max-width:60ch; color:#dfe5fb; font-size:15px;}
   .hero .off-p{margin:10px 0 0; max-width:60ch; color:#dfe5fb; font-size:17px;}
@@ -755,9 +757,20 @@ const MEETS = [
           <text x="2" y="216" textLength="292" lengthAdjust="spacingAndGlyphs" fill="#13307a">PATROL</text>
         </g>
       </svg></span>
-        <span class="fsp-copy"><span class="fsp-line">Take a break! Guard the snack box from sneaky kids.</span><span class="fsp-go">PLAY</span></span>
+        <span class="fsp-copy"><span class="fsp-line"><b>Take a break!</b> Guard the box of fruit snacks at the top of the stairs. Kids sneak in from every side, so tap a kid to send them away. It gets harder every wave. Can you make it to the final boss with snacks left?</span><span class="fsp-go">PLAY</span></span>
       </a>
       <p class="off-note">Track practice will likely start before Feb 28, in mid-to-late February. Once it does, follow your track workouts. You can still use the app then to log your runs.</p>`;
+    // Keep the offseason title on one line at any width by shrinking the font only as far as needed.
+    const offTitle = els.off.querySelector('h1');
+    function fitOffTitle(){
+      if (els.off.hidden) return;
+      offTitle.style.fontSize = '';
+      let px = parseFloat(getComputedStyle(offTitle).fontSize);
+      const room = offTitle.parentNode.clientWidth - 40;   // .hero-inner side padding
+      while (offTitle.scrollWidth > room && px > 16){ px -= 0.5; offTitle.style.fontSize = px + 'px'; }
+    }
+    window.addEventListener('resize', fitOffTitle);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitOffTitle);
     function saved(){ try { const s = JSON.parse(localStorage.getItem('mlkView') || 'null'); return s && s.auto === auto ? s.mode : null; } catch(e){ return null; } }
     function remember(mode){ try { localStorage.setItem('mlkView', JSON.stringify({ mode, auto })); } catch(e){} }
     function apply(mode){
@@ -767,6 +780,7 @@ const MEETS = [
       if (off) els.offSec.querySelector('.wrap').appendChild(els.train); else trainHome.appendChild(els.train);
       els.bSeason.setAttribute('aria-pressed', String(!off)); els.bOff.setAttribute('aria-pressed', String(off));
       document.documentElement.dataset.view = mode;
+      fitOffTitle();
     }
     const q = new URLSearchParams(location.search).get('view');
     apply(q === 'season' || q === 'offseason' ? q : (saved() || auto));
